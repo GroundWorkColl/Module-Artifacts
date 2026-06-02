@@ -1,0 +1,786 @@
+<\!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 2: Job Search</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <style>body { margin: 0; padding: 0; }</style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState } = React;
+
+const TEAL = "#1B6B72";
+const LIGHTGRAY = "#F5F7F8";
+const GOLD = "#B5860A";
+const WHITE = "#FFFFFF";
+
+const modules = [
+  {
+    id: 1,
+    title: "Video 2.1",
+    subtitle: "The Job Search Landscape",
+    icon: "🗺️",
+    color: TEAL,
+    intro: "Let's talk about where jobs actually come from, because 'just look on Indeed' is not a strategy. It's a starting point.",
+    content: [
+      {
+        type: "subhead",
+        text: "The Big Job Boards",
+      },
+      {
+        type: "body",
+        text: "You probably already know a few of these: Indeed, LinkedIn, ZipRecruiter, Glassdoor. These are general boards that aggregate postings across industries and company sizes. They are a reasonable starting point — but use them with intention.",
+      },
+      {
+        type: "tips",
+        items: [
+          "Not every listing is current. Companies sometimes forget to take down postings.",
+          "LinkedIn is not just a job board. It is a visibility tool. A complete profile matters.",
+          "Indeed is volume-heavy. Use the filters. Otherwise you will burn through your energy scrolling past things that do not fit.",
+        ],
+      },
+      {
+        type: "subhead",
+        text: "Niche and Specialty Boards",
+      },
+      {
+        type: "body",
+        text: "If you know your field, there are boards built for it. Handshake is specifically for college students and recent graduates. Idealist covers nonprofits. Dice covers tech. And Mentra and Specialisterne are job boards designed specifically with neurodiverse job seekers in mind — employers who are actively looking for ND talent.",
+      },
+      {
+        type: "subhead",
+        text: "Your Career Center",
+      },
+      {
+        type: "body",
+        text: "If you have access to a university or community college career center, use it. Career centers offer resume review, mock interviews, exclusive job boards, employer connections, and sometimes direct referrals. Career counselors do this all day. They have seen what works.",
+      },
+      {
+        type: "callout",
+        label: "If you graduated recently:",
+        text: "Most career centers remain available to alumni for at least a year, sometimes longer. Call and ask before you assume you've lost access.",
+      },
+      {
+        type: "subhead",
+        text: "Where to Start",
+      },
+      {
+        type: "body",
+        text: "Pick two boards and use them consistently. Set up saved searches with alerts so you are not checking manually every day. Keep a simple spreadsheet tracking where you applied, when, and what the status is. Your job search needs a system — not just effort.",
+      },
+    ],
+    checklist: [
+      "Choose two job boards and create accounts with saved searches and email alerts",
+      "Check whether your career center is accessible to you and make an appointment",
+      "Look up Mentra and Specialisterne if you are a neurodiverse job seeker",
+      "Start a job search tracking spreadsheet: company, role, date applied, status",
+    ],
+  },
+  {
+    id: 2,
+    title: "Video 2.2",
+    subtitle: "Understanding Recruiters",
+    icon: "🤝",
+    color: "#2E86AB",
+    intro: "Recruitment is confusing if no one has explained how it works. Let's fix that.",
+    content: [
+      {
+        type: "subhead",
+        text: "Three Types of Recruiters",
+      },
+      {
+        type: "cards",
+        items: [
+          {
+            title: "Internal Recruiters",
+            desc: "Work directly for the company. They are the first person to see your application when you apply on the company website. Their goal is to fill the role — they are not your advocate, but they are not your adversary either.",
+          },
+          {
+            title: "Staffing Agencies",
+            desc: "Work across multiple employers, often for contract, temp, or entry-level roles. If an agency recruiter reaches out, they are assessing fit for roles they are trying to fill. You are not obligated to take the first thing they offer.",
+          },
+          {
+            title: "Executive Search Firms",
+            desc: "Focus on senior-level or specialized roles. Sometimes called headhunters. You are probably not here yet — but you will be eventually.",
+          },
+        ],
+      },
+      {
+        type: "subhead",
+        text: "What Recruiters Are Actually Looking For",
+      },
+      {
+        type: "body",
+        text: "Recruiters often have limited time per application. When they scan a resume, they are looking for signals: does this person have the keywords and experience that match the role? That is why the language on your resume matters so much. More on that in Video 2.6.",
+      },
+      {
+        type: "body",
+        text: "When you get to a phone screen, they are assessing three things: can you communicate clearly, do you seem to understand the role, and are your salary expectations in range. These are practical screens, not deep dives.",
+      },
+      {
+        type: "subhead",
+        text: "How to Work With Recruiters Effectively",
+      },
+      {
+        type: "tips",
+        items: [
+          "Be responsive. Recruiters manage many candidates. If you are slow to reply, they move on.",
+          "Be honest about your timeline. If you are talking to other employers, you can say so — it often creates useful urgency.",
+          "Maintain the relationship. A staffing agency recruiter who knows your strengths becomes a long-term asset.",
+        ],
+      },
+    ],
+    checklist: [
+      "Update your LinkedIn so recruiters can find you — photo, headline, and summary",
+      "Respond to recruiter messages within 24 hours, even if just to say you are not available",
+      "If you connect with a staffing agency recruiter, save their contact information",
+    ],
+  },
+  {
+    id: 3,
+    title: "Video 2.3",
+    subtitle: "How to Read a Job Posting",
+    icon: "📋",
+    color: "#5C7A6E",
+    intro: "A job posting is a wish list, not a contract. Once you understand that, everything gets easier.",
+    content: [
+      {
+        type: "subhead",
+        text: "Required vs. Preferred",
+      },
+      {
+        type: "body",
+        text: "Pay attention to these two words. Required qualifications are the stated baseline. Preferred qualifications are things they would like but would trade for the right candidate.",
+      },
+      {
+        type: "callout",
+        label: "The practical rule:",
+        text: "If you meet about 60 to 70 percent of the listed qualifications, apply. The threshold for 'does this person have what we need' is softer than the language suggests. Apply and make your case.",
+      },
+      {
+        type: "subhead",
+        text: "Reading the Job Title",
+      },
+      {
+        type: "body",
+        text: "Job titles are not standardized. 'Coordinator' at one company is 'Specialist' at another. What matters more: read the responsibilities section. That tells you what you would actually do day to day.",
+      },
+      {
+        type: "subhead",
+        text: "Reading Between the Lines",
+      },
+      {
+        type: "cards",
+        items: [
+          {
+            title: "\"Fast-paced environment\"",
+            desc: "Often means high workload or frequent change. Know whether that works for your brain before you apply.",
+          },
+          {
+            title: "\"Self-starter\" or \"works independently\"",
+            desc: "Can mean limited structure or onboarding. If you need clear direction, this is worth noting.",
+          },
+          {
+            title: "\"Collaborative team environment\"",
+            desc: "Usually means a lot of meetings and group work. Great if that energizes you — consider it if it drains you.",
+          },
+        ],
+      },
+      {
+        type: "body",
+        text: "None of these are dealbreakers. They are information. You are reading the posting to figure out whether the role fits you — not just whether you fit the role.",
+      },
+      {
+        type: "subhead",
+        text: "Application Instructions",
+      },
+      {
+        type: "body",
+        text: "If the posting includes specific instructions — a work sample, a cover letter question, a specific subject line — follow them exactly. This is often a deliberate filter to see who pays attention.",
+      },
+    ],
+    checklist: [
+      "Find one job posting that feels like a real fit and read it closely",
+      "Highlight every word that appears more than once — those are the priorities",
+      "Note which qualifications are 'required' vs. 'preferred'",
+      "Check the application instructions and follow them to the letter",
+    ],
+  },
+  {
+    id: 4,
+    title: "Video 2.4",
+    subtitle: "Myth Busters",
+    icon: "💡",
+    color: "#6B4E71",
+    intro: "There are a handful of job search myths keeping capable people from even trying. Let's go through them.",
+    content: [
+      {
+        type: "subhead",
+        text: "Myth: You need to meet 100% of qualifications to apply.",
+      },
+      {
+        type: "callout",
+        label: "False.",
+        text: "Job postings describe an ideal candidate, not a minimum threshold. Studies consistently show that underrepresented candidates do not apply unless they meet nearly every requirement — while others apply much more freely. Apply if you are a strong match for the core of the role. Address gaps in your cover letter.",
+      },
+      {
+        type: "subhead",
+        text: "Myth: The best resume gets the job.",
+      },
+      {
+        type: "body",
+        text: "Resumes get you the interview. Nothing more. A resume is a marketing document. Its job is to get you in the room. The rest is about the person you are and how you show up in conversation.",
+      },
+      {
+        type: "subhead",
+        text: "Myth: Your GPA is what matters.",
+      },
+      {
+        type: "body",
+        text: "For most roles, after your first job, GPA is rarely asked about or weighted heavily. What employers want to know: what have you done, can you do the work, and are you someone people want to work with. Skills and experience outpace academic metrics quickly.",
+      },
+      {
+        type: "subhead",
+        text: "Myth: Nobody gets jobs from applying online.",
+      },
+      {
+        type: "body",
+        text: "A lot of people do — especially at larger companies with formal hiring processes. What makes it work: targeted applications, tailored resumes, and a clear cover letter. Applying to 200 roles with the same generic resume rarely works. Applying to 20 roles with a tailored approach often does.",
+      },
+      {
+        type: "subhead",
+        text: "Myth: Employment gaps will disqualify you.",
+      },
+      {
+        type: "body",
+        text: "Gaps have become significantly less stigmatized. Caregiving, health, school, needing to step back — these are human experiences. If a gap exists on your resume, address it briefly and honestly. You do not owe a detailed explanation.",
+      },
+      {
+        type: "subhead",
+        text: "Myth: You have nothing to offer because you have not had a 'real' job.",
+      },
+      {
+        type: "body",
+        text: "You have skills. Volunteer work, coursework, student organizations, caregiving, internships, freelance projects — these all count. The next two videos are about finding and articulating what you actually bring.",
+      },
+    ],
+    checklist: [
+      "Identify one role you have been avoiding applying for — apply this week",
+      "Write two sentences you would use to explain a gap, if you have one",
+      "List three non-traditional experiences that have given you real skills",
+    ],
+  },
+  {
+    id: 5,
+    title: "Video 2.5",
+    subtitle: "Know Your Skills",
+    icon: "🔄",
+    color: "#8B5E3C",
+    intro: "If you went through school with an IEP, 504, or any kind of neurodivergent experience, you have skills employers value — they just need translation.",
+    content: [
+      {
+        type: "subhead",
+        text: "Start With a Skills Assessment",
+      },
+      {
+        type: "body",
+        text: "Before you write a resume, take stock of what you can actually do — not just what roles you have held. Ask yourself: What do I do well? What tasks come naturally? Where do people come to me for help? What have I built, organized, managed, taught, or solved?",
+      },
+      {
+        type: "subhead",
+        text: "Transferable Skills You Already Have",
+      },
+      {
+        type: "cards",
+        items: [
+          {
+            title: "Pattern Recognition",
+            desc: "Seeing connections others miss. Valuable in research, data analysis, quality assurance, editing, and compliance.",
+          },
+          {
+            title: "Hyperfocus",
+            desc: "Going deep on a subject and producing at high quality when engaged. Valuable in project work, technical development, creative roles.",
+          },
+          {
+            title: "Detail Orientation",
+            desc: "Catching errors, maintaining precision, holding consistency. Editing, accounting, healthcare documentation, logistics.",
+          },
+          {
+            title: "Systems Thinking",
+            desc: "Seeing how parts connect to the whole. Operations, project management, software development.",
+          },
+          {
+            title: "Honest Communication",
+            desc: "Saying what is true rather than what is socially expected. This is genuinely rare and valued.",
+          },
+          {
+            title: "Creative Problem-Solving",
+            desc: "Approaching problems differently because your brain is wired differently. This is a feature, not a limitation.",
+          },
+        ],
+      },
+      {
+        type: "subhead",
+        text: "Translating IEP and 504 Language",
+      },
+      {
+        type: "body",
+        text: "IEP and 504 documents use clinical and educational language. That language describes real skills — but you need to convert it before it is useful in a professional context.",
+      },
+      {
+        type: "tips",
+        items: [
+          "\"Requires extended time\" → \"Thorough and methodical; produces careful, accurate work.\"",
+          "\"Benefits from written instructions\" → \"Detail-oriented; works best with clear documentation and written communication.\"",
+          "\"Difficulty with transitions\" → \"Prefers structured workflows; builds consistency and reliability in recurring processes.\"",
+          "\"Hyperfocuses on areas of interest\" → \"Demonstrates deep expertise and sustained attention in areas of professional focus.\"",
+          "\"Benefits from visual supports\" → \"Strong visual thinker; works well with charts, diagrams, and structured information.\"",
+        ],
+      },
+      {
+        type: "callout",
+        label: "On disclosure:",
+        text: "You do not have to disclose your diagnosis to an employer unless you choose to. Your diagnosis is not a job description. Your skills are.",
+      },
+    ],
+    checklist: [
+      "Write down five skills you have that translate to the workplace",
+      "Use the translation framework to convert at least two IEP/ND phrases into corporate language",
+      "Identify three roles or types of work that fit your skill profile",
+    ],
+  },
+  {
+    id: 6,
+    title: "Video 2.6",
+    subtitle: "Building Your Resume",
+    icon: "📄",
+    color: TEAL,
+    intro: "The most common resume mistake is building one generic document and sending it everywhere. Here is how to do it differently.",
+    content: [
+      {
+        type: "subhead",
+        text: "Start With the Posting, Not a Template",
+      },
+      {
+        type: "body",
+        text: "A tailored resume performs significantly better than a generic one. Here is the process:",
+      },
+      {
+        type: "checklist_inline",
+        items: [
+          "Read the job posting carefully. Highlight key skills, qualifications, and responsibilities — especially ones that appear more than once.",
+          "Use those words and phrases in your resume. Applicant tracking systems search for keywords. If your resume does not contain the language from the posting, it may never reach a human.",
+          "Write your experience bullets in terms of results, not just tasks. Not 'Answered phones.' Instead: 'Managed high-volume customer inquiries, maintaining accuracy under pressure.'",
+        ],
+      },
+      {
+        type: "subhead",
+        text: "The Structure",
+      },
+      {
+        type: "body",
+        text: "One page if you have less than ten years of experience. Clean formatting. No graphics or unusual fonts. A PDF unless they ask for Word.",
+      },
+      {
+        type: "cards",
+        items: [
+          {
+            title: "Contact Info",
+            desc: "Name, city and state (not full address), phone, email, LinkedIn. At the top.",
+          },
+          {
+            title: "Summary",
+            desc: "Two to three sentences if you are early career or changing fields. Skip if your experience speaks for itself.",
+          },
+          {
+            title: "Experience",
+            desc: "Reverse chronological. Results-focused bullets. Mirror the language from the job posting.",
+          },
+          {
+            title: "Skills",
+            desc: "Relevant technical and soft skills. Pull directly from the job posting wherever honest.",
+          },
+        ],
+      },
+      {
+        type: "subhead",
+        text: "Naming Your Strengths Through Your Learning Style",
+      },
+      {
+        type: "body",
+        text: "Think about how you actually do your best work — not what a teacher said, but what you have noticed about yourself.",
+      },
+      {
+        type: "tips",
+        items: [
+          "Learn by doing → \"Hands-on problem solver with a track record of learning new systems quickly.\"",
+          "Visual thinker → \"Strong ability to present complex information clearly; experienced creating accessible documentation.\"",
+          "Highly organized and reliable → \"Known for consistent accuracy and thoroughness in high-detail environments.\"",
+          "Strong writer → \"Communicates complex ideas in plain, direct language across written formats.\"",
+        ],
+      },
+      {
+        type: "subhead",
+        text: "What to Leave Off",
+      },
+      {
+        type: "body",
+        text: "No photo. No home address (city and state is enough). No references unless asked. No high school if you are a college grad. No list of unrelated jobs that dilute your focus.",
+      },
+      {
+        type: "callout",
+        label: "The goal:",
+        text: "Your resume has one job: answer one question in under ten seconds. Why should we talk to this person? Make that answer clear.",
+      },
+    ],
+    checklist: [
+      "Find one job posting that feels like a real fit",
+      "Highlight the key skills and qualifications in that posting",
+      "Match your resume language to those words wherever your experience supports it",
+      "Write at least three experience bullets that describe results, not just tasks",
+      "Remove anything that does not serve the role you are applying for",
+    ],
+  },
+  {
+    id: 7,
+    title: "Video 2.7",
+    subtitle: "Job Fairs",
+    icon: "🎯",
+    color: "#2E86AB",
+    intro: "Job fairs can feel overwhelming. They are loud, crowded, and high-stimulation. For neurodiverse brains, that environment can be a real challenge. Here is how to make it work for you anyway.",
+    content: [
+      {
+        type: "subhead",
+        text: "Before You Go",
+      },
+      {
+        type: "body",
+        text: "Research the companies attending before you arrive. Most job fairs publish their list in advance. Choose five to ten that align with your actual interests. You do not need to talk to everyone.",
+      },
+      {
+        type: "body",
+        text: "Prepare a brief two-to-three sentence opening: who you are, what you are looking for, and why you are interested in that company specifically. Practice it out loud until it feels natural, not scripted.",
+      },
+      {
+        type: "checklist_inline",
+        items: [
+          "Print several copies of your resume. Bring them in a folder — not crumpled in a bag.",
+          "Wear what you would wear to an interview at one of those companies. When in doubt, business casual.",
+          "Charge your phone. You will want to take notes.",
+        ],
+      },
+      {
+        type: "subhead",
+        text: "At the Fair",
+      },
+      {
+        type: "body",
+        text: "Start with your lower-priority companies. Use them to warm up. By the time you reach your top targets, you will have done this a few times and it will feel more natural.",
+      },
+      {
+        type: "body",
+        text: "Lead with your opening line. Listen. Ask a question. Most recruiters at job fairs want a quick, real conversation — not a scripted exchange. Take notes on your phone after each conversation: their name, the role they mentioned, and what to follow up on.",
+      },
+      {
+        type: "subhead",
+        text: "Managing Sensory Load",
+      },
+      {
+        type: "tips",
+        items: [
+          "Arrive early, before the crowd peaks. Volume and energy are lower at the start.",
+          "Take breaks. Five minutes outside or in a quiet corner will make your next conversation better.",
+          "Wear comfortable shoes. You will be standing for hours.",
+          "Bring something sensory-regulating if that helps — a fidget, earbuds, whatever keeps you grounded between conversations.",
+        ],
+      },
+      {
+        type: "subhead",
+        text: "After the Fair",
+      },
+      {
+        type: "callout",
+        label: "This is where most people drop the ball:",
+        text: "Follow up within 24 to 48 hours with anyone who gave you a card or mentioned a specific role. A brief email: your name, where you met, what you discussed, and that you are interested in staying in touch. Short is fine. The point is that you did it. The job fair is the beginning of the conversation, not the end.",
+      },
+    ],
+    checklist: [
+      "Research the company list for any upcoming job fair and pick your targets",
+      "Write and practice your two-to-three sentence opening line",
+      "Print five copies of your resume and put them in a folder",
+      "Plan your sensory strategy — arrive early, build in breaks",
+      "Follow up within 48 hours with every recruiter you spoke to",
+    ],
+  },
+];
+
+function ContentBlock({ block }) {
+  if (block.type === "body") {
+    return (
+      <p style={{ fontSize: 15, lineHeight: 1.7, color: "#333", margin: "0 0 14px 0" }}>
+        {block.text}
+      </p>
+    );
+  }
+  if (block.type === "subhead") {
+    return (
+      <p style={{ fontSize: 13, fontWeight: 700, color: TEAL, textTransform: "uppercase", letterSpacing: 1, margin: "20px 0 8px 0" }}>
+        {block.text}
+      </p>
+    );
+  }
+  if (block.type === "callout") {
+    return (
+      <div style={{ background: "#EEF7F7", borderLeft: `4px solid ${TEAL}`, padding: "14px 16px", borderRadius: "0 8px 8px 0", margin: "16px 0" }}>
+        <p style={{ fontSize: 13, fontWeight: 700, color: TEAL, margin: "0 0 4px 0" }}>{block.label}</p>
+        <p style={{ fontSize: 15, lineHeight: 1.65, color: "#333", margin: 0 }}>{block.text}</p>
+      </div>
+    );
+  }
+  if (block.type === "cards") {
+    const cols = block.items.length === 3 ? "1fr 1fr 1fr" : block.items.length === 4 ? "1fr 1fr" : "1fr 1fr 1fr";
+    return (
+      <div style={{ display: "grid", gridTemplateColumns: cols, gap: 10, margin: "12px 0 16px 0" }}>
+        {block.items.map((item, i) => (
+          <div key={i} style={{ background: LIGHTGRAY, borderRadius: 8, padding: "12px 14px", border: "1px solid #DDE3E6" }}>
+            <p style={{ fontSize: 13, fontWeight: 700, color: "#333", margin: "0 0 4px 0" }}>{item.title}</p>
+            <p style={{ fontSize: 13, lineHeight: 1.55, color: "#555", margin: 0 }}>{item.desc}</p>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  if (block.type === "tips") {
+    return (
+      <div style={{ margin: "12px 0 16px 0" }}>
+        {block.items.map((tip, i) => (
+          <div key={i} style={{ display: "flex", gap: 10, marginBottom: 8, alignItems: "flex-start" }}>
+            <span style={{ color: TEAL, fontWeight: 700, fontSize: 15, flexShrink: 0, marginTop: 2 }}>→</span>
+            <p style={{ fontSize: 15, lineHeight: 1.6, color: "#333", margin: 0 }}>{tip}</p>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  if (block.type === "checklist_inline") {
+    return (
+      <div style={{ margin: "12px 0 16px 0" }}>
+        {block.items.map((item, i) => (
+          <div key={i} style={{ display: "flex", gap: 10, marginBottom: 8, alignItems: "flex-start" }}>
+            <span style={{ color: "#AAAAAA", fontSize: 14, flexShrink: 0, marginTop: 2 }}>□</span>
+            <p style={{ fontSize: 15, lineHeight: 1.6, color: "#333", margin: 0 }}>{item}</p>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  return null;
+}
+
+function ChecklistSection({ items, checked, onToggle }) {
+  const done = items.filter((_, i) => checked[i]).length;
+  return (
+    <div style={{ marginTop: 20, background: LIGHTGRAY, borderRadius: 10, padding: "16px 18px", border: "1px solid #DDE3E6" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+        <p style={{ fontSize: 13, fontWeight: 700, color: TEAL, textTransform: "uppercase", letterSpacing: 1, margin: 0 }}>Action Steps</p>
+        <span style={{ fontSize: 12, color: done === items.length ? TEAL : "#999", fontWeight: 600 }}>
+          {done}/{items.length} done
+        </span>
+      </div>
+      {items.map((item, i) => (
+        <div
+          key={i}
+          onClick={() => onToggle(i)}
+          style={{
+            display: "flex", gap: 10, marginBottom: 8, alignItems: "flex-start",
+            cursor: "pointer", padding: "6px 8px", borderRadius: 6,
+            transition: "background 0.15s",
+            background: checked[i] ? "#E6F2F2" : "transparent",
+          }}
+        >
+          <div style={{
+            width: 18, height: 18, borderRadius: 4,
+            border: `2px solid ${checked[i] ? TEAL : "#CCCCCC"}`,
+            background: checked[i] ? TEAL : WHITE,
+            flexShrink: 0, marginTop: 2,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            transition: "all 0.15s",
+          }}>
+            {checked[i] && <span style={{ color: WHITE, fontSize: 11, fontWeight: 700 }}>✓</span>}
+          </div>
+          <p style={{
+            fontSize: 14, lineHeight: 1.55, color: checked[i] ? "#777" : "#333",
+            margin: 0, textDecoration: checked[i] ? "line-through" : "none",
+            transition: "all 0.15s",
+          }}>
+            {item}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Module2() {
+  const [current, setCurrent] = useState(0);
+  const [checkState, setCheckState] = useState(
+    modules.map((m) => m.checklist.map(() => false))
+  );
+
+  const mod = modules[current];
+
+  const toggleCheck = (modIdx, itemIdx) => {
+    setCheckState((prev) =>
+      prev.map((m, mi) =>
+        mi === modIdx ? m.map((v, ii) => (ii === itemIdx ? !v : v)) : m
+      )
+    );
+  };
+
+  const totalChecked = checkState.flat().filter(Boolean).length;
+  const totalItems = checkState.flat().length;
+
+  return (
+    <div style={{ fontFamily: "'Arial', sans-serif", minHeight: "100vh", background: "#F0F4F5", display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "24px 16px" }}>
+      <div style={{ width: "100%", maxWidth: 700 }}>
+
+        {/* Header */}
+        <div style={{ background: TEAL, borderRadius: 14, padding: "22px 26px", marginBottom: 16, color: WHITE }}>
+          <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", opacity: 0.75, margin: "0 0 6px 0" }}>The GroundWork Collective</p>
+          <h1 style={{ fontSize: 22, fontWeight: 800, margin: "0 0 4px 0" }}>Module 2: Job Search</h1>
+          <p style={{ fontSize: 14, opacity: 0.85, margin: "0 0 16px 0" }}>What No One Teaches You About Getting the Job</p>
+
+          {/* Video nav dots */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+              {modules.map((m, i) => (
+                <button
+                  key={m.id}
+                  onClick={() => setCurrent(i)}
+                  title={m.subtitle}
+                  style={{
+                    width: 34, height: 34, borderRadius: "50%", border: "2px solid",
+                    borderColor: i === current ? WHITE : "rgba(255,255,255,0.4)",
+                    background: i === current ? WHITE : "rgba(255,255,255,0.15)",
+                    color: i === current ? TEAL : WHITE,
+                    fontWeight: 700, fontSize: 14, cursor: "pointer",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    transition: "all 0.2s",
+                  }}
+                >
+                  {m.icon}
+                </button>
+              ))}
+            </div>
+            <span style={{ fontSize: 13, opacity: 0.8, whiteSpace: "nowrap", marginLeft: 12 }}>
+              {totalChecked}/{totalItems} steps done
+            </span>
+          </div>
+        </div>
+
+        {/* Progress bar */}
+        <div style={{ display: "flex", gap: 5, marginBottom: 16 }}>
+          {modules.map((_, i) => (
+            <div
+              key={i}
+              style={{
+                flex: 1, height: 4, borderRadius: 2,
+                backgroundColor: i <= current ? TEAL : "#DDE3E6",
+                transition: "background-color 0.3s",
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Main card */}
+        <div style={{ background: WHITE, borderRadius: 14, padding: "24px 28px", boxShadow: "0 2px 12px rgba(0,0,0,0.06)", marginBottom: 16 }}>
+
+          {/* Video header */}
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+            <span style={{ fontSize: 30 }}>{mod.icon}</span>
+            <div>
+              <p style={{ fontSize: 12, fontWeight: 700, color: TEAL, textTransform: "uppercase", letterSpacing: 1, margin: "0 0 2px 0" }}>{mod.title}</p>
+              <h2 style={{ fontSize: 19, fontWeight: 800, color: "#1A2A2D", margin: 0 }}>{mod.subtitle}</h2>
+            </div>
+          </div>
+
+          {/* Intro */}
+          <div style={{ background: LIGHTGRAY, borderRadius: 8, padding: "12px 14px", marginBottom: 20, borderLeft: "4px solid #DDE3E6" }}>
+            <p style={{ fontSize: 15, lineHeight: 1.6, color: "#444", fontStyle: "italic", margin: 0 }}>{mod.intro}</p>
+          </div>
+
+          {/* Content */}
+          <div>
+            {mod.content.map((block, i) => (
+              <ContentBlock key={i} block={block} />
+            ))}
+          </div>
+
+          {/* Checklist */}
+          {mod.checklist.length > 0 && (
+            <ChecklistSection
+              items={mod.checklist}
+              checked={checkState[current]}
+              onToggle={(i) => toggleCheck(current, i)}
+            />
+          )}
+        </div>
+
+        {/* Navigation */}
+        <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+          <button
+            onClick={() => setCurrent((p) => Math.max(0, p - 1))}
+            disabled={current === 0}
+            style={{
+              flex: 1, padding: "13px 0", borderRadius: 10,
+              border: "2px solid #DDE3E6",
+              background: current === 0 ? LIGHTGRAY : WHITE,
+              color: current === 0 ? "#BBBBBB" : "#333",
+              fontWeight: 700, fontSize: 14,
+              cursor: current === 0 ? "default" : "pointer",
+              transition: "all 0.2s",
+            }}
+          >
+            ← Previous
+          </button>
+          {current < modules.length - 1 ? (
+            <button
+              onClick={() => setCurrent((p) => Math.min(modules.length - 1, p + 1))}
+              style={{
+                flex: 2, padding: "13px 0", borderRadius: 10,
+                border: "none", background: TEAL, color: WHITE,
+                fontWeight: 700, fontSize: 14, cursor: "pointer",
+                transition: "all 0.2s",
+              }}
+            >
+              Next: {modules[current + 1].subtitle} →
+            </button>
+          ) : (
+            <div style={{ flex: 2, padding: "13px 16px", borderRadius: 10, background: "#E6F2F2", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <p style={{ color: TEAL, fontWeight: 800, fontSize: 14, margin: 0 }}>
+                {totalChecked === totalItems
+                  ? "✓ Module complete. You are ready to search."
+                  : `${totalItems - totalChecked} action steps remaining across this module.`}
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <p style={{ textAlign: "center", fontSize: 12, color: "#AAAAAA", marginTop: 20 }}>
+          The GroundWork Collective · Module 2 of 11 · Built for the way you think
+        </p>
+      </div>
+    </div>
+  );
+}
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<Module2 />);
+  </script>
+</body>
+</html>

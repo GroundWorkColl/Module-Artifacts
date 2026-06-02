@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Job Search Tracker, GroundWork Collective</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    background: #FAF7F2;
+    color: #2A2A2A;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; }
+  header { margin-bottom: 24px; }
+  h1 { font-size: 24px; margin: 0 0 4px 0; color: #1F3A5F; font-weight: 700; }
+  .sub { color: #5B6675; font-size: 14px; margin: 0; }
+  .card {
+    background: #FFFFFF;
+    border: 1px solid #E6DFD3;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 2px rgba(31, 58, 95, 0.04);
+  }
+  .card h2 { font-size: 17px; margin: 0 0 14px 0; color: #1F3A5F; font-weight: 600; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #3A4452;
+    margin-bottom: 6px;
+  }
+  input[type="text"], input[type="date"], select, textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #D8CFBE;
+    border-radius: 8px;
+    background: #FFFFFF;
+    font-family: inherit;
+    font-size: 14px;
+    color: #2A2A2A;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: 2px solid #C2B69A;
+    outline-offset: 1px;
+    border-color: #B5A582;
+  }
+  textarea { resize: vertical; min-height: 80px; }
+  .hint { font-size: 12px; color: #7B8696; margin-top: 4px; font-style: italic; }
+  button {
+    background: #1F3A5F;
+    color: #FFFFFF;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  button:hover { background: #2A4D7A; }
+  button.secondary {
+    background: #F1ECE0;
+    color: #3A4452;
+    border: 1px solid #D8CFBE;
+  }
+  button.secondary:hover { background: #E6DFD3; }
+  button.danger {
+    background: transparent;
+    color: #A4453A;
+    border: 1px solid #DDB8B0;
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  button.danger:hover { background: #FCEEEA; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  @media (max-width: 720px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+  .stat {
+    background: #F4EFE3;
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+  }
+  .stat .n { font-size: 26px; font-weight: 700; color: #1F3A5F; }
+  .stat .l { font-size: 12px; color: #5B6675; margin-top: 2px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; padding: 10px 8px; background: #F4EFE3; color: #1F3A5F; font-weight: 600; border-bottom: 1px solid #E6DFD3; }
+  td { padding: 10px 8px; border-bottom: 1px solid #F0EADC; vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  .pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+  .pill.applied { background: #E3EDF8; color: #1F3A5F; }
+  .pill.interview { background: #FFF1D6; color: #8A6A1F; }
+  .pill.offer { background: #DCEFE1; color: #2A5F3A; }
+  .pill.rejected { background: #F4DCD7; color: #8A3A30; }
+  .pill.withdrawn { background: #ECE5DA; color: #5B6675; }
+  .pill.theme { background: #E8E1D0; color: #3A4452; margin-right: 6px; margin-bottom: 6px; }
+  .empty { padding: 24px; text-align: center; color: #7B8696; font-size: 14px; }
+  .row-actions { white-space: nowrap; }
+  .why-cell { max-width: 280px; color: #3A4452; }
+  .chart-wrap { position: relative; height: 240px; }
+  .insight {
+    background: #F4EFE3;
+    border-left: 3px solid #C2B69A;
+    padding: 12px 14px;
+    border-radius: 6px;
+    margin-top: 10px;
+    font-size: 13px;
+    color: #3A4452;
+  }
+  .insight strong { color: #1F3A5F; }
+  .row { display: flex; gap: 8px; align-items: center; }
+  .row > * { flex: 1; }
+  .row button { flex: 0 0 auto; }
+  details summary { cursor: pointer; font-weight: 600; color: #1F3A5F; padding: 6px 0; }
+  .why-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .tag-chip {
+    background: #FFFFFF;
+    border: 1px solid #D8CFBE;
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 12px;
+    color: #3A4452;
+    cursor: pointer;
+  }
+  .tag-chip.active { background: #1F3A5F; color: #FFFFFF; border-color: #1F3A5F; }
+  .footer { text-align: center; font-size: 12px; color: #7B8696; margin-top: 20px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Job Search Tracker</h1>
+    <p class="sub">Capture every application and the why behind it. Patterns will surface over time.</p>
+  </header>
+
+  <div class="card">
+    <h2>Add an Application</h2>
+    <div class="grid">
+      <div>
+        <label>Company</label>
+        <input type="text" id="company" placeholder="Company name" />
+      </div>
+      <div>
+        <label>Role</label>
+        <input type="text" id="role" placeholder="Job title" />
+      </div>
+      <div>
+        <label>Date Applied</label>
+        <input type="date" id="date" />
+      </div>
+      <div>
+        <label>Status</label>
+        <select id="status">
+          <option value="applied">Applied</option>
+          <option value="interview">Interview</option>
+          <option value="offer">Offer</option>
+          <option value="rejected">Rejected</option>
+          <option value="withdrawn">Withdrawn</option>
+        </select>
+      </div>
+    </div>
+    <div style="margin-top:14px">
+      <label>Why did this job catch your eye?</label>
+      <textarea id="why" placeholder="Be specific. The team. The mission. The skills. The salary. The schedule. The location."></textarea>
+      <div class="hint">Vague answers are a flag. Push past dopamine apply.</div>
+    </div>
+    <div style="margin-top:14px">
+      <label>Themes (pick any that fit, or type your own)</label>
+      <div class="why-tags" id="themePicker"></div>
+      <input type="text" id="customTheme" placeholder="Add custom theme and press Enter" style="margin-top:10px" />
+    </div>
+    <div style="margin-top:16px" class="row">
+      <button id="addBtn">Add Application</button>
+      <button class="secondary" id="clearForm">Clear</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Snapshot</h2>
+    <div class="stats">
+      <div class="stat"><div class="n" id="totalApps">0</div><div class="l">Applications</div></div>
+      <div class="stat"><div class="n" id="thisWeek">0</div><div class="l">This Week</div></div>
+      <div class="stat"><div class="n" id="interviews">0</div><div class="l">Interviews</div></div>
+      <div class="stat"><div class="n" id="offers">0</div><div class="l">Offers</div></div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Why Patterns</h2>
+      <div class="chart-wrap"><canvas id="themeChart"></canvas></div>
+      <div class="insight" id="themeInsight">Add applications to see your top themes.</div>
+    </div>
+    <div class="card">
+      <h2>Status Breakdown</h2>
+      <div class="chart-wrap"><canvas id="statusChart"></canvas></div>
+      <div class="insight" id="statusInsight">Add applications to see status mix.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Your Applications</h2>
+    <div id="filterRow" style="margin-bottom:12px" class="why-tags"></div>
+    <div id="appTable"></div>
+  </div>
+
+  <div class="footer">Your data lives in this view, on this device. GroundWork Collective Module 1 companion tool.</div>
+</div>
+
+<script>
+const STORE_KEY = "gwc_job_search_v1";
+const DEFAULT_THEMES = [
+  "Mission fit", "Team", "Writing", "Building",
+  "Research", "Data", "Teaching", "Creative",
+  "Hands on", "Remote", "Schedule", "Salary",
+  "Growth path", "Mentor", "Small team", "Big company",
+  "Industry interest", "Applied because I had to"
+];
+
+let store = loadStore();
+let activeThemes = new Set();
+let filterTheme = null;
+let themeChart, statusChart;
+
+function loadStore() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  return { apps: [], customThemes: [] };
+}
+
+function saveStore() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(store)); } catch (e) {}
+}
+
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+
+function renderThemePicker() {
+  const all = [...DEFAULT_THEMES, ...store.customThemes];
+  const host = document.getElementById("themePicker");
+  host.innerHTML = "";
+  all.forEach(t => {
+    const chip = document.createElement("span");
+    chip.className = "tag-chip" + (activeThemes.has(t) ? " active" : "");
+    chip.textContent = t;
+    chip.onclick = () => {
+      if (activeThemes.has(t)) activeThemes.delete(t);
+      else activeThemes.add(t);
+      renderThemePicker();
+    };
+    host.appendChild(chip);
+  });
+}
+
+function renderFilters() {
+  const host = document.getElementById("filterRow");
+  const counts = themeCounts();
+  const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 12);
+  host.innerHTML = "";
+  if (entries.length === 0) return;
+  const all = document.createElement("span");
+  all.className = "tag-chip" + (filterTheme === null ? " active" : "");
+  all.textContent = "All";
+  all.onclick = () => { filterTheme = null; renderAll(); };
+  host.appendChild(all);
+  entries.forEach(([t, n]) => {
+    const chip = document.createElement("span");
+    chip.className = "tag-chip" + (filterTheme === t ? " active" : "");
+    chip.textContent = t + " (" + n + ")";
+    chip.onclick = () => { filterTheme = (filterTheme === t ? null : t); renderAll(); };
+    host.appendChild(chip);
+  });
+}
+
+function themeCounts() {
+  const counts = {};
+  store.apps.forEach(a => {
+    (a.themes || []).forEach(t => { counts[t] = (counts[t] || 0) + 1; });
+  });
+  return counts;
+}
+
+function statusCounts() {
+  const counts = { applied: 0, interview: 0, offer: 0, rejected: 0, withdrawn: 0 };
+  store.apps.forEach(a => { counts[a.status] = (counts[a.status] || 0) + 1; });
+  return counts;
+}
+
+function renderStats() {
+  document.getElementById("totalApps").textContent = store.apps.length;
+  const wk = Date.now() - 7 * 86400000;
+  document.getElementById("thisWeek").textContent = store.apps.filter(a => new Date(a.date).getTime() >= wk).length;
+  const sc = statusCounts();
+  document.getElementById("interviews").textContent = sc.interview;
+  document.getElementById("offers").textContent = sc.offer;
+}
+
+function renderTable() {
+  const host = document.getElementById("appTable");
+  let rows = store.apps.slice().sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+  if (filterTheme) rows = rows.filter(a => (a.themes || []).includes(filterTheme));
+  if (rows.length === 0) {
+    host.innerHTML = '<div class="empty">No applications yet. Add your first one above.</div>';
+    return;
+  }
+  const html = ['<table><thead><tr>',
+    '<th>Date</th><th>Company</th><th>Role</th><th>Why</th><th>Themes</th><th>Status</th><th></th>',
+    '</tr></thead><tbody>'];
+  rows.forEach(a => {
+    const themesHtml = (a.themes || []).map(t => '<span class="pill theme">' + escapeHtml(t) + '</span>').join("");
+    html.push('<tr>');
+    html.push('<td>' + escapeHtml(a.date || "") + '</td>');
+    html.push('<td>' + escapeHtml(a.company || "") + '</td>');
+    html.push('<td>' + escapeHtml(a.role || "") + '</td>');
+    html.push('<td class="why-cell">' + escapeHtml(a.why || "") + '</td>');
+    html.push('<td>' + themesHtml + '</td>');
+    html.push('<td><span class="pill ' + a.status + '">' + a.status + '</span></td>');
+    html.push('<td class="row-actions"><button class="danger" data-id="' + a.id + '">Remove</button></td>');
+    html.push('</tr>');
+  });
+  html.push('</tbody></table>');
+  host.innerHTML = html.join("");
+  host.querySelectorAll("button.danger").forEach(b => {
+    b.onclick = () => {
+      const id = b.getAttribute("data-id");
+      store.apps = store.apps.filter(a => a.id !== id);
+      saveStore();
+      renderAll();
+    };
+  });
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+}
+
+function renderCharts() {
+  const tc = themeCounts();
+  const themeEntries = Object.entries(tc).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  const themeLabels = themeEntries.map(e => e[0]);
+  const themeData = themeEntries.map(e => e[1]);
+
+  if (themeChart) themeChart.destroy();
+  const ctx1 = document.getElementById("themeChart");
+  themeChart = new Chart(ctx1, {
+    type: "bar",
+    data: {
+      labels: themeLabels.length ? themeLabels : ["No data yet"],
+      datasets: [{
+        label: "Applications",
+        data: themeData.length ? themeData : [0],
+        backgroundColor: "#7B96BD",
+        borderRadius: 6,
+      }]
+    },
+    options: {
+      indexAxis: "y",
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { x: { beginAtZero: true, ticks: { precision: 0 } } }
+    }
+  });
+
+  const sc = statusCounts();
+  if (statusChart) statusChart.destroy();
+  const ctx2 = document.getElementById("statusChart");
+  statusChart = new Chart(ctx2, {
+    type: "doughnut",
+    data: {
+      labels: ["Applied", "Interview", "Offer", "Rejected", "Withdrawn"],
+      datasets: [{
+        data: [sc.applied, sc.interview, sc.offer, sc.rejected, sc.withdrawn],
+        backgroundColor: ["#7B96BD", "#E8C26B", "#7BB098", "#C97F73", "#B0A990"],
+        borderColor: "#FAF7F2",
+        borderWidth: 2,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { position: "bottom", labels: { font: { size: 11 } } } }
+    }
+  });
+
+  // Insights
+  const themeInsight = document.getElementById("themeInsight");
+  if (themeData.length >= 2 && store.apps.length >= 3) {
+    const top = themeLabels[0];
+    const second = themeLabels[1];
+    themeInsight.innerHTML = "Your top draw is <strong>" + escapeHtml(top) + "</strong>, followed by <strong>" + escapeHtml(second) + "</strong>. If a role does not match either, ask yourself why it is on your list.";
+  } else if (store.apps.length === 0) {
+    themeInsight.textContent = "Add applications to see your top themes.";
+  } else {
+    themeInsight.textContent = "Add a few more applications to see clear patterns.";
+  }
+
+  const statusInsight = document.getElementById("statusInsight");
+  const total = store.apps.length;
+  if (total === 0) {
+    statusInsight.textContent = "Add applications to see status mix.";
+  } else {
+    const ratio = total ? Math.round((sc.interview / total) * 100) : 0;
+    statusInsight.innerHTML = "<strong>" + ratio + "%</strong> of your applications became interviews. Industry average runs 5 to 10 percent. If yours is much lower, the issue is usually fit or resume, not effort.";
+  }
+}
+
+function renderAll() {
+  renderStats();
+  renderFilters();
+  renderCharts();
+  renderTable();
+  renderThemePicker();
+}
+
+document.getElementById("addBtn").onclick = () => {
+  const company = document.getElementById("company").value.trim();
+  const role = document.getElementById("role").value.trim();
+  const date = document.getElementById("date").value || new Date().toISOString().slice(0, 10);
+  const status = document.getElementById("status").value;
+  const why = document.getElementById("why").value.trim();
+  if (!company || !role) {
+    alert("Add a company and role before saving.");
+    return;
+  }
+  store.apps.push({
+    id: uid(),
+    company, role, date, status, why,
+    themes: Array.from(activeThemes),
+    created: Date.now(),
+  });
+  saveStore();
+  document.getElementById("company").value = "";
+  document.getElementById("role").value = "";
+  document.getElementById("why").value = "";
+  document.getElementById("date").value = "";
+  document.getElementById("status").value = "applied";
+  activeThemes.clear();
+  renderAll();
+};
+
+document.getElementById("clearForm").onclick = () => {
+  document.getElementById("company").value = "";
+  document.getElementById("role").value = "";
+  document.getElementById("why").value = "";
+  document.getElementById("date").value = "";
+  document.getElementById("status").value = "applied";
+  activeThemes.clear();
+  renderThemePicker();
+};
+
+document.getElementById("customTheme").addEventListener("keydown", e => {
+  if (e.key === "Enter") {
+    const v = e.target.value.trim();
+    if (v && !store.customThemes.includes(v) && !DEFAULT_THEMES.includes(v)) {
+      store.customThemes.push(v);
+      saveStore();
+    }
+    if (v) activeThemes.add(v);
+    e.target.value = "";
+    renderThemePicker();
+  }
+});
+
+document.getElementById("date").value = new Date().toISOString().slice(0, 10);
+renderAll();
+</script>
+</body>
+</html>

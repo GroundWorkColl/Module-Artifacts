@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GroundWork Collective | Workplace Glossary</title>
+<style>
+  :root {
+    --ink: #1f2937;
+    --ink-soft: #4b5563;
+    --paper: #faf8f5;
+    --card: #ffffff;
+    --line: #e6e2db;
+    --brand: #1f4e79;
+    --brand-soft: #e9eef5;
+    --accent: #b85c38;
+    --good: #2e7d4f;
+    --highlight: #fff3c4;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.55;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 32px 24px 80px; }
+  header { margin-bottom: 24px; }
+  .eyebrow {
+    color: var(--accent);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  h1 { font-size: 32px; font-weight: 700; color: var(--brand); margin: 0 0 8px; }
+  .lede { color: var(--ink-soft); font-size: 16px; margin: 0 0 24px; max-width: 720px; }
+  .search-row {
+    position: sticky;
+    top: 0;
+    background: var(--paper);
+    padding: 16px 0;
+    z-index: 10;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 24px;
+  }
+  .search-input {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 17px;
+    border: 2px solid var(--line);
+    border-radius: 8px;
+    background: var(--card);
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.15s;
+    font-family: inherit;
+  }
+  .search-input:focus {
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px rgba(31, 78, 121, 0.12);
+  }
+  .hint {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 6px;
+    font-style: italic;
+  }
+  .filters {
+    margin-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+  .filter-label { font-size: 13px; color: var(--ink-soft); margin-right: 4px; font-weight: 500; }
+  .chip {
+    padding: 5px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: var(--ink-soft);
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .chip:hover { border-color: var(--brand); color: var(--brand); }
+  .chip.active { background: var(--brand); border-color: var(--brand); color: #fff; }
+  .chip.clear { color: var(--accent); border-color: transparent; padding-left: 4px; }
+  .chip.clear:hover { color: var(--accent); border-color: var(--accent); background: #fff; }
+  .results-meta { color: var(--ink-soft); font-size: 14px; margin-bottom: 16px; }
+  .suggest {
+    background: #fcf6e7;
+    border: 1px solid #ead7a3;
+    color: #6b4f0f;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 14px;
+  }
+  .suggest button {
+    border: none;
+    background: transparent;
+    color: var(--brand);
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+    font-family: inherit;
+    font-size: inherit;
+  }
+  .empty { text-align: center; padding: 60px 20px; color: var(--ink-soft); }
+  .empty strong { color: var(--ink); display: block; margin-bottom: 6px; font-size: 17px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 20px 22px;
+    margin-bottom: 14px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    position: relative;
+  }
+  .card.fuzzy {
+    border-style: dashed;
+    border-color: #cdb88a;
+  }
+  .fuzzy-badge {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    font-size: 11px;
+    color: #9c7a3d;
+    background: #fcf6e7;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  .term { font-size: 19px; font-weight: 700; color: var(--brand); margin: 0 0 6px; padding-right: 110px; }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+    align-items: center;
+  }
+  .tag {
+    font-size: 12px;
+    padding: 3px 9px;
+    border-radius: 4px;
+    background: var(--brand-soft);
+    color: var(--brand);
+    font-weight: 500;
+  }
+  .tag.module { background: #f3eee7; color: var(--accent); }
+  .tag.module-none { background: #f0f0eb; color: var(--ink-soft); }
+  .label { font-weight: 600; color: var(--ink); font-size: 14px; margin-bottom: 2px; }
+  .body { color: var(--ink); font-size: 15.5px; margin-bottom: 12px; }
+  .body:last-child { margin-bottom: 0; }
+  .body.actually {
+    background: #fcfaf5;
+    border-left: 3px solid var(--accent);
+    padding: 10px 14px;
+    border-radius: 0 6px 6px 0;
+  }
+  mark { background: var(--highlight); color: var(--ink); padding: 0 2px; border-radius: 2px; }
+  footer {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    color: var(--ink-soft);
+    font-size: 13px;
+    text-align: center;
+  }
+  @media (max-width: 600px) {
+    h1 { font-size: 26px; }
+    .wrap { padding: 20px 16px 60px; }
+    .card { padding: 16px 18px; }
+    .term { padding-right: 0; }
+    .fuzzy-badge { position: static; display: inline-block; margin-bottom: 8px; }
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ink: #e8e6e0;
+      --ink-soft: #b0aca3;
+      --paper: #1a1816;
+      --card: #25221f;
+      --line: #3a3633;
+      --brand: #7fb3e5;
+      --brand-soft: #2a3a4a;
+      --accent: #e89368;
+      --highlight: #5a4a1c;
+    }
+    .body.actually { background: #2a2620; }
+    .suggest { background: #2a2418; border-color: #4a3f24; color: #d4b876; }
+    .fuzzy-badge { background: #3a2f1a; color: #d4b876; }
+    .card.fuzzy { border-color: #5a4a2c; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="eyebrow">GroundWork Collective</div>
+  <h1>Workplace Glossary</h1>
+  <p class="lede">Type a word, phrase or office expression. Search matches the term, the plain definition and what people actually mean. Each entry shows the modules where it comes up. Typos are okay, fuzzy matching is on.</p>
+</header>
+
+<div class="search-row">
+  <input type="text" id="search" class="search-input" placeholder="Try: circle back, vesting, masking, EOD, culture..." autocomplete="off" aria-label="Search the glossary">
+  <div class="hint">Tip: misspellings still find results. Searching for "circel" will surface "circle back".</div>
+  <div class="filters" id="filters">
+    <span class="filter-label">Filter by module:</span>
+  </div>
+</div>
+
+<div id="suggest" class="suggest" style="display:none;" aria-live="polite"></div>
+<div class="results-meta" id="meta" aria-live="polite"></div>
+<div id="results" role="list"></div>
+
+<footer>
+  GroundWork Collective Workplace Glossary. Compiled April 2026. 201 entries across modules 1 to 12.
+</footer>
+</div>
+
+<script>
+const ENTRIES = [{"term": "ATS (Applicant Tracking System)", "category": "Hiring and Job Search", "modules": ["2"], "definition": "Software that scans, sorts and filters resumes before a human ever sees them.", "actually": "If your resume does not include the exact keywords from the job posting, it may never reach a person. Match the language."}, {"term": "Job posting", "category": "Hiring and Job Search", "modules": ["2"], "definition": "The public listing of an open role, including responsibilities and requirements.", "actually": "Treat it as a wish list, not a contract. Many requirements are negotiable. Apply if you meet most of the must-haves."}, {"term": "Hidden job market", "category": "Hiring and Job Search", "modules": ["2"], "definition": "Roles filled through referrals or internal moves before they post publicly.", "actually": "Around half of jobs never get posted. Knowing people inside companies you respect matters more than perfect cover letters."}, {"term": "Recruiter", "category": "Hiring and Job Search", "modules": ["2", "3"], "definition": "A person who finds and screens candidates. May work in-house or for an agency.", "actually": "Their job is to fill the role, not to advocate for you. Be polite and clear, but verify everything they tell you about the company."}, {"term": "Hiring manager", "category": "Hiring and Job Search", "modules": ["2", "3", "4"], "definition": "The person you would actually report to if hired.", "actually": "This is the decision maker. The recruiter is the gatekeeper. Treat both with care, but the hiring manager is who you are really trying to convince."}, {"term": "Sourcer", "category": "Hiring and Job Search", "modules": ["2"], "definition": "A recruiter who only finds candidates and hands them off, no interviewing.", "actually": "If a sourcer reaches out, you are early in the funnel. Take the call to learn about the role even if you are not sure yet."}, {"term": "Referral", "category": "Hiring and Job Search", "modules": ["2"], "definition": "A current employee recommending you for an open role.", "actually": "Referrals often skip the resume pile. They carry weight because someone is staking their reputation on you."}, {"term": "Cover letter", "category": "Hiring and Job Search", "modules": ["2"], "definition": "A short letter sent with a resume explaining why you want the role.", "actually": "Most are not read closely. Keep it tight. One specific reason you want this job, one specific thing you bring."}, {"term": "Cold outreach", "category": "Hiring and Job Search", "modules": ["2"], "definition": "Contacting someone you do not know, usually on LinkedIn or email, to ask about a role or advice.", "actually": "Short, specific, low-ask messages work. Long requests for someone's time usually do not."}, {"term": "Job fair", "category": "Hiring and Job Search", "modules": ["2"], "definition": "An event where companies set up booths to meet candidates in bulk.", "actually": "Plan in advance. Pick three booths, prep two questions per booth and leave when full. Do not try to talk to everyone."}, {"term": "Phone screen", "category": "Interviewing", "modules": ["3"], "definition": "A short initial interview by phone, usually 20 to 30 minutes.", "actually": "It is a filter, not a deep dive. The recruiter is checking for red flags, salary alignment and basic communication."}, {"term": "One-way video interview", "category": "Interviewing", "modules": ["3"], "definition": "An asynchronous interview where you record video answers to set questions.", "actually": "No human is on the other end while you record. You usually get one or two takes per question. Practice with the camera before going live."}, {"term": "Panel interview", "category": "Interviewing", "modules": ["3"], "definition": "An interview with multiple interviewers at once.", "actually": "Make eye contact with whoever asked the question, then briefly include the others. You do not have to answer all of them at once."}, {"term": "Behavioral interview", "category": "Interviewing", "modules": ["3"], "definition": "Questions that ask you to describe how you handled a past situation.", "actually": "Starts with phrases like Tell me about a time when. They want a real story with a beginning, middle and end."}, {"term": "Technical interview", "category": "Interviewing", "modules": ["3"], "definition": "An interview testing job-specific skills, often with a problem to solve live.", "actually": "Common in engineering, design, finance and analytics roles. Show your thinking out loud. Getting unstuck matters more than getting the perfect answer."}, {"term": "STAR method", "category": "Interviewing", "modules": ["3"], "definition": "A structure for answering behavioral questions: Situation, Task, Action, Result.", "actually": "It is a scaffold, not a script. Use it so you do not ramble. Drop a few keywords from the job posting into your Action and Result."}, {"term": "Mock interview", "category": "Interviewing", "modules": ["3"], "definition": "A practice interview, usually with a friend, mentor or coach.", "actually": "Practice answers out loud, not just in your head. Saying it aloud is what builds the muscle."}, {"term": "Case interview", "category": "Interviewing", "modules": ["3"], "definition": "An interview where you walk through a business problem in real time.", "actually": "Common in consulting and product roles. They want to see structured thinking, not the right answer."}, {"term": "Background check", "category": "Interviewing", "modules": ["4"], "definition": "A formal verification of identity, employment history and sometimes criminal record.", "actually": "Standard at most companies. Be honest on your application. Surprises here are what cause issues, not the past itself."}, {"term": "Reference", "category": "Interviewing", "modules": ["4"], "definition": "A person who can speak to your work or character.", "actually": "Always ask before listing someone. Tell them what role you are interviewing for so their answer can match."}, {"term": "Offer letter", "category": "Offer, Negotiation and Pay", "modules": ["4"], "definition": "The formal written offer of employment, including title, salary, start date and benefits.", "actually": "Read every line. Verbal offers are not real until in writing. Ask for time to review. Forty-eight to seventy-two hours is normal."}, {"term": "Total compensation", "category": "Offer, Negotiation and Pay", "modules": ["4"], "definition": "The full value of an offer: base salary, bonus, equity, benefits and perks.", "actually": "Two offers with the same base can be very different. Health insurance quality, PTO and 401k match can be worth thousands per year."}, {"term": "Base salary", "category": "Offer, Negotiation and Pay", "modules": ["4"], "definition": "The fixed amount you are paid before bonus, commission or other variable pay.", "actually": "This is the only number you can fully count on. Everything else is conditional."}, {"term": "Gross pay", "category": "Offer, Negotiation and Pay", "modules": ["4"], "definition": "Your earnings before taxes and deductions are taken out.", "actually": "This is the bigger number on your paystub. It is not what hits your bank account."}, {"term": "Net pay", "category": "Offer, Negotiation and Pay", "modules": ["4"], "definition": "Your take-home pay after all taxes and deductions.", "actually": "This is what actually shows up in your account. Plan your budget around this number, not gross."}, {"term": "Withholding", "category": "Offer, Negotiation and Pay", "modules": ["4", "5"], "definition": "Money taken out of your paycheck for taxes before you get it.", "actually": "How much is withheld depends on what you put on your W-4. Mistakes here can mean a tax bill later."}, {"term": "Deduction", "category": "Offer, Negotiation and Pay", "modules": ["4", "5"], "definition": "Any amount taken out of your paycheck, including taxes, insurance premiums and 401k contributions.", "actually": "Some are mandatory like federal tax. Some are your choice like 401k. Know the difference."}, {"term": "Bonus", "category": "Offer, Negotiation and Pay", "modules": ["4"], "definition": "Additional pay tied to performance, company results or hiring incentive.", "actually": "Often target or up to amounts. Read the fine print. It is not guaranteed unless your offer letter says so."}, {"term": "Signing bonus", "category": "Offer, Negotiation and Pay", "modules": ["4"], "definition": "A one-time payment for joining the company.", "actually": "Often comes with a clawback. If you leave within twelve months, you may have to pay it back. Check the terms."}, {"term": "Commission", "category": "Offer, Negotiation and Pay", "modules": ["4"], "definition": "Variable pay tied to sales or revenue you generate.", "actually": "Common in sales roles. Ask about quota, ramp time and how often commission has actually been paid out historically."}, {"term": "Equity", "category": "Offer, Negotiation and Pay", "modules": ["4"], "definition": "Ownership in the company, usually in the form of stock or stock options.", "actually": "Often advertised as a big number. In private companies it may be worth nothing. Ask about vesting and recent valuation."}, {"term": "RSU (Restricted Stock Unit)", "category": "Offer, Negotiation and Pay", "modules": ["4"], "definition": "A grant of company stock that vests over time.", "actually": "Common at public companies. Treat the value as real but volatile. The price can move a lot before it vests."}, {"term": "Vesting", "category": "Offer, Negotiation and Pay", "modules": ["4"], "definition": "The schedule for when equity actually becomes yours.", "actually": "A typical schedule is four years with a one-year cliff. If you leave before the cliff, you get nothing."}, {"term": "Cliff", "category": "Offer, Negotiation and Pay", "modules": ["4"], "definition": "The minimum time you must stay before any equity vests.", "actually": "Usually one year. Day 365 you get a chunk. Day 364 you get zero."}, {"term": "Salaried (exempt)", "category": "Offer, Negotiation and Pay", "modules": ["4"], "definition": "Paid a fixed annual amount regardless of hours worked.", "actually": "No overtime pay. Working more than forty hours is common in many salaried roles."}, {"term": "Hourly (non-exempt)", "category": "Offer, Negotiation and Pay", "modules": ["4"], "definition": "Paid per hour worked, with overtime pay required after forty hours per week.", "actually": "Track your hours carefully. Overtime is a legal right in non-exempt roles."}, {"term": "Pay period", "category": "Offer, Negotiation and Pay", "modules": ["4"], "definition": "The schedule on which you are paid. Weekly, bi-weekly, semi-monthly or monthly.", "actually": "Bi-weekly means every two weeks (twenty-six paychecks). Semi-monthly means twice a month (twenty-four paychecks). They are not the same."}, {"term": "Negotiation", "category": "Offer, Negotiation and Pay", "modules": ["4"], "definition": "The conversation about adjusting the offer before you accept.", "actually": "Almost always expected. The risk of asking respectfully is much smaller than the upside. Aim for one clear ask, not five."}, {"term": "HR (Human Resources)", "category": "HR, Benefits and Paperwork", "modules": ["5", "6", "7"], "definition": "The department that handles hiring, benefits, policy and personnel issues.", "actually": "HR works for the company, not for you. Useful for paperwork and process. Not a confidant."}, {"term": "Onboarding", "category": "HR, Benefits and Paperwork", "modules": ["5", "6"], "definition": "The process of getting set up at a new job, often the first thirty to ninety days.", "actually": "Quality varies wildly. Some companies have a structured program. Others hand you a laptop and disappear."}, {"term": "Orientation", "category": "HR, Benefits and Paperwork", "modules": ["6"], "definition": "A structured session covering company history, policies, mission and culture, usually in your first week.", "actually": "Mostly listening. Take notes and ask one or two thoughtful questions to be remembered."}, {"term": "W-4", "category": "HR, Benefits and Paperwork", "modules": ["6"], "definition": "The federal tax form that tells your employer how much to withhold from each paycheck.", "actually": "Filled out on day one. Mistakes mean too much or too little tax taken out. The IRS has a free withholding calculator."}, {"term": "I-9", "category": "HR, Benefits and Paperwork", "modules": ["6"], "definition": "The federal form proving you are legally allowed to work in the US.", "actually": "Bring your passport or driver's license plus social security card on day one. They will photocopy the documents."}, {"term": "Direct deposit", "category": "HR, Benefits and Paperwork", "modules": ["6"], "definition": "Setting up your paycheck to land in your bank account automatically.", "actually": "Bring a voided check or bank routing and account numbers on day one. First paycheck is sometimes a paper check."}, {"term": "Benefits enrollment", "category": "HR, Benefits and Paperwork", "modules": ["4", "6"], "definition": "The window when you sign up for health insurance, 401k and other benefits.", "actually": "Usually thirty days from your start date. Miss it and you wait until the next open enrollment, often a year away."}, {"term": "Open enrollment", "category": "HR, Benefits and Paperwork", "modules": ["6"], "definition": "The annual window when employees can change benefits choices.", "actually": "Usually in the fall. Outside this window, you can only change benefits after a qualifying life event like marriage or birth."}, {"term": "Premium", "category": "HR, Benefits and Paperwork", "modules": ["4", "6"], "definition": "What you pay each pay period for health insurance.", "actually": "Comes out of your paycheck before you ever use the insurance."}, {"term": "Deductible", "category": "HR, Benefits and Paperwork", "modules": ["4", "6"], "definition": "What you pay out of pocket each year before insurance starts covering costs.", "actually": "A high deductible can mean thousands out of pocket before insurance kicks in. Always check this number."}, {"term": "Copay", "category": "HR, Benefits and Paperwork", "modules": ["4", "6"], "definition": "A fixed amount you pay at the time of a medical visit.", "actually": "Often twenty to fifty dollars per visit. Predictable and small."}, {"term": "Coinsurance", "category": "HR, Benefits and Paperwork", "modules": ["4", "6"], "definition": "The percentage of a medical bill you pay after meeting your deductible.", "actually": "Typical is twenty percent. It can add up fast on a major medical bill."}, {"term": "Out-of-pocket maximum", "category": "HR, Benefits and Paperwork", "modules": ["4", "6"], "definition": "The yearly cap on what you pay for covered care.", "actually": "After you hit this, insurance pays one hundred percent of covered care. This is the number that protects you in a worst-case year."}, {"term": "In-network", "category": "HR, Benefits and Paperwork", "modules": ["4", "6"], "definition": "Doctors and facilities that have a contract with your insurance.", "actually": "Always check before booking. Out-of-network care can be many times more expensive."}, {"term": "Out-of-network", "category": "HR, Benefits and Paperwork", "modules": ["4", "6"], "definition": "Providers who do not have a contract with your insurance.", "actually": "Sometimes covered partially, sometimes not at all. Read your plan documents before going."}, {"term": "PPO (Preferred Provider Organization)", "category": "HR, Benefits and Paperwork", "modules": ["4", "6"], "definition": "A health plan that lets you see any doctor without a referral, with better rates in-network.", "actually": "More flexibility, higher premiums. Better for people with specialists or established care."}, {"term": "HMO (Health Maintenance Organization)", "category": "HR, Benefits and Paperwork", "modules": ["4", "6"], "definition": "A health plan where you pick a primary care doctor and need referrals to see specialists.", "actually": "Lower premiums, less flexibility. Works if you do not need many specialists."}, {"term": "HDHP (High Deductible Health Plan)", "category": "HR, Benefits and Paperwork", "modules": ["4", "6"], "definition": "A plan with low monthly premiums and a high deductible, usually paired with an HSA.", "actually": "Cheapest paycheck deduction, most expensive surprise medical bill. Only choose this if you have savings to cover the deductible."}, {"term": "HSA (Health Savings Account)", "category": "HR, Benefits and Paperwork", "modules": ["4", "6"], "definition": "A tax-advantaged savings account paired with an HDHP.", "actually": "Triple tax advantage. Money rolls over year to year. One of the best long-term savings tools if you can leave it untouched."}, {"term": "FSA (Flexible Spending Account)", "category": "HR, Benefits and Paperwork", "modules": ["4", "6"], "definition": "A pre-tax account for healthcare or dependent care expenses.", "actually": "Use it or lose it. Money usually does not roll over to the next year. Estimate carefully."}, {"term": "401k", "category": "HR, Benefits and Paperwork", "modules": ["4", "6"], "definition": "An employer-sponsored retirement savings plan.", "actually": "Opt in immediately. If your company matches, that match is free money. Not contributing enough to get the full match is leaving cash on the table."}, {"term": "Employer match", "category": "HR, Benefits and Paperwork", "modules": ["6"], "definition": "The amount your employer adds to your 401k based on what you contribute.", "actually": "Common match: 100 percent up to 4 percent. That means if you put in four percent of your salary, the company adds another four percent. Take the full match every time."}, {"term": "Roth vs. Traditional 401k", "category": "HR, Benefits and Paperwork", "modules": ["6"], "definition": "Roth is taxed now and tax-free in retirement. Traditional is tax-deferred now and taxed later.", "actually": "For most early-career workers, Roth often wins. Your tax rate is likely lower now than it will be later."}, {"term": "Vesting (employer match)", "category": "HR, Benefits and Paperwork", "modules": ["6"], "definition": "The schedule for when employer-contributed 401k money becomes yours.", "actually": "Some companies match immediately. Others require three to five years. Check before you leave a job."}, {"term": "PTO (Paid Time Off)", "category": "HR, Benefits and Paperwork", "modules": ["6", "8"], "definition": "Paid days off, often combining vacation and sick time.", "actually": "Use it. Banking PTO is not a virtue. Some companies pay it out when you leave, some do not."}, {"term": "Sick time", "category": "HR, Benefits and Paperwork", "modules": ["8"], "definition": "Paid days off for illness, sometimes separate from PTO.", "actually": "Some states require paid sick leave separate from vacation. Know your state's rules."}, {"term": "FMLA (Family and Medical Leave Act)", "category": "HR, Benefits and Paperwork", "modules": ["7"], "definition": "Federal law that provides up to twelve weeks of unpaid, job-protected leave for certain medical and family reasons.", "actually": "Unpaid is the key word. Most companies layer paid leave on top. Eligibility requires twelve months of employment."}, {"term": "COBRA", "category": "HR, Benefits and Paperwork", "modules": ["6"], "definition": "A federal law that lets you keep your employer health insurance after leaving the job.", "actually": "Expensive. You pay the full premium your employer used to cover. Useful as a bridge, not a long-term plan."}, {"term": "ADA (Americans with Disabilities Act)", "category": "Disclosure and Accommodations", "modules": ["7"], "definition": "Federal law protecting people with disabilities from discrimination, including in employment.", "actually": "Protects you from the moment you apply, not just after you start. Employers cannot ask about diagnoses."}, {"term": "Reasonable accommodation", "category": "Disclosure and Accommodations", "modules": ["7"], "definition": "A change to the work environment or job that lets a qualified person with a disability perform the job.", "actually": "Examples include flexible hours, a quiet workspace, written instructions and noise-canceling headphones. Not a favor. A legal protection."}, {"term": "Interactive process", "category": "Disclosure and Accommodations", "modules": ["7"], "definition": "The legally required back-and-forth between you and HR to figure out an accommodation.", "actually": "It is a conversation, not a form. They cannot just say no. They have to engage."}, {"term": "Undue hardship", "category": "Disclosure and Accommodations", "modules": ["7"], "definition": "The legal standard for when an employer can deny an accommodation.", "actually": "Bar is high. Cost alone is rarely enough. Most accommodations are cheap or free."}, {"term": "Disclosure", "category": "Disclosure and Accommodations", "modules": ["7"], "definition": "Telling your employer about a diagnosis or disability.", "actually": "Never required. A personal choice with real trade-offs. Disclosing partial information like functional needs without diagnosis is often enough."}, {"term": "Self-ID form", "category": "Disclosure and Accommodations", "modules": ["7"], "definition": "A voluntary form asking if you identify as having a disability, often during application.", "actually": "Confidential, separate from your application. Skipping it has zero impact on your hiring chances."}, {"term": "HIPAA", "category": "Disclosure and Accommodations", "modules": ["7"], "definition": "Federal law protecting your medical privacy.", "actually": "Your employer cannot share your medical information with managers. Mostly applies to healthcare providers, not employers, but creates the privacy framework."}, {"term": "EEOC (Equal Employment Opportunity Commission)", "category": "Disclosure and Accommodations", "modules": ["7"], "definition": "The federal agency that enforces workplace discrimination laws.", "actually": "Where you file a formal complaint if discrimination or denied accommodation cannot be resolved with HR."}, {"term": "One-on-one (1:1)", "category": "Daily Work and Communication", "modules": ["8", "9"], "definition": "A recurring private meeting between you and your manager.", "actually": "Usually weekly or bi-weekly. Bring an agenda. This is your dedicated time. Use it for blockers, growth and feedback, not just status."}, {"term": "Skip-level", "category": "Daily Work and Communication", "modules": ["8"], "definition": "A meeting with your manager's manager.", "actually": "Common at larger companies. Not a betrayal of your manager. Treat it as a chance to show your work and ask broader questions."}, {"term": "Stand-up", "category": "Daily Work and Communication", "modules": ["8", "10"], "definition": "A short daily team meeting, often fifteen minutes, where each person shares status.", "actually": "Three things: what you did, what you are doing, what is blocking you. Keep it tight. Save details for after."}, {"term": "All-hands", "category": "Daily Work and Communication", "modules": ["8"], "definition": "A company-wide meeting, usually monthly or quarterly.", "actually": "Mostly listening. Take notes on anything that affects your work. Optional questions at the end are usually safe to skip."}, {"term": "Town hall", "category": "Daily Work and Communication", "modules": ["8"], "definition": "Another name for an all-hands. Often used for Q and A with leadership.", "actually": "Listen for what is changing. The official message is usually polished. The follow-up small talk often tells you more."}, {"term": "Status update", "category": "Daily Work and Communication", "modules": ["8", "10"], "definition": "A short summary of what you are working on, written or spoken.", "actually": "Format: what is done, what is in progress, what is blocked. Lead with the important thing. Skip the chronology."}, {"term": "Sync", "category": "Daily Work and Communication", "modules": ["8"], "definition": "A real-time meeting (verb or noun). Lets sync on Friday means lets meet.", "actually": "If someone asks for a sync, they want a live conversation, not an email."}, {"term": "Async", "category": "Daily Work and Communication", "modules": ["8"], "definition": "Communication that does not require everyone to be available at the same time. Email, Slack, recorded video.", "actually": "Async-first cultures expect you to write things down. Sync-first cultures expect you to show up to meetings."}, {"term": "Loop in", "category": "Daily Work and Communication", "modules": ["8"], "definition": "Adding someone to a conversation, usually by CC or by mentioning them.", "actually": "Looping in Sarah usually means Sarah needs to know but does not need to act. Adding Sarah can mean she needs to do something. Read carefully."}, {"term": "Cross-functional", "category": "Daily Work and Communication", "modules": ["8"], "definition": "Work that involves multiple departments.", "actually": "Cross-functional projects move slower because more people have to agree. Patience and over-communication help."}, {"term": "Stakeholder", "category": "Daily Work and Communication", "modules": ["8"], "definition": "Anyone who has an interest in or is affected by a project.", "actually": "Not just the people doing the work. Includes leaders, end users and anyone who can block or accelerate it."}, {"term": "Deliverable", "category": "Daily Work and Communication", "modules": ["8"], "definition": "A specific output you owe, like a document, design or code.", "actually": "If a deliverable is fuzzy, ask: What does done look like? Get the answer in writing."}, {"term": "Deck", "category": "Daily Work and Communication", "modules": ["8"], "definition": "A slide presentation. Same as PowerPoint or slides.", "actually": "Throw a deck together rarely means a quick task. Slides take longer than people estimate."}, {"term": "Read-out", "category": "Daily Work and Communication", "modules": ["8"], "definition": "A meeting where someone presents results or findings.", "actually": "Usually senior people are listening. Stick to the headline. Do not narrate every step."}, {"term": "Pre-read", "category": "Daily Work and Communication", "modules": ["8"], "definition": "A document sent before a meeting so people can review it in advance.", "actually": "If you are sent one, actually read it. Showing up un-prepped is a small but visible signal."}, {"term": "Action item", "category": "Daily Work and Communication", "modules": ["8"], "definition": "A specific task assigned to a person with a deadline.", "actually": "If something is yours, restate it: So I will do X by Y. If nobody owns it, it does not happen."}, {"term": "Owner / DRI (Directly Responsible Individual)", "category": "Daily Work and Communication", "modules": ["8"], "definition": "The single person accountable for a piece of work.", "actually": "Saying the team owns something usually means nobody does. Ownership at the individual level is what moves work."}, {"term": "Escalate", "category": "Daily Work and Communication", "modules": ["8"], "definition": "Bringing an issue to a higher authority.", "actually": "Not a complaint. A signal that something is blocked and needs help. Always tell your manager first before escalating around them."}, {"term": "Bandwidth", "category": "Daily Work and Communication", "modules": ["8"], "definition": "Your available time and capacity for new work.", "actually": "Do you have bandwidth usually means can you take this on. Saying you do not have bandwidth is acceptable. Saying yes when you do not creates more problems."}, {"term": "Capacity", "category": "Daily Work and Communication", "modules": ["8", "10"], "definition": "How much work you can take on, often discussed in planning meetings.", "actually": "Closely related to bandwidth. At capacity means full plate."}, {"term": "Roadmap", "category": "Daily Work and Communication", "modules": ["8"], "definition": "A high-level plan of what the company or team will work on over time.", "actually": "Always changing. Treat it as a directional guide, not a contract."}, {"term": "Backlog", "category": "Daily Work and Communication", "modules": ["8"], "definition": "The list of work waiting to be done.", "actually": "If something is in the backlog, it is acknowledged but not scheduled. Backlog is sometimes a polite no."}, {"term": "KPI (Key Performance Indicator)", "category": "Daily Work and Communication", "modules": ["8"], "definition": "A specific metric used to measure success.", "actually": "Know your team's KPIs. Your work should connect to them. If you cannot tie your work to a KPI, ask why."}, {"term": "OKR (Objectives and Key Results)", "category": "Daily Work and Communication", "modules": ["8"], "definition": "A goal-setting framework: an objective with measurable results.", "actually": "Usually quarterly. The objective is the direction. The key results are the proof points."}, {"term": "Performance review", "category": "Daily Work and Communication", "modules": ["8"], "definition": "A formal evaluation of your work, usually annual or semi-annual.", "actually": "Keep a running list of your wins all year. Do not rely on memory in the meeting itself."}, {"term": "PIP (Performance Improvement Plan)", "category": "Daily Work and Communication", "modules": ["8"], "definition": "A formal document outlining what you must improve to keep your job.", "actually": "Sometimes a real chance to recover, sometimes a paper trail before termination. If you are placed on one, get clear on the criteria and timeline immediately."}, {"term": "Circle back", "category": "Office Idioms", "modules": [], "definition": "Return to a topic later.", "actually": "Lets circle back often means not now and maybe never. If it matters, follow up in writing with a specific date."}, {"term": "Touch base", "category": "Office Idioms", "modules": [], "definition": "Have a brief check-in.", "actually": "Usually a five to fifteen minute conversation. Lower stakes than a real meeting. Often more chat than substance."}, {"term": "Take this offline", "category": "Office Idioms", "modules": [], "definition": "Continue this conversation in a smaller setting, not in the current meeting.", "actually": "Means this is too detailed or too messy for this room. Not a snub. The follow-up is real."}, {"term": "Park it", "category": "Office Idioms", "modules": [], "definition": "Set this topic aside for now.", "actually": "Sometimes the topic does come back. Sometimes it does not. Note it down."}, {"term": "Table it", "category": "Office Idioms", "modules": [], "definition": "Postpone discussion of a topic.", "actually": "Same as park it. American usage. In British English, table means the opposite, which causes occasional confusion."}, {"term": "Loop back", "category": "Office Idioms", "modules": [], "definition": "Follow up later.", "actually": "Same family as circle back. If someone says they will loop back, ask when."}, {"term": "Ping me", "category": "Office Idioms", "modules": [], "definition": "Send me a quick message, usually on Slack or Teams.", "actually": "Means reach out, not call. Almost always written, not voice."}, {"term": "Quick question", "category": "Office Idioms", "modules": [], "definition": "I have a question.", "actually": "Often not quick. Brace for a five minute answer."}, {"term": "Got a sec", "category": "Office Idioms", "modules": [], "definition": "Do you have a moment?", "actually": "Rarely actually one second. Usually a five to ten minute conversation. Acceptable to say give me ten minutes, then yes."}, {"term": "Do you have bandwidth", "category": "Office Idioms", "modules": [], "definition": "Are you available to take on this work?", "actually": "It is okay to say no, especially if you are already full. Saying yes when you do not creates risk."}, {"term": "Reach out", "category": "Office Idioms", "modules": [], "definition": "Contact someone.", "actually": "Usually means email or message. Rarely a phone call unless specified."}, {"term": "Sync up", "category": "Office Idioms", "modules": [], "definition": "Have a meeting to align.", "actually": "Real-time conversation, not async. Often fifteen to thirty minutes."}, {"term": "Align / get on the same page", "category": "Office Idioms", "modules": [], "definition": "Reach agreement on a topic.", "actually": "Often used when there is disagreement. Lets align can mean we are not aligned and I want to fix that."}, {"term": "Deep dive", "category": "Office Idioms", "modules": [], "definition": "A detailed examination of a topic.", "actually": "Real time commitment, often a meeting of forty-five minutes or more. Not a quick chat."}, {"term": "Level set", "category": "Office Idioms", "modules": [], "definition": "Make sure everyone has the same information before discussing.", "actually": "Usually a recap at the start of a meeting. Listen carefully. Decisions often follow."}, {"term": "Move the needle", "category": "Office Idioms", "modules": [], "definition": "Make a meaningful difference to a measurable outcome.", "actually": "If your work moves the needle, it has visible impact. If it does not, it may not be valued, even if it is hard."}, {"term": "Boil the ocean", "category": "Office Idioms", "modules": [], "definition": "Take on too large a scope.", "actually": "Dont boil the ocean means narrow the problem. A polite way of saying you are overcomplicating it."}, {"term": "In the weeds", "category": "Office Idioms", "modules": [], "definition": "Stuck in too much detail.", "actually": "Youre in the weeds can mean you are over-explaining or losing the bigger picture. Im in the weeds can mean you are overwhelmed by detail."}, {"term": "Low-hanging fruit", "category": "Office Idioms", "modules": [], "definition": "Easy wins.", "actually": "Tasks that are quick to complete and visible. Often a good place to start when you are new."}, {"term": "Quick win", "category": "Office Idioms", "modules": [], "definition": "A small, fast result with visible impact.", "actually": "Useful for building credibility in your first ninety days."}, {"term": "Apples to apples", "category": "Office Idioms", "modules": [], "definition": "A fair, like-for-like comparison.", "actually": "If someone says it is not apples to apples, they think the comparison is unfair."}, {"term": "Run it up the flagpole", "category": "Office Idioms", "modules": [], "definition": "Get approval from a higher up.", "actually": "Means a decision is not yours to make alone. Expect a delay while it travels up the chain."}, {"term": "Drink from the firehose", "category": "Office Idioms", "modules": [], "definition": "Receive too much information at once.", "actually": "Common in onboarding. Acceptable to say I am drinking from the firehose, can we slow down."}, {"term": "Wear many hats", "category": "Office Idioms", "modules": [], "definition": "Do many different jobs at once.", "actually": "Common at startups. Sometimes a positive (variety). Sometimes a warning (no clear role, scope creep, no extra pay)."}, {"term": "Move fast and break things", "category": "Office Idioms", "modules": [], "definition": "Prioritize speed over perfection.", "actually": "A startup mantra. Sometimes an excuse for messy work. In a job interview, ask what break things actually means in practice."}, {"term": "Synergy", "category": "Office Idioms", "modules": [], "definition": "Combined effect, where the whole is greater than the parts.", "actually": "Often used vaguely. If a senior person says synergy, they usually mean working together better. Sometimes it means nothing at all."}, {"term": "Cadence", "category": "Office Idioms", "modules": [], "definition": "The rhythm or frequency of something.", "actually": "Whats the cadence of this meeting means how often does it happen."}, {"term": "Optics", "category": "Office Idioms", "modules": [], "definition": "How something looks to outside observers.", "actually": "Bad optics means it looks bad even if it is fine. A signal that perception matters here, not just facts."}, {"term": "Cover your bases", "category": "Office Idioms", "modules": [], "definition": "Make sure all angles are handled.", "actually": "Often means document things. Email confirms, written summaries, getting things in writing."}, {"term": "Paper trail", "category": "Office Idioms", "modules": [], "definition": "A written record of decisions, agreements or events.", "actually": "Important for accommodations, performance reviews and any escalation. If it is not in writing, it did not happen."}, {"term": "Get aligned", "category": "Office Idioms", "modules": [], "definition": "Reach agreement before moving forward.", "actually": "If your manager says lets get aligned, they want buy-in, not just confirmation."}, {"term": "In the loop", "category": "Office Idioms", "modules": [], "definition": "Included in updates and decisions.", "actually": "Keep me in the loop means copy me on relevant emails. A request to be informed, not necessarily to act."}, {"term": "Out of the loop", "category": "Office Idioms", "modules": [], "definition": "Not informed.", "actually": "If you feel out of the loop, ask to be added to relevant channels or recurring meetings. Usually a fix, not a slight."}, {"term": "Throw under the bus", "category": "Office Idioms", "modules": [], "definition": "Blame a coworker to protect yourself.", "actually": "Watch for it. If you see it happening, document your work and what you communicated."}, {"term": "Have your back", "category": "Office Idioms", "modules": [], "definition": "Defend or support you.", "actually": "A good manager has your back in public, especially in front of leadership. Note who actually does this."}, {"term": "Drop the ball", "category": "Office Idioms", "modules": [], "definition": "Fail to follow through on something you owned.", "actually": "Happens to everyone. Owning it directly (I dropped the ball, here is how I am fixing it) often goes better than explaining why."}, {"term": "Hit the ground running", "category": "Office Idioms", "modules": [], "definition": "Start a job quickly and produce work fast.", "actually": "An expectation often set in interviews. Reasonable ramp time is still real. Do not let this phrase make you skip learning the basics."}, {"term": "Wheelhouse", "category": "Office Idioms", "modules": [], "definition": "Your area of strength.", "actually": "Thats in my wheelhouse means I am good at this. Useful when offering to take on work that fits you."}, {"term": "Move the goalposts", "category": "Office Idioms", "modules": [], "definition": "Change the criteria after the work has started.", "actually": "If it happens repeatedly, document it. It is a real pattern, not just frustration."}, {"term": "As discussed", "category": "Softened Language", "modules": [], "definition": "Referring to a previous conversation.", "actually": "Often used when someone is pinning down what you agreed to. Read it as a follow-up, not a casual reference. Make sure it matches your understanding."}, {"term": "Per my last email", "category": "Softened Language", "modules": [], "definition": "Referring back to an earlier email.", "actually": "Usually a polite way of saying I already told you this. Mild frustration. Not personal, but a signal."}, {"term": "Friendly reminder", "category": "Softened Language", "modules": [], "definition": "Reminding you of something due.", "actually": "Almost always not friendly. The sender wants action. Treat it as a real reminder."}, {"term": "Just checking in", "category": "Softened Language", "modules": [], "definition": "Asking for an update.", "actually": "They want a status. Reply within a day even if the update is no progress yet, here is when I expect to have one."}, {"term": "Bandwidth permitting", "category": "Softened Language", "modules": [], "definition": "If we have time.", "actually": "Often a soft way to say this probably will not happen. Read accordingly."}, {"term": "To be transparent", "category": "Softened Language", "modules": [], "definition": "Speaking directly about something sensitive.", "actually": "Brace for honest feedback or bad news. Often precedes information you might not love."}, {"term": "I have some feedback", "category": "Softened Language", "modules": [], "definition": "I want to discuss something you did.", "actually": "Could be positive, but more often a critique. Listen first. Take notes. Do not defend in real time."}, {"term": "Help me understand", "category": "Softened Language", "modules": [], "definition": "Explain your reasoning.", "actually": "Sometimes a real curiosity. Often a polite challenge. Stay neutral and explain your logic clearly."}, {"term": "With all due respect", "category": "Softened Language", "modules": [], "definition": "I am about to disagree.", "actually": "Usually precedes a real pushback. Listen to what comes after, not the phrase."}, {"term": "Going forward", "category": "Softened Language", "modules": [], "definition": "From now on.", "actually": "Usually means a change in expectation. The thing that happened was a problem. The thing they are saying now is the new rule."}, {"term": "Lets revisit", "category": "Softened Language", "modules": [], "definition": "We will discuss this again later.", "actually": "Sometimes real, sometimes a polite no. Ask when. Lets revisit next Tuesday is real. Lets revisit at some point is usually not."}, {"term": "Interesting", "category": "Softened Language", "modules": [], "definition": "A neutral acknowledgment.", "actually": "Often means I do not agree but I am not going to argue here. Not a green light."}, {"term": "Noted", "category": "Softened Language", "modules": [], "definition": "I heard you.", "actually": "Not the same as I agree. Usually means the conversation is closed, not that they will act."}, {"term": "FYI", "category": "Email Shorthand", "modules": [], "definition": "For your information.", "actually": "No action needed. You are being kept in the loop."}, {"term": "EOD", "category": "Email Shorthand", "modules": [], "definition": "End of day.", "actually": "Usually 5 or 6 pm in the senders time zone. Confirm time zone if working with a remote team."}, {"term": "COB", "category": "Email Shorthand", "modules": [], "definition": "Close of business.", "actually": "Same as EOD. More common in finance and law. Roughly 5 pm sender's time."}, {"term": "EOW", "category": "Email Shorthand", "modules": [], "definition": "End of week.", "actually": "Usually means Friday by 5 pm."}, {"term": "OOO", "category": "Email Shorthand", "modules": [], "definition": "Out of office.", "actually": "Often paired with an auto-reply explaining when they will be back."}, {"term": "WFH", "category": "Email Shorthand", "modules": [], "definition": "Working from home.", "actually": "May or may not affect availability. Usually means available by Slack or email."}, {"term": "ASAP", "category": "Email Shorthand", "modules": [], "definition": "As soon as possible.", "actually": "Vague. If urgent, ask for a specific deadline. ASAP can mean today or this week."}, {"term": "TLDR", "category": "Email Shorthand", "modules": [], "definition": "Too long, did not read. The summary version.", "actually": "If you are sending a long email, put a TLDR at the top. People appreciate it."}, {"term": "ICYMI", "category": "Email Shorthand", "modules": [], "definition": "In case you missed it.", "actually": "Usually a follow-up share. No action expected. Sometimes a polite nudge."}, {"term": "CC", "category": "Email Shorthand", "modules": [], "definition": "Carbon copy. People who are included for visibility.", "actually": "Usually means they are aware but not the primary audience."}, {"term": "BCC", "category": "Email Shorthand", "modules": [], "definition": "Blind carbon copy. Hidden recipients.", "actually": "Use carefully. If discovered, it can read as sneaky. Mostly used for HR cc on sensitive emails or large mailing lists."}, {"term": "Reply All", "category": "Email Shorthand", "modules": [], "definition": "Reply to everyone on the email thread.", "actually": "Use sparingly. Most replies should go to the sender only. Reply all floods inboxes and can be a small social misstep."}, {"term": "Culture", "category": "Workplace Culture and People", "modules": ["1", "8"], "definition": "The shared patterns of behavior, language, expectations and values inside any group of people. Culture is built from what people repeatedly do, not from what they say they value.", "actually": "Culture is the rules nobody writes down. It is what gets praised, what gets ignored and what gets you in trouble. The official version in a handbook and the lived version in real meetings often differ. The lived version is what shapes your day."}, {"term": "Company culture (workplace culture)", "category": "Workplace Culture and People", "modules": ["1", "5", "6", "7", "8", "9"], "definition": "The specific patterns of behavior, communication, decision-making and expectations inside one particular company or team. Includes both written policies and the unwritten norms that develop over time.", "actually": "How meetings actually run. How feedback gets delivered. Who gets promoted and why. What you can say openly versus what only goes in private messages. How late you can stay home sick before someone notices. Read it before you try to change it. Read it before you decide how much of yourself to bring to work."}, {"term": "Manager", "category": "Workplace Culture and People", "modules": ["8", "9"], "definition": "The person you report to directly.", "actually": "Sets your priorities, reviews your work and influences your raise. Build this relationship intentionally."}, {"term": "Skip-level manager", "category": "Workplace Culture and People", "modules": ["8"], "definition": "Your manager's manager.", "actually": "Useful relationship to develop carefully. Never use to go around your direct manager unless something serious is happening."}, {"term": "Mentor", "category": "Workplace Culture and People", "modules": ["8", "9"], "definition": "A more senior person who advises you on your career.", "actually": "Usually informal. Best mentors emerge from real working relationships, not formal programs. Asking will you be my mentor rarely works."}, {"term": "Sponsor", "category": "Workplace Culture and People", "modules": ["8"], "definition": "A senior person who actively advocates for you when you are not in the room.", "actually": "Different from a mentor. A sponsor uses their political capital for you. You earn this through reliability, not networking events."}, {"term": "Peer", "category": "Workplace Culture and People", "modules": ["8"], "definition": "A coworker at your level.", "actually": "Often the most important relationships. Your peers become your network for the next decade."}, {"term": "Direct report", "category": "Workplace Culture and People", "modules": ["8"], "definition": "Someone who reports to you (only relevant if you become a manager).", "actually": "Becoming a manager is a different job, not a promotion of the same job. Different skills."}, {"term": "Cross-functional partner", "category": "Workplace Culture and People", "modules": ["8"], "definition": "Someone in another department you work with regularly.", "actually": "Treat them like internal customers. Reliability builds your reputation across the company."}, {"term": "Team lead", "category": "Workplace Culture and People", "modules": ["8"], "definition": "A senior individual contributor who guides others without formal management responsibility.", "actually": "Influences without authority. Often a stepping stone to management."}, {"term": "Individual contributor (IC)", "category": "Workplace Culture and People", "modules": ["8"], "definition": "An employee who does the work but does not manage people.", "actually": "Many companies have an IC career track that goes as senior as a management track. You do not have to manage to grow."}, {"term": "Culture fit", "category": "Workplace Culture and People", "modules": ["8"], "definition": "How well you match the company's working style.", "actually": "Sometimes legitimate. Sometimes used to justify excluding people who think differently. Watch for vague culture fit rejections."}, {"term": "Psychological safety", "category": "Workplace Culture and People", "modules": ["8"], "definition": "The shared belief that the team is safe for taking risks and being honest.", "actually": "A real research-backed concept. High psychological safety teams have better outcomes. Low ones often look polished from outside but burn people out."}, {"term": "Toxic workplace", "category": "Workplace Culture and People", "modules": ["8"], "definition": "A workplace with patterns of harm, not just a difficult day.", "actually": "Not every hard day is toxic. Look for repeated patterns: blame, gaslighting, retaliation, broken promises. Document patterns, not single events."}, {"term": "Burnout", "category": "Workplace Culture and People", "modules": ["7", "8", "9", "10"], "definition": "A state of chronic exhaustion from prolonged stress, with reduced effectiveness and detachment.", "actually": "Not the same as a bad week. Recovery requires real change, not a long weekend. Can have specific patterns for Neurodivergent workers."}, {"term": "Masking", "category": "Workplace Culture and People", "modules": ["7"], "definition": "Suppressing or camouflaging traits to fit in.", "actually": "Common for Neurodivergent workers. Effective short term, exhausting long term. Often a contributor to burnout."}, {"term": "RSD (Rejection Sensitive Dysphoria)", "category": "Workplace Culture and People", "modules": ["3", "10", "12"], "definition": "An intense emotional response to perceived rejection, criticism or failure.", "actually": "Common in ADHD. The feeling is real. The threat usually is not. Reality-check the spiral with someone outside the situation."}, {"term": "PDA (Pathological Demand Avoidance)", "category": "Workplace Culture and People", "modules": ["10", "12"], "definition": "An autonomy-driven response where direct demands trigger an automatic refusal, even of things you want to do.", "actually": "Reframing tasks as choices often works better than pushing through. Not laziness. A nervous system response."}, {"term": "Imposter syndrome", "category": "Workplace Culture and People", "modules": ["10", "12"], "definition": "Feeling like a fraud despite real competence.", "actually": "Almost everyone has it at some point. The fix is usually evidence and time, not self-talk."}, {"term": "Self-regulation", "category": "Workplace Culture and People", "modules": ["9", "10", "11"], "definition": "Managing your nervous system, attention and emotional state.", "actually": "A skill, not a personality trait. Sensory tools, breaks and structure are regulation tools."}, {"term": "Remote", "category": "Work Arrangements", "modules": ["4", "5"], "definition": "Work entirely from outside the office.", "actually": "May be remote anywhere or remote within state X. Tax and legal rules differ. Confirm in your offer."}, {"term": "Hybrid", "category": "Work Arrangements", "modules": ["4", "5"], "definition": "Some days in office, some days remote.", "actually": "Ask about specifics. Hybrid can mean two days in or four days in. Big difference in cost and energy."}, {"term": "In-office", "category": "Work Arrangements", "modules": ["4", "5"], "definition": "Five days a week on site.", "actually": "Returning to office is a growing trend. Confirm before accepting if remote flexibility matters to you."}, {"term": "RTO (Return to Office)", "category": "Work Arrangements", "modules": ["8"], "definition": "A policy requiring employees to return to in-person work.", "actually": "Often phased. Watch for changes after you accept an offer."}, {"term": "Open office", "category": "Work Arrangements", "modules": ["5", "11"], "definition": "A workspace with no walls or cubicles, shared by many people.", "actually": "High sensory load. Headphones are common professional equipment, not antisocial behavior. Plan regulation breaks into your day."}, {"term": "Hot desk / hoteling", "category": "Work Arrangements", "modules": ["5", "11"], "definition": "No assigned desk. Pick a spot daily.", "actually": "Adds decision fatigue. If you can request a consistent spot as an accommodation, it is often easy to grant."}, {"term": "Cubicle", "category": "Work Arrangements", "modules": ["11"], "definition": "A semi-enclosed workspace with partial walls.", "actually": "More privacy than open office, less than a private office. Increasingly rare."}, {"term": "Resignation / notice", "category": "Exit and Transitions", "modules": [], "definition": "Formally telling your employer you are leaving.", "actually": "Two weeks is the standard. Some industries expect more. Resign in person or by video, then in writing."}, {"term": "Two weeks notice", "category": "Exit and Transitions", "modules": [], "definition": "The standard period between announcing your resignation and your last day.", "actually": "Almost always expected. Skipping it can affect future references."}, {"term": "Severance", "category": "Exit and Transitions", "modules": [], "definition": "Pay or benefits offered when you are let go.", "actually": "Often comes with a release agreement. Read carefully. You can usually negotiate, especially if asked to sign quickly."}, {"term": "Layoff / RIF (Reduction in Force)", "category": "Exit and Transitions", "modules": [], "definition": "Termination not based on your performance, usually due to business reasons.", "actually": "Not a mark on your record. Most layoffs are about budget, not you. Update LinkedIn and start outreach quickly."}, {"term": "Termination for cause", "category": "Exit and Transitions", "modules": [], "definition": "Fired for performance or conduct issues.", "actually": "Different legal status from a layoff. May affect unemployment eligibility. Get any documentation in writing."}, {"term": "Garden leave", "category": "Exit and Transitions", "modules": [], "definition": "A period after resignation where you are paid but not working, often barred from joining a competitor.", "actually": "Common in finance and senior roles. Read your employment contract for this clause before resigning."}, {"term": "Non-compete", "category": "Exit and Transitions", "modules": [], "definition": "A contract clause restricting where you can work after leaving.", "actually": "Enforceability varies a lot by state. Many are not enforceable for early-career workers. Consult a lawyer if you are unsure."}, {"term": "NDA (Non-Disclosure Agreement)", "category": "Exit and Transitions", "modules": [], "definition": "A contract preventing you from sharing certain information.", "actually": "Standard at most companies. Read what is covered. Most cover company confidential information, not your personal experiences."}, {"term": "Exit interview", "category": "Exit and Transitions", "modules": [], "definition": "A meeting with HR or a manager when you leave a job.", "actually": "Optional in most cases. Be diplomatic. Brutal honesty rarely helps and the notes can persist in your record."}, {"term": "Boomerang", "category": "Exit and Transitions", "modules": [], "definition": "Returning to a former employer after leaving.", "actually": "Increasingly common. Maintain bridges when you leave. The industry is smaller than it looks."}];
+
+const MODULE_NAMES = {
+  "1": "M1 College to Work",
+  "2": "M2 Job Search",
+  "3": "M3 Interview",
+  "4": "M4 Follow Up and Money",
+  "5": "M5 Before Day One and Onboarding",
+  "6": "M6 Onboarding (in M5)",
+  "7": "M7 Disclosure",
+  "8": "M8 In the Workplace",
+  "9": "M9 OT Lens",
+  "10": "M10 Time and EF",
+  "11": "M11 Sensory",
+  "12": "M12 Peopling"
+};
+
+const state = { q: "", module: null };
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+}
+
+function highlight(text, q) {
+  if (!q) return escapeHtml(text);
+  const escapedText = escapeHtml(text);
+  const safe = q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return escapedText.replace(new RegExp(safe, "gi"), m => "<mark>" + m + "</mark>");
+}
+
+// Levenshtein distance with early exit if exceeding threshold
+function levenshtein(a, b, max) {
+  const al = a.length, bl = b.length;
+  if (Math.abs(al - bl) > max) return max + 1;
+  if (al === 0) return bl;
+  if (bl === 0) return al;
+  let prev = new Array(bl + 1);
+  let curr = new Array(bl + 1);
+  for (let j = 0; j <= bl; j++) prev[j] = j;
+  for (let i = 1; i <= al; i++) {
+    curr[0] = i;
+    let rowMin = curr[0];
+    for (let j = 1; j <= bl; j++) {
+      const cost = a.charCodeAt(i-1) === b.charCodeAt(j-1) ? 0 : 1;
+      curr[j] = Math.min(curr[j-1] + 1, prev[j] + 1, prev[j-1] + cost);
+      if (curr[j] < rowMin) rowMin = curr[j];
+    }
+    if (rowMin > max) return max + 1;
+    [prev, curr] = [curr, prev];
+  }
+  return prev[bl];
+}
+
+function tokenize(text) {
+  return text.toLowerCase().match(/[a-z0-9]+/g) || [];
+}
+
+// Returns smallest Levenshtein distance from any token in text to query
+function bestTokenDistance(text, q, max) {
+  const tokens = tokenize(text);
+  let best = max + 1;
+  for (const t of tokens) {
+    if (Math.abs(t.length - q.length) > max) continue;
+    const d = levenshtein(t, q, max);
+    if (d < best) best = d;
+    if (best === 0) return 0;
+  }
+  return best;
+}
+
+// Score an entry against the query; 0 means no match.
+function scoreEntry(e, q) {
+  const term = e.term.toLowerCase();
+  const def = e.definition.toLowerCase();
+  const act = e.actually.toLowerCase();
+
+  // Exact substring matches (best)
+  if (term.includes(q)) return { score: 100, fuzzy: false };
+  if (def.includes(q))  return { score: 60,  fuzzy: false };
+  if (act.includes(q))  return { score: 40,  fuzzy: false };
+
+  // Fuzzy fallback for queries 4+ chars
+  if (q.length < 4) return { score: 0, fuzzy: false };
+  const threshold = q.length <= 5 ? 1 : 2;
+
+  const tdist = bestTokenDistance(e.term, q, threshold);
+  if (tdist <= threshold) return { score: 80 - tdist * 10, fuzzy: true };
+
+  const ddist = bestTokenDistance(e.definition, q, threshold);
+  if (ddist <= threshold) return { score: 50 - ddist * 10, fuzzy: true };
+
+  const adist = bestTokenDistance(e.actually, q, threshold);
+  if (adist <= threshold) return { score: 30 - adist * 10, fuzzy: true };
+
+  return { score: 0, fuzzy: false };
+}
+
+// Find a best correction suggestion for the typed query
+function bestCorrection(q) {
+  if (q.length < 4) return null;
+  const threshold = q.length <= 5 ? 1 : 2;
+  const candidates = new Set();
+  for (const e of ENTRIES) {
+    for (const t of tokenize(e.term)) candidates.add(t);
+  }
+  let best = null, bestDist = threshold + 1;
+  for (const c of candidates) {
+    if (Math.abs(c.length - q.length) > threshold) continue;
+    if (c === q.toLowerCase()) return null; // already exact
+    const d = levenshtein(c, q.toLowerCase(), threshold);
+    if (d > 0 && d < bestDist) { bestDist = d; best = c; }
+  }
+  return best;
+}
+
+function buildFilters() {
+  const f = document.getElementById("filters");
+  const order = ["1","2","3","4","5","7","8","9","10","11","12"];
+  for (const m of order) {
+    const btn = document.createElement("button");
+    btn.className = "chip";
+    btn.textContent = "M" + m;
+    btn.title = MODULE_NAMES[m];
+    btn.dataset.module = m;
+    btn.addEventListener("click", () => {
+      state.module = state.module === m ? null : m;
+      render();
+    });
+    f.appendChild(btn);
+  }
+  const generalBtn = document.createElement("button");
+  generalBtn.className = "chip";
+  generalBtn.textContent = "General";
+  generalBtn.title = "Common office terms not tied to a specific module";
+  generalBtn.dataset.module = "__none__";
+  generalBtn.addEventListener("click", () => {
+    state.module = state.module === "__none__" ? null : "__none__";
+    render();
+  });
+  f.appendChild(generalBtn);
+
+  const clearBtn = document.createElement("button");
+  clearBtn.className = "chip clear";
+  clearBtn.textContent = "Clear";
+  clearBtn.addEventListener("click", () => {
+    state.q = "";
+    state.module = null;
+    document.getElementById("search").value = "";
+    render();
+  });
+  f.appendChild(clearBtn);
+}
+
+function moduleOk(e) {
+  if (!state.module) return true;
+  if (state.module === "__none__") return !e.modules || e.modules.length === 0;
+  return e.modules && e.modules.includes(state.module);
+}
+
+function renderEntry(e, fuzzy) {
+  const moduleTags = (e.modules && e.modules.length)
+    ? e.modules.map(m => `<span class="tag module" title="${escapeHtml(MODULE_NAMES[m] || ("Module " + m))}">M${m}</span>`).join("")
+    : `<span class="tag module-none">General</span>`;
+  const fuzzyBadge = fuzzy ? `<span class="fuzzy-badge">fuzzy match</span>` : "";
+  const cardClass = fuzzy ? "card fuzzy" : "card";
+  return `
+    <div class="${cardClass}" role="listitem">
+      ${fuzzyBadge}
+      <div class="term">${highlight(e.term, fuzzy ? "" : state.q)}</div>
+      <div class="meta">
+        <span class="tag">${escapeHtml(e.category)}</span>
+        ${moduleTags}
+      </div>
+      <div class="label">What it means</div>
+      <div class="body">${highlight(e.definition, fuzzy ? "" : state.q)}</div>
+      <div class="label">What people actually mean</div>
+      <div class="body actually">${highlight(e.actually, fuzzy ? "" : state.q)}</div>
+    </div>
+  `;
+}
+
+function render() {
+  for (const c of document.querySelectorAll(".chip")) {
+    if (c.classList.contains("clear")) continue;
+    c.classList.toggle("active", c.dataset.module === state.module);
+  }
+  const q = state.q.toLowerCase();
+  const meta = document.getElementById("meta");
+  const results = document.getElementById("results");
+  const suggest = document.getElementById("suggest");
+  suggest.style.display = "none";
+  suggest.innerHTML = "";
+
+  if (!q && !state.module) {
+    const sorted = ENTRIES.slice().sort((a,b) => a.term.localeCompare(b.term));
+    meta.textContent = `${sorted.length} terms.`;
+    results.innerHTML = sorted.map(e => renderEntry(e, false)).join("");
+    return;
+  }
+
+  const scored = [];
+  for (const e of ENTRIES) {
+    if (!moduleOk(e)) continue;
+    if (!q) {
+      scored.push({ e, score: 1, fuzzy: false });
+      continue;
+    }
+    const r = scoreEntry(e, q);
+    if (r.score > 0) scored.push({ e, score: r.score, fuzzy: r.fuzzy });
+  }
+  scored.sort((a,b) => b.score - a.score || a.e.term.localeCompare(b.e.term));
+
+  const anyFuzzy = scored.some(x => x.fuzzy);
+  const allFuzzy = scored.length > 0 && scored.every(x => x.fuzzy);
+
+  if (q && allFuzzy) {
+    const correction = bestCorrection(q);
+    if (correction) {
+      suggest.style.display = "block";
+      suggest.innerHTML = `No exact matches for "<strong>${escapeHtml(state.q)}</strong>". Showing fuzzy matches. <button id="usecorr">Did you mean "${escapeHtml(correction)}"?</button>`;
+      setTimeout(() => {
+        const btn = document.getElementById("usecorr");
+        if (btn) btn.addEventListener("click", () => {
+          state.q = correction;
+          document.getElementById("search").value = correction;
+          render();
+        });
+      }, 0);
+    } else {
+      suggest.style.display = "block";
+      suggest.innerHTML = `No exact matches for "<strong>${escapeHtml(state.q)}</strong>". Showing nearby matches.`;
+    }
+  }
+
+  if (scored.length === 0) {
+    meta.textContent = "";
+    results.innerHTML = `<div class="empty"><strong>No matches.</strong>Try a shorter word, or clear the filters.</div>`;
+    return;
+  }
+
+  const filterDescription = state.module
+    ? (state.module === "__none__" ? " in General" : ` in Module ${state.module}`)
+    : "";
+  const fuzzyNote = anyFuzzy && !allFuzzy ? " (some are fuzzy matches)" : "";
+  meta.textContent = `${scored.length} ${scored.length === 1 ? "match" : "matches"}${q ? ` for "${state.q}"` : ""}${filterDescription}${fuzzyNote}.`;
+  results.innerHTML = scored.map(x => renderEntry(x.e, x.fuzzy)).join("");
+}
+
+document.getElementById("search").addEventListener("input", e => {
+  state.q = e.target.value.trim();
+  render();
+});
+
+buildFilters();
+render();
+</script>
+</body>
+</html>

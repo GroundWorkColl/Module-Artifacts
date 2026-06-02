@@ -1,0 +1,520 @@
+<\!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 5: How to Prep to Start</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <style>body { margin: 0; padding: 0; }</style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState } = React;
+
+const TEAL = "#1B6B72";
+const LIGHTGRAY = "#F5F7F8";
+const GOLD = "#B5860A";
+const WHITE = "#FFFFFF";
+
+const modules = [
+  {
+    id: 1,
+    title: "Video 5.1",
+    subtitle: "The Gap Between Yes and Day One",
+    icon: "🕐",
+    color: TEAL,
+    intro: "You accepted the offer. Now your brain has entered the ambiguous waiting zone. Here's what that space is actually for.",
+    content: [
+      {
+        type: "body",
+        text: "You accepted the offer. You sent the thank-you. You told your people. And then you waited.",
+      },
+      {
+        type: "body",
+        text: "For some people, that waiting period feels fine. For others — really common for neurodiverse brains — the gap between knowing you got the job and actually starting feels like standing in a room with no furniture. Nothing to do, but you cannot stop thinking about it.",
+      },
+      {
+        type: "callout",
+        label: "Here's what that space is actually for:",
+        text: "Logistics. Small, solvable, concrete things. The kind of things your brain does well when it has a task to focus on.",
+      },
+      {
+        type: "body",
+        text: "This module is your task list. We cover what to wear, hygiene expectations at work, how to plan your commute, and what to bring on day one.",
+      },
+      {
+        type: "body",
+        text: "By the end, you'll have a checklist you can actually use.",
+      },
+    ],
+    checklist: [],
+  },
+  {
+    id: 2,
+    title: "Video 5.2",
+    subtitle: "What to Wear",
+    icon: "👔",
+    color: "#2E86AB",
+    intro: "Before you stress about your closet, do this first.",
+    content: [
+      {
+        type: "subhead",
+        text: "Start with Research",
+      },
+      {
+        type: "body",
+        text: "Go back to the company website, LinkedIn, or social media. Look at photos of actual employees — not the stock photos on the About page. Team events, office photos, conference shots. That will tell you more than any dress code policy.",
+      },
+      {
+        type: "subhead",
+        text: "The Three Dress Code Zones",
+      },
+      {
+        type: "cards",
+        items: [
+          {
+            title: "Business Formal",
+            desc: "Suits, blazers, dress shoes. Law firms, finance, executive roles. Becoming less common but it still exists.",
+          },
+          {
+            title: "Business Casual",
+            desc: "The most common. Slacks or chinos, collared shirts, blouses, clean sneakers or dress shoes. No jeans, no athleisure, no graphic tees. When in doubt, default here.",
+          },
+          {
+            title: "Casual / Startup",
+            desc: "Jeans are fine — clean, fitted, not distressed. Plain tees work. Sneakers are standard.",
+          },
+        ],
+      },
+      {
+        type: "callout",
+        label: "One rule that applies everywhere:",
+        text: "Your first week is not the time to test the edges of the dress code. Dress one level up from what you think is expected. You can always adjust. You cannot undo a first impression.",
+      },
+    ],
+    checklist: [
+      "Research the dress code before buying anything",
+      "Choose and lay out five outfits before the week starts",
+      "Make sure everything is clean, pressed, and actually comfortable",
+      "Wear new shoes around the house first",
+    ],
+  },
+  {
+    id: 3,
+    title: "Video 5.3",
+    subtitle: "Hygiene at Work",
+    icon: "🧼",
+    color: "#5C7A6E",
+    intro: "Nobody talks about this out loud. We will. It matters more at work than it did in other settings.",
+    content: [
+      {
+        type: "subhead",
+        text: "The Daily Baseline",
+      },
+      {
+        type: "body",
+        text: "Shower or bathe daily. Use deodorant or antiperspirant every morning. Brush your teeth before you leave the house — and again after lunch if you can. Clean clothes every day. Nails trimmed and clean. Hair clean and managed. These are the non-negotiables.",
+      },
+      {
+        type: "subhead",
+        text: "On Scent",
+      },
+      {
+        type: "callout",
+        label: "The rule:",
+        text: "If you can smell your own scent from an arm's length away, it is too much for a shared workspace. Light or none is always the right call. Many people have sensory sensitivities or migraines — strong fragrance is one of the most common friction points in office culture.",
+      },
+      {
+        type: "subhead",
+        text: "If Daily Routines Are Hard",
+      },
+      {
+        type: "body",
+        text: "For some people, executive function makes daily hygiene routines genuinely difficult. Not because you do not care. Because the routine requires sequencing, initiation, and memory — and those are exactly the skills that can be harder for neurodiverse brains.",
+      },
+      {
+        type: "body",
+        text: "If that's you, this is worth building a system around. The goal is a routine that runs without you having to think about it.",
+      },
+      {
+        type: "tips",
+        items: [
+          "Put your hygiene items in one visible spot — on the counter, not in a drawer.",
+          "Attach hygiene tasks to something you already do. After coffee. Before you check your phone.",
+          "Use a simple checklist if it helps. No one needs to see it. It just needs to work.",
+        ],
+      },
+    ],
+    checklist: [
+      "Daily: shower, deodorant, clean clothes, teeth",
+      "Keep fragrance light or none for shared workspaces",
+      "Pack a small office kit: travel deodorant, gum or mints, stain remover pen",
+      "Design a hygiene routine before your first week starts",
+    ],
+  },
+  {
+    id: 4,
+    title: "Video 5.4",
+    subtitle: "Planning Your Commute",
+    icon: "🚗",
+    color: "#6B4E71",
+    intro: "Your commute is not just how you get there. It is part of your workday. How it goes in the morning affects how you show up.",
+    content: [
+      {
+        type: "subhead",
+        text: "Do a Dry Run",
+      },
+      {
+        type: "body",
+        text: "Before your first day, do your full commute at least once. Same route. Same time of day. Same mode of transportation. Not on a Saturday morning — on a Tuesday.",
+      },
+      {
+        type: "body",
+        text: "Find out where you park, where you enter, how long it actually takes, and where the surprises are. A construction zone, a train that runs late, a parking garage that fills up by 8:15. You want to know this in advance.",
+      },
+      {
+        type: "callout",
+        label: "Build in a buffer:",
+        text: "Add 15 to 20 minutes to whatever you think the commute will take. Not because you'll be late otherwise — but because arriving with a few minutes to spare does something specific for your nervous system. You get to take a breath. You get to orient. If you're early, sit in your car, walk around the block, get a coffee. That time is yours.",
+      },
+      {
+        type: "subhead",
+        text: "Logistics to Confirm Before Day One",
+      },
+      {
+        type: "checklist_inline",
+        items: [
+          "Where do you park? Is there a cost? Is it validated?",
+          "What entrance do you use? Do you need a badge?",
+          "Where do you go when you walk in?",
+          "Which stop or exit if you take transit?",
+          "Do you need a pass, a fare card, or a specific payment method?",
+        ],
+      },
+      {
+        type: "body",
+        text: "If you don't know the answers, email HR before you start. These are practical questions and every company has been asked them before.",
+      },
+    ],
+    checklist: [
+      "Do a commute dry run on a weekday before your start date",
+      "Confirm parking, entrance, and where to go when you walk in",
+      "Build 15–20 minutes into your planned arrival time",
+      "Email HR any logistics questions you still have",
+    ],
+  },
+  {
+    id: 5,
+    title: "Video 5.5",
+    subtitle: "What to Bring on Day One",
+    icon: "🎒",
+    color: "#8B5E3C",
+    intro: "Day one is not the day to figure out what you need. It is the day to show up with what you already know.",
+    content: [
+      {
+        type: "subhead",
+        text: "Documents and ID",
+      },
+      {
+        type: "body",
+        text: "HR will need to verify your identity and right to work. Bring two forms of ID — a driver's license or state ID plus your Social Security card is the most common combination. Your passport alone also works. Look up the I-9 form if you're not sure what qualifies.",
+      },
+      {
+        type: "body",
+        text: "Bring your direct deposit information too: your bank's routing number and account number. HR usually collects this on day one.",
+      },
+      {
+        type: "subhead",
+        text: "Your Day One Kit",
+      },
+      {
+        type: "cards",
+        items: [
+          { title: "Notebook + pen", desc: "You will be taking in a lot of information quickly. Writing helps, even in a digital-first workplace." },
+          { title: "Water bottle", desc: "You will be talking and listening all day. Hydration matters." },
+          { title: "Snacks", desc: "Lunch might not be figured out yet. Don't manage hunger on top of everything else." },
+          { title: "Phone + charger", desc: "You may be setting up two-factor authentication on company accounts." },
+          { title: "Extra layer", desc: "Office temperatures are always a surprise." },
+          { title: "Two forms of ID", desc: "Required for HR. Don't leave home without them." },
+        ],
+      },
+      {
+        type: "subhead",
+        text: "What to Expect",
+      },
+      {
+        type: "body",
+        text: "Day one will probably involve a lot of waiting. Waiting for access to be set up, for someone to come get you, for your computer to be configured. This is normal. Almost universal. Bring something to read if you need to fill quiet time.",
+      },
+      {
+        type: "body",
+        text: "You will meet a lot of people and forget most of their names. That is also normal. You are not supposed to remember everyone immediately. Give yourself permission to ask again.",
+      },
+      {
+        type: "callout",
+        label: "The goal of day one:",
+        text: "Orient. Look around. Listen more than you talk. Take notes. Show up as someone who is paying attention. That is exactly the right call.",
+      },
+    ],
+    checklist: [
+      "Two forms of ID (driver's license + Social Security card, or passport)",
+      "Direct deposit information (routing + account number)",
+      "Notebook and pen",
+      "Water bottle",
+      "Snacks",
+      "Phone charger",
+      "Light jacket or extra layer",
+    ],
+  },
+];
+
+function ProgressBar({ current, total }) {
+  return (
+    <div style={{ display: "flex", gap: 6, marginBottom: 20 }}>
+      {Array.from({ length: total }).map((_, i) => (
+        <div
+          key={i}
+          style={{
+            flex: 1,
+            height: 4,
+            borderRadius: 2,
+            backgroundColor: i <= current ? TEAL : "#DDE3E6",
+            transition: "background-color 0.3s",
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function ContentBlock({ block }) {
+  if (block.type === "body") {
+    return (
+      <p style={{ fontSize: 15, lineHeight: 1.7, color: "#333", margin: "0 0 14px 0" }}>
+        {block.text}
+      </p>
+    );
+  }
+  if (block.type === "subhead") {
+    return (
+      <p style={{ fontSize: 13, fontWeight: 700, color: TEAL, textTransform: "uppercase", letterSpacing: 1, margin: "20px 0 8px 0" }}>
+        {block.text}
+      </p>
+    );
+  }
+  if (block.type === "callout") {
+    return (
+      <div style={{ background: "#EEF7F7", borderLeft: `4px solid ${TEAL}`, padding: "14px 16px", borderRadius: "0 8px 8px 0", margin: "16px 0" }}>
+        <p style={{ fontSize: 13, fontWeight: 700, color: TEAL, margin: "0 0 4px 0" }}>{block.label}</p>
+        <p style={{ fontSize: 15, lineHeight: 1.65, color: "#333", margin: 0 }}>{block.text}</p>
+      </div>
+    );
+  }
+  if (block.type === "cards") {
+    return (
+      <div style={{ display: "grid", gridTemplateColumns: block.items.length === 3 ? "1fr 1fr 1fr" : "1fr 1fr", gap: 10, margin: "12px 0 16px 0" }}>
+        {block.items.map((item, i) => (
+          <div key={i} style={{ background: "#F5F7F8", borderRadius: 8, padding: "12px 14px", border: "1px solid #DDE3E6" }}>
+            <p style={{ fontSize: 13, fontWeight: 700, color: "#333", margin: "0 0 4px 0" }}>{item.title}</p>
+            <p style={{ fontSize: 13, lineHeight: 1.55, color: "#555", margin: 0 }}>{item.desc}</p>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  if (block.type === "tips") {
+    return (
+      <div style={{ margin: "12px 0 16px 0" }}>
+        {block.items.map((tip, i) => (
+          <div key={i} style={{ display: "flex", gap: 10, marginBottom: 8, alignItems: "flex-start" }}>
+            <span style={{ color: TEAL, fontWeight: 700, fontSize: 15, flexShrink: 0, marginTop: 2 }}>→</span>
+            <p style={{ fontSize: 15, lineHeight: 1.6, color: "#333", margin: 0 }}>{tip}</p>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  if (block.type === "checklist_inline") {
+    return (
+      <div style={{ margin: "12px 0 16px 0" }}>
+        {block.items.map((item, i) => (
+          <div key={i} style={{ display: "flex", gap: 10, marginBottom: 8, alignItems: "flex-start" }}>
+            <span style={{ color: "#AAAAAA", fontSize: 14, flexShrink: 0, marginTop: 2 }}>□</span>
+            <p style={{ fontSize: 15, lineHeight: 1.6, color: "#333", margin: 0 }}>{item}</p>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  return null;
+}
+
+function ChecklistSection({ items, checked, onToggle }) {
+  const done = items.filter((_, i) => checked[i]).length;
+  return (
+    <div style={{ marginTop: 20, background: "#F5F7F8", borderRadius: 10, padding: "16px 18px", border: "1px solid #DDE3E6" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+        <p style={{ fontSize: 13, fontWeight: 700, color: TEAL, textTransform: "uppercase", letterSpacing: 1, margin: 0 }}>Action Steps</p>
+        <span style={{ fontSize: 12, color: done === items.length ? TEAL : "#999", fontWeight: 600 }}>
+          {done}/{items.length} done
+        </span>
+      </div>
+      {items.map((item, i) => (
+        <div
+          key={i}
+          onClick={() => onToggle(i)}
+          style={{ display: "flex", gap: 10, marginBottom: 8, alignItems: "flex-start", cursor: "pointer", padding: "6px 8px", borderRadius: 6, transition: "background 0.15s", background: checked[i] ? "#E6F2F2" : "transparent" }}
+        >
+          <div style={{
+            width: 18, height: 18, borderRadius: 4, border: `2px solid ${checked[i] ? TEAL : "#CCCCCC"}`,
+            background: checked[i] ? TEAL : "white", flexShrink: 0, marginTop: 2,
+            display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.15s",
+          }}>
+            {checked[i] && <span style={{ color: "white", fontSize: 11, fontWeight: 700 }}>✓</span>}
+          </div>
+          <p style={{ fontSize: 14, lineHeight: 1.55, color: checked[i] ? "#777" : "#333", margin: 0, textDecoration: checked[i] ? "line-through" : "none", transition: "all 0.15s" }}>
+            {item}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Module5() {
+  const [current, setCurrent] = useState(0);
+  const [checkState, setCheckState] = useState(
+    modules.map((m) => m.checklist.map(() => false))
+  );
+
+  const mod = modules[current];
+
+  const toggleCheck = (modIdx, itemIdx) => {
+    setCheckState((prev) =>
+      prev.map((m, mi) =>
+        mi === modIdx ? m.map((v, ii) => (ii === itemIdx ? !v : v)) : m
+      )
+    );
+  };
+
+  const totalChecked = checkState.flat().filter(Boolean).length;
+  const totalItems = checkState.flat().length;
+
+  return (
+    <div style={{ fontFamily: "'Arial', sans-serif", minHeight: "100vh", background: "#F0F4F5", display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "24px 16px" }}>
+      <div style={{ width: "100%", maxWidth: 680 }}>
+
+        {/* Header */}
+        <div style={{ background: TEAL, borderRadius: 14, padding: "22px 26px", marginBottom: 16, color: "white" }}>
+          <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", opacity: 0.75, margin: "0 0 6px 0" }}>The GroundWork Collective</p>
+          <h1 style={{ fontSize: 22, fontWeight: 800, margin: "0 0 4px 0" }}>Module 5: How to Prep to Start</h1>
+          <p style={{ fontSize: 14, opacity: 0.85, margin: "0 0 16px 0" }}>What Nobody Tells You Before Day One</p>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ display: "flex", gap: 6 }}>
+              {modules.map((m, i) => (
+                <button
+                  key={m.id}
+                  onClick={() => setCurrent(i)}
+                  style={{
+                    width: 32, height: 32, borderRadius: "50%", border: "2px solid",
+                    borderColor: i === current ? "white" : "rgba(255,255,255,0.4)",
+                    background: i === current ? "white" : "rgba(255,255,255,0.15)",
+                    color: i === current ? TEAL : "white",
+                    fontWeight: 700, fontSize: 13, cursor: "pointer",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    transition: "all 0.2s",
+                  }}
+                >
+                  {m.icon}
+                </button>
+              ))}
+            </div>
+            <span style={{ fontSize: 13, opacity: 0.8 }}>{totalChecked}/{totalItems} steps done</span>
+          </div>
+        </div>
+
+        {/* Main card */}
+        <div style={{ background: "white", borderRadius: 14, padding: "24px 28px", boxShadow: "0 2px 12px rgba(0,0,0,0.06)", marginBottom: 16 }}>
+
+          {/* Video header */}
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+            <span style={{ fontSize: 28 }}>{mod.icon}</span>
+            <div>
+              <p style={{ fontSize: 12, fontWeight: 700, color: TEAL, textTransform: "uppercase", letterSpacing: 1, margin: "0 0 2px 0" }}>{mod.title}</p>
+              <h2 style={{ fontSize: 19, fontWeight: 800, color: "#1A2A2D", margin: 0 }}>{mod.subtitle}</h2>
+            </div>
+          </div>
+
+          {/* Intro */}
+          <div style={{ background: "#F5F7F8", borderRadius: 8, padding: "12px 14px", marginBottom: 20, borderLeft: "4px solid #DDE3E6" }}>
+            <p style={{ fontSize: 15, lineHeight: 1.6, color: "#444", fontStyle: "italic", margin: 0 }}>{mod.intro}</p>
+          </div>
+
+          {/* Content */}
+          <div>
+            {mod.content.map((block, i) => (
+              <ContentBlock key={i} block={block} />
+            ))}
+          </div>
+
+          {/* Checklist */}
+          {mod.checklist.length > 0 && (
+            <ChecklistSection
+              items={mod.checklist}
+              checked={checkState[current]}
+              onToggle={(i) => toggleCheck(current, i)}
+            />
+          )}
+        </div>
+
+        {/* Navigation */}
+        <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+          <button
+            onClick={() => setCurrent((p) => Math.max(0, p - 1))}
+            disabled={current === 0}
+            style={{
+              flex: 1, padding: "13px 0", borderRadius: 10, border: "2px solid #DDE3E6",
+              background: current === 0 ? "#F5F7F8" : "white",
+              color: current === 0 ? "#BBBBBB" : "#333",
+              fontWeight: 700, fontSize: 14, cursor: current === 0 ? "default" : "pointer",
+              transition: "all 0.2s",
+            }}
+          >
+            ← Previous
+          </button>
+          {current < modules.length - 1 ? (
+            <button
+              onClick={() => setCurrent((p) => Math.min(modules.length - 1, p + 1))}
+              style={{
+                flex: 2, padding: "13px 0", borderRadius: 10, border: "none",
+                background: TEAL, color: "white", fontWeight: 700, fontSize: 14, cursor: "pointer",
+                transition: "all 0.2s",
+              }}
+            >
+              Next: {modules[current + 1].subtitle} →
+            </button>
+          ) : (
+            <div style={{ flex: 2, padding: "13px 16px", borderRadius: 10, background: "#E6F2F2", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <p style={{ color: TEAL, fontWeight: 800, fontSize: 14, margin: 0 }}>
+                {totalChecked === totalItems ? "✓ All set. You are ready." : `${totalItems - totalChecked} action steps left across this module.`}
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <p style={{ textAlign: "center", fontSize: 12, color: "#AAAAAA", marginTop: 20 }}>
+          The GroundWork Collective · Module 5 of 11 · Built for the way you think
+        </p>
+      </div>
+    </div>
+  );
+}
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<Module5 />);
+  </script>
+</body>
+</html>

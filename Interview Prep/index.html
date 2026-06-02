@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 3: Interview Prep Tool | GroundWork Collective</title>
+<style>
+  :root {
+    --navy: #1C3557;
+    --teal: #00838F;
+    --mid-blue: #2E75B6;
+    --orange: #E87722;
+    --light-teal: #E0F4F5;
+    --light-navy: #E8EDF3;
+    --light-orange: #FDF2E9;
+    --text: #2D2D2D;
+    --subtle: #6B7280;
+    --border: #D1D5DB;
+    --white: #FFFFFF;
+    --bg: #F8FAFC;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  header {
+    background: var(--navy);
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  header .brand { color: white; font-size: 14px; font-weight: 600; letter-spacing: 0.05em; opacity: 0.9; }
+  header .module-label { color: var(--teal); font-size: 20px; font-weight: 700; }
+
+  .progress-bar-wrap {
+    background: var(--navy);
+    padding: 0 32px 16px;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .prog-step {
+    flex: 1;
+    height: 4px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  .prog-step.active { background: var(--teal); }
+  .prog-step.done { background: rgba(0,131,143,0.5); }
+  .prog-label {
+    color: rgba(255,255,255,0.6);
+    font-size: 11px;
+    min-width: 90px;
+    text-align: right;
+  }
+
+  .container {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+  }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .section-header {
+    margin-bottom: 24px;
+  }
+  .section-tag {
+    display: inline-block;
+    background: var(--teal);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 3px 10px;
+    border-radius: 3px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  .section-header h2 {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  .section-header p {
+    color: var(--subtle);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* Cards */
+  .card {
+    background: white;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .card h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card h3 .icon {
+    width: 28px; height: 28px;
+    background: var(--light-teal);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  /* Checklist items */
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #F3F4F6;
+    cursor: pointer;
+    user-select: none;
+  }
+  .check-item:last-child { border-bottom: none; }
+  .check-item:hover { background: #FAFAFA; margin: 0 -24px; padding: 10px 24px; }
+
+  .check-box {
+    width: 22px; height: 22px;
+    border: 2px solid var(--border);
+    border-radius: 5px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .check-box.checked {
+    background: var(--teal);
+    border-color: var(--teal);
+    color: white;
+  }
+  .check-box.checked::after { content: '✓'; font-size: 13px; font-weight: 700; }
+
+  .check-label { font-size: 14px; line-height: 1.5; color: var(--text); flex: 1; }
+  .check-label.done { text-decoration: line-through; color: var(--subtle); }
+
+  /* Progress indicator */
+  .progress-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--light-navy);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 12px;
+  }
+  .progress-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); }
+
+  /* Format selector */
+  .format-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .format-card {
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: white;
+  }
+  .format-card:hover { border-color: var(--teal); background: var(--light-teal); }
+  .format-card.selected { border-color: var(--teal); background: var(--light-teal); }
+  .format-card .format-icon { font-size: 24px; margin-bottom: 6px; }
+  .format-card .format-name { font-weight: 700; font-size: 14px; color: var(--navy); }
+  .format-card .format-desc { font-size: 12px; color: var(--subtle); margin-top: 3px; line-height: 1.4; }
+
+  /* Tips panel */
+  .tips-panel {
+    background: var(--light-teal);
+    border-left: 4px solid var(--teal);
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin-top: 16px;
+    display: none;
+  }
+  .tips-panel.visible { display: block; }
+  .tips-panel h4 { font-size: 13px; font-weight: 700; color: var(--teal); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .tips-panel ul { list-style: none; padding: 0; }
+  .tips-panel ul li { font-size: 14px; color: var(--text); padding: 4px 0; padding-left: 16px; position: relative; line-height: 1.5; }
+  .tips-panel ul li::before { content: '→'; position: absolute; left: 0; color: var(--teal); font-weight: 700; }
+
+  /* Question builder */
+  .question-bank {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .q-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: #F9FAFB;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .q-item:hover { border-color: var(--mid-blue); background: #EEF4FB; }
+  .q-item.added { border-color: var(--teal); background: var(--light-teal); }
+  .q-item .q-text { font-size: 14px; flex: 1; line-height: 1.4; }
+  .q-add-btn {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    background: var(--mid-blue);
+    color: white;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .q-add-btn.added { background: var(--teal); }
+  .q-add-btn:hover { opacity: 0.85; }
+
+  .my-questions {
+    background: var(--light-navy);
+    border-radius: 8px;
+    padding: 16px;
+    min-height: 80px;
+  }
+  .my-questions h4 { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 10px; }
+  .my-questions .empty { font-size: 13px; color: var(--subtle); font-style: italic; }
+  .my-q-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(28,53,87,0.1);
+    font-size: 13px;
+  }
+  .my-q-item:last-child { border-bottom: none; }
+  .my-q-item .remove { color: var(--subtle); cursor: pointer; font-size: 16px; line-height: 1; flex-shrink: 0; }
+  .my-q-item .remove:hover { color: #DC2626; }
+  .my-q-num { font-weight: 700; color: var(--teal); min-width: 20px; }
+
+  /* Custom question input */
+  .custom-q-wrap { display: flex; gap: 8px; margin-top: 12px; }
+  .custom-q-input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .custom-q-input:focus { border-color: var(--teal); }
+  .custom-q-btn {
+    padding: 10px 16px;
+    background: var(--navy);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    white-space: nowrap;
+  }
+  .custom-q-btn:hover { background: #152d4a; }
+
+  /* STAR practice */
+  .star-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .star-q {
+    padding: 16px 20px;
+    background: var(--navy);
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+  }
+  .star-q .toggle { font-size: 18px; transition: transform 0.2s; }
+  .star-q.open .toggle { transform: rotate(45deg); }
+  .star-fields { padding: 20px; display: none; }
+  .star-fields.open { display: block; }
+  .star-field { margin-bottom: 16px; }
+  .star-label {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--orange); margin-bottom: 6px;
+  }
+  .star-label .badge {
+    background: var(--orange); color: white;
+    padding: 2px 7px; border-radius: 3px; font-size: 11px;
+  }
+  .star-hint { font-size: 12px; color: var(--subtle); margin-bottom: 6px; }
+  .star-textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 70px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .star-textarea:focus { border-color: var(--teal); }
+  .star-complete-btn {
+    padding: 8px 16px;
+    background: var(--teal);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    margin-top: 4px;
+  }
+
+  /* Pre-interview email builder */
+  .email-preview {
+    background: #F9FAFB;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text);
+    white-space: pre-wrap;
+    margin-top: 16px;
+    font-family: 'Segoe UI', Arial, sans-serif;
+  }
+  .email-toggle-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 0; border-bottom: 1px solid #F3F4F6;
+    cursor: pointer; user-select: none;
+  }
+  .email-toggle-item:last-child { border-bottom: none; }
+  .toggle-box {
+    width: 38px; height: 22px;
+    background: var(--border);
+    border-radius: 11px;
+    position: relative;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+  .toggle-box::after {
+    content: '';
+    position: absolute;
+    width: 16px; height: 16px;
+    background: white;
+    border-radius: 50%;
+    top: 3px; left: 3px;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .toggle-box.on { background: var(--teal); }
+  .toggle-box.on::after { transform: translateX(16px); }
+  .toggle-label { font-size: 14px; flex: 1; }
+
+  .copy-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px;
+    background: var(--navy);
+    color: white;
+    border: none; border-radius: 6px;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer; font-family: inherit;
+    margin-top: 12px;
+  }
+  .copy-btn:hover { background: #152d4a; }
+  .copy-btn.copied { background: var(--teal); }
+
+  /* Callout */
+  .callout {
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 16px 0;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .callout.teal { background: var(--light-teal); border-left: 4px solid var(--teal); }
+  .callout.orange { background: var(--light-orange); border-left: 4px solid var(--orange); }
+  .callout.navy { background: var(--light-navy); border-left: 4px solid var(--navy); }
+  .callout strong { display: block; margin-bottom: 4px; }
+
+  /* Nav buttons */
+  .nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 32px;
+    gap: 12px;
+  }
+  .btn {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    border: none;
+    transition: all 0.2s;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .btn-primary { background: var(--navy); color: white; }
+  .btn-primary:hover { background: #152d4a; }
+  .btn-secondary { background: white; color: var(--navy); border: 2px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--navy); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* Section tabs */
+  .tab-bar {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 24px;
+    overflow-x: auto;
+  }
+  .tab {
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--subtle);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .tab:hover { color: var(--teal); }
+  .tab.active { color: var(--teal); border-bottom-color: var(--teal); }
+
+  /* Summary page */
+  .summary-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1px solid #F3F4F6;
+    font-size: 14px;
+  }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-row .label { color: var(--subtle); font-size: 13px; }
+  .summary-row .value { font-weight: 600; color: var(--navy); }
+  .badge-complete { background: #D1FAE5; color: #065F46; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; }
+  .badge-partial { background: #FEF3C7; color: #92400E; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .format-grid { grid-template-columns: 1fr 1fr; }
+    header { padding: 16px 20px; }
+    .container { padding: 20px 16px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">GROUNDWORK COLLECTIVE</div>
+  <div class="module-label">Module 3: The Interview</div>
+</header>
+
+<div class="progress-bar-wrap">
+  <div class="prog-step active" onclick="goTo(0)" title="Format"></div>
+  <div class="prog-step" onclick="goTo(1)" title="Night Before"></div>
+  <div class="prog-step" onclick="goTo(2)" title="Pre-Interview Email"></div>
+  <div class="prog-step" onclick="goTo(3)" title="Questions to Ask"></div>
+  <div class="prog-step" onclick="goTo(4)" title="STAR Practice"></div>
+  <div class="prog-step" onclick="goTo(5)" title="Summary"></div>
+  <div class="prog-label" id="prog-label">Step 1 of 6</div>
+</div>
+
+<div class="container">
+
+  <!-- SECTION 0: Format -->
+  <div class="section active" id="sec-0">
+    <div class="section-header">
+      <div class="section-tag">3.1 Know Your Format</div>
+      <h2>What kind of interview do you have?</h2>
+      <p>Select your format. You'll get specific tips for preparing for it.</p>
+    </div>
+
+    <div class="format-grid" id="format-grid">
+      <div class="format-card" onclick="selectFormat('phone')" data-fmt="phone">
+        <div class="format-icon">📞</div>
+        <div class="format-name">Phone Screen</div>
+        <div class="format-desc">15–30 min, first filter, no video</div>
+      </div>
+      <div class="format-card" onclick="selectFormat('video-live')" data-fmt="video-live">
+        <div class="format-icon">🎥</div>
+        <div class="format-name">Live Video</div>
+        <div class="format-desc">Zoom, Teams, Google Meet</div>
+      </div>
+      <div class="format-card" onclick="selectFormat('video-oneway')" data-fmt="video-oneway">
+        <div class="format-icon">⏺️</div>
+        <div class="format-name">One-Way Video</div>
+        <div class="format-desc">You record; they review later</div>
+      </div>
+      <div class="format-card" onclick="selectFormat('inperson-1on1')" data-fmt="inperson-1on1">
+        <div class="format-icon">🤝</div>
+        <div class="format-name">In-Person: 1-on-1</div>
+        <div class="format-desc">One interviewer, direct conversation</div>
+      </div>
+      <div class="format-card" onclick="selectFormat('inperson-panel')" data-fmt="inperson-panel">
+        <div class="format-icon">👥</div>
+        <div class="format-name">In-Person: Panel</div>
+        <div class="format-desc">Multiple interviewers at once</div>
+      </div>
+      <div class="format-card" onclick="selectFormat('inperson-series')" data-fmt="inperson-series">
+        <div class="format-icon">🔄</div>
+        <div class="format-name">In-Person: Series</div>
+        <div class="format-desc">Back-to-back conversations</div>
+      </div>
+    </div>
+
+    <div class="tips-panel" id="format-tips"></div>
+
+    <div class="nav-row">
+      <div></div>
+      <button class="btn btn-primary" onclick="goTo(1)">Next: Night Before Checklist →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 1: Night Before Checklist -->
+  <div class="section" id="sec-1">
+    <div class="section-header">
+      <div class="section-tag">3.2 Show Up Ready</div>
+      <h2>Night Before Checklist</h2>
+      <p>Check off each item as you complete it. Get these done before interview day.</p>
+    </div>
+
+    <div class="card">
+      <h3><span class="icon">🌙</span> The Night Before</h3>
+      <div class="progress-pill"><span class="dot"></span> <span id="night-progress">0 of 8 done</span></div>
+      <div id="night-checklist">
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Shower and handle all hygiene basics</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Lay out full outfit — check for stains, wrinkles, missing buttons</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Packed bag: resume copies (3+), notepad, pen, any requested documents</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Set two alarms for the morning</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Confirmed address, mapped route, know parking or transit</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Reviewed names of who you're meeting with</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Reviewed your three questions for the interviewer</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Tech check (if video): camera, mic, lighting, backup plan</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3><span class="icon">☀️</span> Morning Of</h3>
+      <div class="progress-pill"><span class="dot"></span> <span id="morning-progress">0 of 5 done</span></div>
+      <div id="morning-checklist">
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Eat something — low blood sugar affects focus</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Brush teeth after coffee</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Check appearance in natural light</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Left earlier than needed — arrive 10–15 min early</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Silence phone before entering the building</div></div>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-secondary" onclick="goTo(0)">← Back</button>
+      <button class="btn btn-primary" onclick="goTo(2)">Next: Pre-Interview Email →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 2: Pre-Interview Email -->
+  <div class="section" id="sec-2">
+    <div class="section-header">
+      <div class="section-tag">3.3 Before You Walk In</div>
+      <h2>Build your pre-interview email</h2>
+      <p>Toggle the questions you need answered. Your email draft updates in real time.</p>
+    </div>
+
+    <div class="card">
+      <h3><span class="icon">📧</span> What do you need to know?</h3>
+      <div id="email-toggles">
+        <div class="email-toggle-item" onclick="toggleEmailItem(this)" data-key="names">
+          <div class="toggle-box on"></div>
+          <div class="toggle-label">Who will I be meeting with? (names and titles)</div>
+        </div>
+        <div class="email-toggle-item" onclick="toggleEmailItem(this)" data-key="format">
+          <div class="toggle-box on"></div>
+          <div class="toggle-label">Confirm the interview format and platform</div>
+        </div>
+        <div class="email-toggle-item" onclick="toggleEmailItem(this)" data-key="duration">
+          <div class="toggle-box on"></div>
+          <div class="toggle-label">How long should I plan for?</div>
+        </div>
+        <div class="email-toggle-item" onclick="toggleEmailItem(this)" data-key="bring">
+          <div class="toggle-box"></div>
+          <div class="toggle-label">Is there anything specific I should bring or prepare?</div>
+        </div>
+        <div class="email-toggle-item" onclick="toggleEmailItem(this)" data-key="location">
+          <div class="toggle-box on"></div>
+          <div class="toggle-label">Building entrance and parking/transit recommendation</div>
+        </div>
+        <div class="email-toggle-item" onclick="toggleEmailItem(this)" data-key="questions">
+          <div class="toggle-box"></div>
+          <div class="toggle-label">Will I receive questions or topic areas in advance?</div>
+        </div>
+        <div class="email-toggle-item" onclick="toggleEmailItem(this)" data-key="accommodate">
+          <div class="toggle-box"></div>
+          <div class="toggle-label">Request a quiet space or low-stimulation environment</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3><span class="icon">✉️</span> Your email draft</h3>
+      <div class="email-preview" id="email-preview"></div>
+      <button class="copy-btn" id="copy-btn" onclick="copyEmail()">📋 Copy to clipboard</button>
+    </div>
+
+    <div class="callout teal">
+      <strong>Remember:</strong> This email signals that you're organized and prepared before you even arrive. Short, professional, and direct is the goal. You don't need to over-explain why you're asking.
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-secondary" onclick="goTo(1)">← Back</button>
+      <button class="btn btn-primary" onclick="goTo(3)">Next: Questions to Ask →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 3: Questions to Ask -->
+  <div class="section" id="sec-3">
+    <div class="section-header">
+      <div class="section-tag">3.3 Questions for the Interviewer</div>
+      <h2>Build your question list</h2>
+      <p>Add at least three questions from the bank below, or write your own. Bring these to the interview.</p>
+    </div>
+
+    <div class="tab-bar">
+      <div class="tab active" onclick="switchQTab('bank', this)">Question Bank</div>
+      <div class="tab" onclick="switchQTab('mylist', this)">My List (<span id="my-q-count">0</span>)</div>
+    </div>
+
+    <div id="q-tab-bank">
+      <div class="card" style="padding-top: 16px;">
+        <h3 style="margin-bottom: 16px;"><span class="icon">💡</span> Role and Success</h3>
+        <div class="question-bank" id="q-bank-role">
+          <div class="q-item" data-qid="q1"><span class="q-text">What does success look like in this role in the first 90 days?</span><button class="q-add-btn" onclick="addQuestion(this, 'What does success look like in this role in the first 90 days?')">+ Add</button></div>
+          <div class="q-item" data-qid="q2"><span class="q-text">What's the biggest challenge someone new to this role typically faces?</span><button class="q-add-btn" onclick="addQuestion(this, 'What\'s the biggest challenge someone new to this role typically faces?')">+ Add</button></div>
+          <div class="q-item" data-qid="q3"><span class="q-text">How has this role evolved over the past year?</span><button class="q-add-btn" onclick="addQuestion(this, 'How has this role evolved over the past year?')">+ Add</button></div>
+        </div>
+      </div>
+      <div class="card" style="padding-top: 16px;">
+        <h3 style="margin-bottom: 16px;"><span class="icon">👥</span> Team and Culture</h3>
+        <div class="question-bank" id="q-bank-team">
+          <div class="q-item" data-qid="q4"><span class="q-text">Can you describe the team I'd be working with most closely?</span><button class="q-add-btn" onclick="addQuestion(this, 'Can you describe the team I\'d be working with most closely?')">+ Add</button></div>
+          <div class="q-item" data-qid="q5"><span class="q-text">What do you enjoy most about working here?</span><button class="q-add-btn" onclick="addQuestion(this, 'What do you enjoy most about working here?')">+ Add</button></div>
+          <div class="q-item" data-qid="q6"><span class="q-text">How does the team handle feedback and communication?</span><button class="q-add-btn" onclick="addQuestion(this, 'How does the team handle feedback and communication?')">+ Add</button></div>
+        </div>
+      </div>
+      <div class="card" style="padding-top: 16px;">
+        <h3 style="margin-bottom: 16px;"><span class="icon">🔮</span> Process and Next Steps</h3>
+        <div class="question-bank" id="q-bank-process">
+          <div class="q-item" data-qid="q7"><span class="q-text">What are the next steps in your hiring process?</span><button class="q-add-btn" onclick="addQuestion(this, 'What are the next steps in your hiring process?')">+ Add</button></div>
+          <div class="q-item" data-qid="q8"><span class="q-text">What does onboarding typically look like for this role?</span><button class="q-add-btn" onclick="addQuestion(this, 'What does onboarding typically look like for this role?')">+ Add</button></div>
+          <div class="q-item" data-qid="q9"><span class="q-text">Is there anything about my background you'd like me to clarify?</span><button class="q-add-btn" onclick="addQuestion(this, 'Is there anything about my background you\'d like me to clarify?')">+ Add</button></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon">✏️</span> Add your own question</h3>
+        <div class="custom-q-wrap">
+          <input class="custom-q-input" id="custom-q-input" type="text" placeholder="Type a question specific to this role or company..." />
+          <button class="custom-q-btn" onclick="addCustomQuestion()">Add</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="q-tab-mylist" style="display:none;">
+      <div class="card">
+        <h3><span class="icon">📋</span> Your question list</h3>
+        <div class="my-questions" id="my-questions-list">
+          <div class="empty" id="q-empty-msg">No questions added yet. Go to the Question Bank to add some.</div>
+        </div>
+        <div class="callout orange" style="margin-top: 16px;">
+          <strong>Aim for at least 3.</strong> Having your questions written down means you won't forget them when the moment comes. Bring this list to your interview.
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-secondary" onclick="goTo(2)">← Back</button>
+      <button class="btn btn-primary" onclick="goTo(4)">Next: STAR Practice →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 4: STAR Practice -->
+  <div class="section" id="sec-4">
+    <div class="section-header">
+      <div class="section-tag">3.4 Mock Interview Practice</div>
+      <h2>Practice with STAR</h2>
+      <p>Pick a question and draft your answer using the Situation, Task, Action, Result structure. This is a scratchpad — no one sees this but you.</p>
+    </div>
+
+    <div class="callout navy" style="margin-bottom: 20px;">
+      <strong>STAR is a structure, not a script.</strong> Use it to keep your answers focused and complete. Practice enough that the structure becomes instinct.
+    </div>
+
+    <div id="star-cards">
+      <div class="star-card">
+        <div class="star-q" onclick="toggleStar(this)">
+          <span>"Tell me about yourself."</span>
+          <span class="toggle">+</span>
+        </div>
+        <div class="star-fields">
+          <div class="star-field">
+            <div class="star-label"><span class="badge">S</span> Situation</div>
+            <div class="star-hint">Who are you professionally? Where are you coming from?</div>
+            <textarea class="star-textarea" placeholder="My background is in... I recently..."></textarea>
+          </div>
+          <div class="star-field">
+            <div class="star-label"><span class="badge">T</span> Task / Focus</div>
+            <div class="star-hint">What are you focused on now? What are you looking for?</div>
+            <textarea class="star-textarea" placeholder="Right now I'm focused on... I'm looking for a role where..."></textarea>
+          </div>
+          <div class="star-field">
+            <div class="star-label"><span class="badge">A</span> Action / Strengths</div>
+            <div class="star-hint">What do you bring? What's your strongest asset?</div>
+            <textarea class="star-textarea" placeholder="I'm particularly strong at... I bring..."></textarea>
+          </div>
+          <div class="star-field">
+            <div class="star-label"><span class="badge">R</span> Result / Why This Role</div>
+            <div class="star-hint">Connect your story to this specific opportunity.</div>
+            <textarea class="star-textarea" placeholder="That's what draws me to this role because..."></textarea>
+          </div>
+          <button class="star-complete-btn" onclick="markStarDone(this)">Mark as practiced ✓</button>
+        </div>
+      </div>
+
+      <div class="star-card">
+        <div class="star-q" onclick="toggleStar(this)">
+          <span>"Tell me about a time you handled a challenge."</span>
+          <span class="toggle">+</span>
+        </div>
+        <div class="star-fields">
+          <div class="star-field">
+            <div class="star-label"><span class="badge">S</span> Situation</div>
+            <div class="star-hint">What was the context? What was happening?</div>
+            <textarea class="star-textarea" placeholder="I was working on... / I was in a role where..."></textarea>
+          </div>
+          <div class="star-field">
+            <div class="star-label"><span class="badge">T</span> Task</div>
+            <div class="star-hint">What was your specific responsibility in that situation?</div>
+            <textarea class="star-textarea" placeholder="My job was to... / I was responsible for..."></textarea>
+          </div>
+          <div class="star-field">
+            <div class="star-label"><span class="badge">A</span> Action</div>
+            <div class="star-hint">What did YOU specifically do? Be concrete about your choices.</div>
+            <textarea class="star-textarea" placeholder="I decided to... / I approached it by..."></textarea>
+          </div>
+          <div class="star-field">
+            <div class="star-label"><span class="badge">R</span> Result</div>
+            <div class="star-hint">What happened? What did you learn?</div>
+            <textarea class="star-textarea" placeholder="As a result... / What I learned from this was..."></textarea>
+          </div>
+          <button class="star-complete-btn" onclick="markStarDone(this)">Mark as practiced ✓</button>
+        </div>
+      </div>
+
+      <div class="star-card">
+        <div class="star-q" onclick="toggleStar(this)">
+          <span>"Tell me about a time you worked with a difficult team member."</span>
+          <span class="toggle">+</span>
+        </div>
+        <div class="star-fields">
+          <div class="star-field">
+            <div class="star-label"><span class="badge">S</span> Situation</div>
+            <div class="star-hint">Brief context. What was the project or team dynamic?</div>
+            <textarea class="star-textarea" placeholder="I was on a team that..."></textarea>
+          </div>
+          <div class="star-field">
+            <div class="star-label"><span class="badge">T</span> Task</div>
+            <div class="star-hint">What outcome was needed despite the friction?</div>
+            <textarea class="star-textarea" placeholder="We needed to deliver... / My role required..."></textarea>
+          </div>
+          <div class="star-field">
+            <div class="star-label"><span class="badge">A</span> Action</div>
+            <div class="star-hint">What specific steps did you take to address it?</div>
+            <textarea class="star-textarea" placeholder="I initiated a conversation... / I decided to..."></textarea>
+          </div>
+          <div class="star-field">
+            <div class="star-label"><span class="badge">R</span> Result</div>
+            <div class="star-hint">What happened? How did things resolve?</div>
+            <textarea class="star-textarea" placeholder="We were able to... / I learned..."></textarea>
+          </div>
+          <button class="star-complete-btn" onclick="markStarDone(this)">Mark as practiced ✓</button>
+        </div>
+      </div>
+
+      <div class="star-card">
+        <div class="star-q" onclick="toggleStar(this)">
+          <span>"What's an area you're working to improve?"</span>
+          <span class="toggle">+</span>
+        </div>
+        <div class="star-fields">
+          <div class="star-field">
+            <div class="star-label"><span class="badge">S</span> Situation / Honest Context</div>
+            <div class="star-hint">Name something real. Interviewers can tell when this is rehearsed.</div>
+            <textarea class="star-textarea" placeholder="One area I've been working on is..."></textarea>
+          </div>
+          <div class="star-field">
+            <div class="star-label"><span class="badge">T</span> Task / Why It Matters</div>
+            <div class="star-hint">Why does improving this matter to you professionally?</div>
+            <textarea class="star-textarea" placeholder="This matters because in my work, I need to..."></textarea>
+          </div>
+          <div class="star-field">
+            <div class="star-label"><span class="badge">A</span> Action / What You're Doing</div>
+            <div class="star-hint">What concrete steps are you taking to improve?</div>
+            <textarea class="star-textarea" placeholder="I've been working on this by... / I recently started..."></textarea>
+          </div>
+          <div class="star-field">
+            <div class="star-label"><span class="badge">R</span> Result / Progress</div>
+            <div class="star-hint">What improvement have you seen, even if it's ongoing?</div>
+            <textarea class="star-textarea" placeholder="I've noticed... / I'm seeing progress in..."></textarea>
+          </div>
+          <button class="star-complete-btn" onclick="markStarDone(this)">Mark as practiced ✓</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout teal" style="margin-top: 16px;">
+      <strong>Feedback checklist for mock interviews:</strong>
+      After your practice run, ask: Did my answer address what was asked? Did I go too long? Was there a moment where I lost you? What one thing should I say differently?
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-secondary" onclick="goTo(3)">← Back</button>
+      <button class="btn btn-primary" onclick="goTo(5)">See My Summary →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 5: Summary -->
+  <div class="section" id="sec-5">
+    <div class="section-header">
+      <div class="section-tag">Interview Prep Summary</div>
+      <h2>Here's where you stand</h2>
+      <p>A quick look at what you've completed across all four prep areas.</p>
+    </div>
+
+    <div class="card">
+      <div id="summary-rows"></div>
+    </div>
+
+    <div class="callout teal" id="summary-callout">
+      Keep going. Every section you complete is one less thing to worry about on interview day.
+    </div>
+
+    <div class="card" style="margin-top: 16px;">
+      <h3><span class="icon">📌</span> Quick reminders</h3>
+      <div class="check-item" style="cursor: default;"><div class="check-box checked"></div><div class="check-label">Ask for accommodations before the interview if you need them. You don't have to disclose a diagnosis.</div></div>
+      <div class="check-item" style="cursor: default;"><div class="check-box checked"></div><div class="check-label">Have your question list written down and bring it. Don't rely on memory.</div></div>
+      <div class="check-item" style="cursor: default;"><div class="check-box checked"></div><div class="check-label">Arrive 10–15 minutes early. Greet the front desk warmly. They often share impressions.</div></div>
+      <div class="check-item" style="cursor: default;"><div class="check-box checked"></div><div class="check-label">Practice out loud, not just in your head. Your brain will skip things your mouth stumbles over.</div></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-secondary" onclick="goTo(4)">← Back</button>
+      <button class="btn btn-primary" onclick="goTo(0)">Start Over</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// State
+let state = {
+  currentSection: 0,
+  selectedFormat: null,
+  emailToggles: { names: true, format: true, duration: true, bring: false, location: true, questions: false, accommodate: false },
+  myQuestions: [],
+  starDone: [],
+};
+
+const formatTips = {
+  phone: {
+    title: 'Phone Screen Tips',
+    tips: ['Find a quiet room — background noise reads as unprepared.', 'Have your resume in front of you. It\'s okay to reference it.', 'Stand or sit up straight. Your posture changes your voice.', 'Smile. It actually comes through in how you sound.', 'It\'s okay to pause before answering. You don\'t need to fill every silence.']
+  },
+  'video-live': {
+    title: 'Live Video Tips',
+    tips: ['Test camera, mic, and lighting the day before — not the day of.', 'Look at the camera lens when you speak, not at your own face on screen.', 'Use a plain, neutral background. Close other tabs. Silence notifications.', 'Have a backup plan ready if your connection drops. Mention it upfront.', 'Dress fully — top and bottom. It affects how you feel and carry yourself.']
+  },
+  'video-oneway': {
+    title: 'One-Way Video Tips',
+    tips: ['Read the instructions twice before starting.', 'Retakes are usually limited. Don\'t waste them on warmups.', 'Look directly at the camera lens, not the screen.', 'Dress and treat it exactly like a live interview.', 'Record a test video first to check your framing, lighting, and audio.']
+  },
+  'inperson-1on1': {
+    title: 'In-Person 1-on-1 Tips',
+    tips: ['Map the location the day before. Know the exact entrance.', 'Arrive 10–15 minutes early. Not earlier.', 'Greet the front desk warmly — they often share impressions.', 'Bring three printed copies of your resume and a notepad.', 'Make steady eye contact. You don\'t have to maintain it constantly — that\'s uncomfortable. Just natural and engaged.']
+  },
+  'inperson-panel': {
+    title: 'In-Person Panel Tips',
+    tips: ['Get the names of panel members in advance if you can. Use them.', 'Address your answer to the person who asked — but briefly include the others.', 'Don\'t be thrown by people taking notes. It\'s standard practice.', 'Prepare for more questions and a longer conversation than a 1-on-1.', 'It\'s okay to ask: "Who would I be working most closely with?" — it helps you direct the conversation.']
+  },
+  'inperson-series': {
+    title: 'In-Person Series Tips',
+    tips: ['You will repeat yourself. That\'s fine. Stay consistent across conversations.', 'Each interviewer evaluates you independently. Treat each conversation as fresh.', 'It\'s okay to ask the coordinator how many conversations to plan for.', 'Bring enough resume copies for every person you might meet.', 'Energy management matters. Take a breath between conversations when you can.']
+  }
+};
+
+function selectFormat(fmt) {
+  state.selectedFormat = fmt;
+  document.querySelectorAll('.format-card').forEach(c => c.classList.remove('selected'));
+  document.querySelector(`[data-fmt="${fmt}"]`).classList.add('selected');
+  const panel = document.getElementById('format-tips');
+  const tips = formatTips[fmt];
+  panel.innerHTML = `<h4>${tips.title}</h4><ul>${tips.tips.map(t => `<li>${t}</li>`).join('')}</ul>`;
+  panel.classList.add('visible');
+}
+
+function toggleCheck(item) {
+  const box = item.querySelector('.check-box');
+  const label = item.querySelector('.check-label');
+  box.classList.toggle('checked');
+  label.classList.toggle('done');
+  updateChecklistProgress();
+}
+
+function updateChecklistProgress() {
+  const nightItems = document.querySelectorAll('#night-checklist .check-box');
+  const nightDone = Array.from(nightItems).filter(b => b.classList.contains('checked')).length;
+  document.getElementById('night-progress').textContent = `${nightDone} of ${nightItems.length} done`;
+
+  const morningItems = document.querySelectorAll('#morning-checklist .check-box');
+  const morningDone = Array.from(morningItems).filter(b => b.classList.contains('checked')).length;
+  document.getElementById('morning-progress').textContent = `${morningDone} of ${morningItems.length} done`;
+}
+
+// Email builder
+const emailLines = {
+  names: 'Could you let me know who I\'ll be meeting with — names and titles if possible?',
+  format: 'Could you confirm the interview format and any platform or link I\'ll need?',
+  duration: 'How long should I plan for the interview?',
+  bring: 'Is there anything specific you\'d like me to bring or prepare in advance?',
+  location: 'Could you confirm the best entrance to use and whether there\'s parking or transit you\'d recommend?',
+  questions: 'Will I receive any questions or topic areas in advance to prepare?',
+  accommodate: 'I do my best work in quieter environments — would it be possible to hold the interview in a lower-stimulation space?'
+};
+
+function toggleEmailItem(item) {
+  const key = item.dataset.key;
+  const box = item.querySelector('.toggle-box');
+  state.emailToggles[key] = !state.emailToggles[key];
+  box.classList.toggle('on', state.emailToggles[key]);
+  buildEmailPreview();
+}
+
+function buildEmailPreview() {
+  const activeLines = Object.entries(state.emailToggles)
+    .filter(([k, v]) => v)
+    .map(([k]) => emailLines[k]);
+
+  if (activeLines.length === 0) {
+    document.getElementById('email-preview').textContent = 'Select at least one item above to generate your email.';
+    return;
+  }
+
+  const intro = 'Thank you for the interview invitation. I\'m looking forward to it.';
+  const connector = activeLines.length === 1
+    ? 'One quick question before we meet:'
+    : 'A few quick questions to help me prepare:';
+
+  const body = activeLines.length === 1
+    ? `\n${activeLines[0]}`
+    : '\n' + activeLines.map(l => `• ${l}`).join('\n');
+
+  const close = '\n\nThank you — I appreciate you taking a moment to confirm.';
+
+  document.getElementById('email-preview').textContent = `${intro}\n\n${connector}${body}${close}`;
+}
+
+function copyEmail() {
+  const text = document.getElementById('email-preview').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '📋 Copy to clipboard'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// Question bank
+function addQuestion(btn, text) {
+  if (state.myQuestions.includes(text)) return;
+  state.myQuestions.push(text);
+  btn.textContent = '✓ Added';
+  btn.classList.add('added');
+  btn.closest('.q-item').classList.add('added');
+  updateMyQuestionsList();
+}
+
+function addCustomQuestion() {
+  const input = document.getElementById('custom-q-input');
+  const text = input.value.trim();
+  if (!text || state.myQuestions.includes(text)) return;
+  state.myQuestions.push(text);
+  input.value = '';
+  updateMyQuestionsList();
+}
+
+document.getElementById('custom-q-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') addCustomQuestion();
+});
+
+function removeQuestion(idx) {
+  const removed = state.myQuestions.splice(idx, 1)[0];
+  // Re-enable the bank button
+  document.querySelectorAll('.q-add-btn').forEach(btn => {
+    if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(removed.replace(/'/g, "\\'"))) {
+      btn.textContent = '+ Add';
+      btn.classList.remove('added');
+      btn.closest('.q-item').classList.remove('added');
+    }
+  });
+  updateMyQuestionsList();
+}
+
+function updateMyQuestionsList() {
+  const list = document.getElementById('my-questions-list');
+  const countEl = document.getElementById('my-q-count');
+  countEl.textContent = state.myQuestions.length;
+
+  if (state.myQuestions.length === 0) {
+    list.innerHTML = '<div class="empty" id="q-empty-msg">No questions added yet. Go to the Question Bank to add some.</div>';
+    return;
+  }
+
+  list.innerHTML = state.myQuestions.map((q, i) =>
+    `<div class="my-q-item"><span class="my-q-num">${i + 1}</span><span style="flex:1;font-size:14px;">${q}</span><span class="remove" onclick="removeQuestion(${i})">×</span></div>`
+  ).join('');
+}
+
+function switchQTab(tab, el) {
+  document.querySelectorAll('.tab-bar .tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('q-tab-bank').style.display = tab === 'bank' ? 'block' : 'none';
+  document.getElementById('q-tab-mylist').style.display = tab === 'mylist' ? 'block' : 'none';
+}
+
+// STAR
+function toggleStar(header) {
+  const fields = header.nextElementSibling;
+  header.classList.toggle('open');
+  fields.classList.toggle('open');
+}
+
+function markStarDone(btn) {
+  const card = btn.closest('.star-card');
+  const question = card.querySelector('.star-q span').textContent;
+  if (!state.starDone.includes(question)) state.starDone.push(question);
+  btn.textContent = '✓ Practiced';
+  btn.style.background = '#065F46';
+  btn.disabled = true;
+}
+
+// Navigation
+function goTo(idx) {
+  document.querySelectorAll('.section').forEach((s, i) => s.classList.toggle('active', i === idx));
+  state.currentSection = idx;
+  updateProgressBar();
+  if (idx === 5) buildSummary();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateProgressBar() {
+  const steps = document.querySelectorAll('.prog-step');
+  steps.forEach((s, i) => {
+    s.classList.remove('active', 'done');
+    if (i === state.currentSection) s.classList.add('active');
+    else if (i < state.currentSection) s.classList.add('done');
+  });
+  const labels = ['Step 1 of 6', 'Step 2 of 6', 'Step 3 of 6', 'Step 4 of 6', 'Step 5 of 6', 'Summary'];
+  document.getElementById('prog-label').textContent = labels[state.currentSection];
+}
+
+function buildSummary() {
+  const nightItems = document.querySelectorAll('#night-checklist .check-box');
+  const morningItems = document.querySelectorAll('#morning-checklist .check-box');
+  const nightDone = Array.from(nightItems).filter(b => b.classList.contains('checked')).length;
+  const morningDone = Array.from(morningItems).filter(b => b.classList.contains('checked')).length;
+  const totalCheck = nightDone + morningDone;
+  const totalMax = nightItems.length + morningItems.length;
+
+  const rows = [
+    { label: 'Interview format', value: state.selectedFormat ? formatTips[state.selectedFormat]?.title : 'Not selected', done: !!state.selectedFormat },
+    { label: 'Night before checklist', value: `${nightDone} of ${nightItems.length} items`, done: nightDone === nightItems.length },
+    { label: 'Morning of checklist', value: `${morningDone} of ${morningItems.length} items`, done: morningDone === morningItems.length },
+    { label: 'Pre-interview email', value: Object.values(state.emailToggles).filter(Boolean).length + ' questions included', done: true },
+    { label: 'Questions for interviewer', value: `${state.myQuestions.length} questions ready`, done: state.myQuestions.length >= 3 },
+    { label: 'STAR practice', value: `${state.starDone.length} of 4 questions practiced`, done: state.starDone.length >= 2 },
+  ];
+
+  document.getElementById('summary-rows').innerHTML = rows.map(r => `
+    <div class="summary-row">
+      <span class="label">${r.label}</span>
+      <span>
+        <span class="value" style="margin-right:8px;">${r.value}</span>
+        <span class="${r.done ? 'badge-complete' : 'badge-partial'}">${r.done ? 'Ready' : 'In progress'}</span>
+      </span>
+    </div>
+  `).join('');
+
+  const allDone = rows.every(r => r.done);
+  const callout = document.getElementById('summary-callout');
+  if (allDone) {
+    callout.className = 'callout teal';
+    callout.innerHTML = '<strong>You\'re ready.</strong> You\'ve worked through every section. Walk in prepared and trust your prep.';
+  } else {
+    callout.className = 'callout orange';
+    callout.innerHTML = '<strong>Keep going.</strong> Finish any sections marked "In progress" before your interview. A few minutes of prep now means a lot less stress on the day.';
+  }
+}
+
+// Init
+buildEmailPreview();
+</script>
+
+</body>
+</html>

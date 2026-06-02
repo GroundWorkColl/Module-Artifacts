@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 7: Disclosure & Accommodations Tool | GroundWork Collective</title>
+<style>
+  :root {
+    --navy: #1C3557;
+    --teal: #00838F;
+    --mid-blue: #2E75B6;
+    --orange: #E87722;
+    --light-teal: #E0F4F5;
+    --light-navy: #E8EDF3;
+    --light-orange: #FDF2E9;
+    --text: #2D2D2D;
+    --subtle: #6B7280;
+    --border: #D1D5DB;
+    --white: #FFFFFF;
+    --bg: #F8FAFC;
+    --green: #059669;
+    --light-green: #D1FAE5;
+    --red: #DC2626;
+    --light-red: #FEE2E2;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  header {
+    background: var(--navy);
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  header .brand { color: white; font-size: 14px; font-weight: 600; opacity: 0.9; }
+  header .module-label { color: var(--teal); font-size: 20px; font-weight: 700; }
+
+  .nav-tabs {
+    background: white;
+    border-bottom: 2px solid var(--border);
+    padding: 0 32px;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .nav-tab {
+    padding: 14px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--subtle);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .nav-tab:hover { color: var(--teal); }
+  .nav-tab.active { color: var(--teal); border-bottom-color: var(--teal); }
+
+  .container { max-width: 820px; margin: 0 auto; padding: 32px 24px 80px; }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .page-header {
+    margin-bottom: 28px;
+  }
+  .page-tag {
+    display: inline-block;
+    background: var(--teal);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 3px 10px;
+    border-radius: 3px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  .page-header h2 { font-size: 26px; font-weight: 700; color: var(--navy); margin-bottom: 8px; line-height: 1.2; }
+  .page-header p { color: var(--subtle); font-size: 15px; line-height: 1.6; }
+
+  .card {
+    background: white;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .card h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card h3 .icon {
+    width: 28px; height: 28px;
+    background: var(--light-teal);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  /* Decision guide */
+  .decision-question {
+    margin-bottom: 20px;
+  }
+  .dq-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .dq-num {
+    background: var(--navy);
+    color: white;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .dq-options {
+    display: flex;
+    gap: 8px;
+    margin-left: 30px;
+    flex-wrap: wrap;
+  }
+  .dq-opt {
+    padding: 8px 16px;
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: white;
+  }
+  .dq-opt:hover { border-color: var(--teal); color: var(--teal); }
+  .dq-opt.selected-yes { border-color: var(--teal); background: var(--light-teal); color: var(--teal); }
+  .dq-opt.selected-no { border-color: var(--orange); background: var(--light-orange); color: var(--orange); }
+  .dq-opt.selected-unsure { border-color: var(--mid-blue); background: #EEF4FB; color: var(--mid-blue); }
+
+  .decision-result {
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    display: none;
+  }
+  .decision-result.visible { display: block; }
+  .decision-result.lean-disclose { background: var(--light-teal); border: 2px solid var(--teal); }
+  .decision-result.lean-wait { background: var(--light-orange); border: 2px solid var(--orange); }
+  .decision-result.mixed { background: var(--light-navy); border: 2px solid var(--navy); }
+  .result-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .result-text { font-size: 14px; line-height: 1.7; }
+  .result-actions { margin-top: 16px; }
+  .result-actions li { font-size: 14px; margin-bottom: 6px; padding-left: 16px; position: relative; line-height: 1.5; }
+  .result-actions li::before { content: '→'; position: absolute; left: 0; font-weight: 700; }
+
+  /* Accommodations planner */
+  .accom-category { margin-bottom: 24px; }
+  .cat-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 16px;
+    background: var(--light-navy);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .cat-header .cat-icon { font-size: 18px; }
+  .cat-header .cat-name { font-weight: 700; font-size: 14px; color: var(--navy); flex: 1; }
+  .cat-header .cat-toggle { color: var(--subtle); font-size: 16px; transition: transform 0.2s; }
+  .cat-header.open .cat-toggle { transform: rotate(90deg); }
+  .cat-items { display: none; }
+  .cat-items.open { display: block; }
+
+  .accom-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid #F3F4F6;
+    cursor: pointer;
+    user-select: none;
+    border-radius: 6px;
+    transition: background 0.15s;
+  }
+  .accom-item:hover { background: #F9FAFB; }
+  .accom-item:last-child { border-bottom: none; }
+  .accom-check {
+    width: 22px; height: 22px;
+    border: 2px solid var(--border);
+    border-radius: 5px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .accom-check.checked { background: var(--teal); border-color: var(--teal); color: white; }
+  .accom-check.checked::after { content: '✓'; font-size: 13px; font-weight: 700; }
+  .accom-content { flex: 1; }
+  .accom-name { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+  .accom-name.done { text-decoration: line-through; color: var(--subtle); }
+  .accom-desc { font-size: 12px; color: var(--subtle); line-height: 1.4; }
+
+  .my-list-preview {
+    background: var(--light-navy);
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 4px;
+    min-height: 60px;
+  }
+  .my-list-preview h4 { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 10px; }
+  .preview-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(28,53,87,0.1);
+    font-size: 13px;
+  }
+  .preview-item:last-child { border-bottom: none; }
+  .preview-num { font-weight: 700; color: var(--teal); min-width: 18px; }
+
+  /* Request builder */
+  .request-field { margin-bottom: 20px; }
+  .req-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .req-hint { font-size: 12px; color: var(--subtle); margin-bottom: 8px; line-height: 1.4; }
+  .req-input, .req-textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+    color: var(--text);
+    background: white;
+  }
+  .req-input:focus, .req-textarea:focus { border-color: var(--teal); }
+  .req-textarea { resize: vertical; min-height: 80px; }
+
+  .generated-email {
+    background: #F9FAFB;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--text);
+    white-space: pre-wrap;
+    margin-top: 16px;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    min-height: 100px;
+  }
+  .copy-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 10px 18px;
+    background: var(--navy);
+    color: white;
+    border: none; border-radius: 6px;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer; font-family: inherit;
+    margin-top: 12px;
+  }
+  .copy-btn:hover { background: #152d4a; }
+  .copy-btn.copied { background: var(--teal); }
+
+  /* Burnout self-check */
+  .burnout-q {
+    padding: 14px 0;
+    border-bottom: 1px solid #F3F4F6;
+  }
+  .burnout-q:last-child { border-bottom: none; }
+  .burnout-q-text { font-size: 14px; font-weight: 600; color: var(--navy); margin-bottom: 10px; line-height: 1.4; }
+  .burnout-scale {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .scale-btn {
+    padding: 6px 14px;
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: white;
+  }
+  .scale-btn:hover { border-color: var(--teal); }
+  .scale-btn.sel-rarely { border-color: var(--green); background: var(--light-green); color: var(--green); }
+  .scale-btn.sel-sometimes { border-color: var(--mid-blue); background: #EEF4FB; color: var(--mid-blue); }
+  .scale-btn.sel-often { border-color: var(--orange); background: var(--light-orange); color: var(--orange); }
+  .scale-btn.sel-always { border-color: var(--red); background: var(--light-red); color: var(--red); }
+
+  .burnout-result {
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    display: none;
+  }
+  .burnout-result.visible { display: block; }
+  .burnout-result.low { background: var(--light-green); border: 2px solid var(--green); }
+  .burnout-result.moderate { background: #FEF3C7; border: 2px solid #D97706; }
+  .burnout-result.high { background: var(--light-orange); border: 2px solid var(--orange); }
+  .burnout-result.critical { background: var(--light-red); border: 2px solid var(--red); }
+
+  /* Callouts */
+  .callout {
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 16px 0;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .callout.teal { background: var(--light-teal); border-left: 4px solid var(--teal); }
+  .callout.orange { background: var(--light-orange); border-left: 4px solid var(--orange); }
+  .callout.navy { background: var(--light-navy); border-left: 4px solid var(--navy); }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    header { padding: 16px 20px; }
+    .container { padding: 20px 16px 60px; }
+    .nav-tabs { padding: 0 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">GROUNDWORK COLLECTIVE</div>
+  <div class="module-label">Module 7: Disclosure &amp; Accommodations</div>
+</header>
+
+<div class="nav-tabs">
+  <div class="nav-tab active" onclick="switchPage('decision', this)">Disclosure Decision</div>
+  <div class="nav-tab" onclick="switchPage('accommodations', this)">My Accommodations</div>
+  <div class="nav-tab" onclick="switchPage('request', this)">Request Builder</div>
+  <div class="nav-tab" onclick="switchPage('burnout', this)">Early Warning Check</div>
+</div>
+
+<div class="container">
+
+  <!-- PAGE 1: Disclosure Decision Guide -->
+  <div class="page active" id="page-decision">
+    <div class="page-header">
+      <div class="page-tag">7.2 The Decision</div>
+      <h2>Should you disclose?</h2>
+      <p>Answer the questions below honestly. The tool will help you think through where you stand — not tell you what to do. This decision is yours.</p>
+    </div>
+
+    <div class="card">
+      <h3><span class="icon">⚖️</span> Work through the decision</h3>
+
+      <div class="decision-question">
+        <div class="dq-label"><span class="dq-num">1</span> Are you currently struggling with something in your work environment that an accommodation could address?</div>
+        <div class="dq-options">
+          <button class="dq-opt" onclick="setAnswer(this, 'need', 'yes', 'selected-yes')">Yes, clearly</button>
+          <button class="dq-opt" onclick="setAnswer(this, 'need', 'maybe', 'selected-unsure')">Maybe / Not sure</button>
+          <button class="dq-opt" onclick="setAnswer(this, 'need', 'no', 'selected-no')">Not right now</button>
+        </div>
+      </div>
+
+      <div class="decision-question">
+        <div class="dq-label"><span class="dq-num">2</span> Do you have a sense of what specific accommodation you'd request?</div>
+        <div class="dq-options">
+          <button class="dq-opt" onclick="setAnswer(this, 'specific', 'yes', 'selected-yes')">Yes, I know what I'd ask for</button>
+          <button class="dq-opt" onclick="setAnswer(this, 'specific', 'maybe', 'selected-unsure')">I have ideas but need to think</button>
+          <button class="dq-opt" onclick="setAnswer(this, 'specific', 'no', 'selected-no')">Not yet</button>
+        </div>
+      </div>
+
+      <div class="decision-question">
+        <div class="dq-label"><span class="dq-num">3</span> How would you describe trust with your manager right now?</div>
+        <div class="dq-options">
+          <button class="dq-opt" onclick="setAnswer(this, 'trust', 'yes', 'selected-yes')">Strong — they're supportive</button>
+          <button class="dq-opt" onclick="setAnswer(this, 'trust', 'maybe', 'selected-unsure')">Neutral / Uncertain</button>
+          <button class="dq-opt" onclick="setAnswer(this, 'trust', 'no', 'selected-no')">Low or unclear</button>
+        </div>
+      </div>
+
+      <div class="decision-question">
+        <div class="dq-label"><span class="dq-num">4</span> Based on what you've seen, how does your workplace handle disability-related matters?</div>
+        <div class="dq-options">
+          <button class="dq-opt" onclick="setAnswer(this, 'culture', 'yes', 'selected-yes')">Professionally and with care</button>
+          <button class="dq-opt" onclick="setAnswer(this, 'culture', 'maybe', 'selected-unsure')">I'm not sure</button>
+          <button class="dq-opt" onclick="setAnswer(this, 'culture', 'no', 'selected-no')">Not well, or I've seen red flags</button>
+        </div>
+      </div>
+
+      <div class="decision-question">
+        <div class="dq-label"><span class="dq-num">5</span> Are you currently in a performance conversation or under scrutiny at work?</div>
+        <div class="dq-options">
+          <button class="dq-opt" onclick="setAnswer(this, 'perf', 'yes', 'selected-no')">Yes, currently</button>
+          <button class="dq-opt" onclick="setAnswer(this, 'perf', 'maybe', 'selected-unsure')">Borderline / Some tension</button>
+          <button class="dq-opt" onclick="setAnswer(this, 'perf', 'no', 'selected-yes')">No, standing is good</button>
+        </div>
+      </div>
+
+      <div class="decision-question">
+        <div class="dq-label"><span class="dq-num">6</span> Do you currently have a healthcare provider who could write documentation if requested?</div>
+        <div class="dq-options">
+          <button class="dq-opt" onclick="setAnswer(this, 'provider', 'yes', 'selected-yes')">Yes, I have a provider</button>
+          <button class="dq-opt" onclick="setAnswer(this, 'provider', 'maybe', 'selected-unsure')">I'd need to find one</button>
+          <button class="dq-opt" onclick="setAnswer(this, 'provider', 'no', 'selected-no')">No</button>
+        </div>
+      </div>
+
+      <div class="decision-result" id="decision-result"></div>
+    </div>
+
+    <div class="callout navy">
+      <strong>This tool doesn't decide for you.</strong> It helps you see your answers in one place. The right decision depends on factors only you have full visibility into. Use this as a thinking prompt, not a verdict.
+    </div>
+  </div>
+
+  <!-- PAGE 2: Accommodations Planner -->
+  <div class="page" id="page-accommodations">
+    <div class="page-header">
+      <div class="page-tag">7.3 What to Ask For</div>
+      <h2>Build your accommodations list</h2>
+      <p>Check any accommodations that would genuinely help you. Your selected items carry over to the Request Builder.</p>
+    </div>
+
+    <div id="accom-selected-preview" style="display:none;">
+      <div class="card">
+        <h3><span class="icon">📋</span> Selected so far</h3>
+        <div class="my-list-preview">
+          <div id="selected-accom-list"><div style="font-size:13px;color:var(--subtle);font-style:italic;">None selected yet.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accom-category" id="cat-environment">
+      <div class="cat-header" onclick="toggleCat(this)">
+        <span class="cat-icon">🏢</span>
+        <span class="cat-name">Environment and Space</span>
+        <span class="cat-toggle">▶</span>
+      </div>
+      <div class="cat-items">
+        <div class="accom-item" onclick="toggleAccom(this)" data-id="a1" data-name="Private or quieter workspace" data-desc="Reduces sensory overload and auditory distraction during focused work.">
+          <div class="accom-check"></div>
+          <div class="accom-content"><div class="accom-name">Private or quieter workspace</div><div class="accom-desc">Reduces sensory overload and auditory distraction during focused work.</div></div>
+        </div>
+        <div class="accom-item" onclick="toggleAccom(this)" data-id="a2" data-name="Modified lighting (lamps instead of fluorescents)" data-desc="Addresses sensory sensitivity to overhead fluorescent lighting.">
+          <div class="accom-check"></div>
+          <div class="accom-content"><div class="accom-name">Modified lighting (lamps instead of fluorescents)</div><div class="accom-desc">Addresses sensory sensitivity to overhead fluorescent lighting.</div></div>
+        </div>
+        <div class="accom-item" onclick="toggleAccom(this)" data-id="a3" data-name="Noise-canceling headphones approved for use" data-desc="Manages auditory sensitivity in open office environments.">
+          <div class="accom-check"></div>
+          <div class="accom-content"><div class="accom-name">Noise-canceling headphones approved for use</div><div class="accom-desc">Manages auditory sensitivity in open office environments.</div></div>
+        </div>
+        <div class="accom-item" onclick="toggleAccom(this)" data-id="a4" data-name="Access to a quiet room for decompression or focus work" data-desc="Designated low-stimulation space available when needed.">
+          <div class="accom-check"></div>
+          <div class="accom-content"><div class="accom-name">Access to a quiet room for decompression or focus work</div><div class="accom-desc">Designated low-stimulation space available when needed.</div></div>
+        </div>
+        <div class="accom-item" onclick="toggleAccom(this)" data-id="a5" data-name="Seated location away from high-traffic areas" data-desc="Reduces distractions from movement and incidental conversations.">
+          <div class="accom-check"></div>
+          <div class="accom-content"><div class="accom-name">Seated location away from high-traffic areas</div><div class="accom-desc">Reduces distractions from movement and incidental conversations.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accom-category" id="cat-schedule">
+      <div class="cat-header" onclick="toggleCat(this)">
+        <span class="cat-icon">🕐</span>
+        <span class="cat-name">Schedule and Time</span>
+        <span class="cat-toggle">▶</span>
+      </div>
+      <div class="cat-items">
+        <div class="accom-item" onclick="toggleAccom(this)" data-id="b1" data-name="Flexible start or end times" data-desc="Adjusted schedule to align with optimal functioning windows.">
+          <div class="accom-check"></div>
+          <div class="accom-content"><div class="accom-name">Flexible start or end times</div><div class="accom-desc">Adjusted schedule to align with optimal functioning windows.</div></div>
+        </div>
+        <div class="accom-item" onclick="toggleAccom(this)" data-id="b2" data-name="More frequent or longer breaks" data-desc="Modified break schedule for regulation and cognitive recovery.">
+          <div class="accom-check"></div>
+          <div class="accom-content"><div class="accom-name">More frequent or longer breaks</div><div class="accom-desc">Modified break schedule for regulation and cognitive recovery.</div></div>
+        </div>
+        <div class="accom-item" onclick="toggleAccom(this)" data-id="b3" data-name="Extended deadlines for specific tasks" data-desc="Additional time for work products that require sustained attention.">
+          <div class="accom-check"></div>
+          <div class="accom-content"><div class="accom-name">Extended deadlines for specific tasks</div><div class="accom-desc">Additional time for work products that require sustained attention.</div></div>
+        </div>
+        <div class="accom-item" onclick="toggleAccom(this)" data-id="b4" data-name="Attendance modifications for medical appointments" data-desc="Flexible attendance to accommodate treatment schedules.">
+          <div class="accom-check"></div>
+          <div class="accom-content"><div class="accom-name">Attendance modifications for medical appointments</div><div class="accom-desc">Flexible attendance to accommodate treatment schedules.</div></div>
+        </div>
+        <div class="accom-item" onclick="toggleAccom(this)" data-id="b5" data-name="Protected focus time blocks (no meetings)" data-desc="Reserved time each day for deep or complex work.">
+          <div class="accom-check"></div>
+          <div class="accom-content"><div class="accom-name">Protected focus time blocks (no meetings)</div><div class="accom-desc">Reserved time each day for deep or complex work.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accom-category" id="cat-communication">
+      <div class="cat-header" onclick="toggleCat(this)">
+        <span class="cat-icon">💬</span>
+        <span class="cat-name">Communication and Information</span>
+        <span class="cat-toggle">▶</span>
+      </div>
+      <div class="cat-items">
+        <div class="accom-item" onclick="toggleAccom(this)" data-id="c1" data-name="Written instructions in addition to verbal ones" data-desc="Reduces reliance on working memory during task handoffs.">
+          <div class="accom-check"></div>
+          <div class="accom-content"><div class="accom-name">Written instructions in addition to verbal ones</div><div class="accom-desc">Reduces reliance on working memory during task handoffs.</div></div>
+        </div>
+        <div class="accom-item" onclick="toggleAccom(this)" data-id="c2" data-name="Written meeting agendas distributed in advance" data-desc="Supports preparation and reduces anxiety about unexpected topics.">
+          <div class="accom-check"></div>
+          <div class="accom-content"><div class="accom-name">Written meeting agendas distributed in advance</div><div class="accom-desc">Supports preparation and reduces anxiety about unexpected topics.</div></div>
+        </div>
+        <div class="accom-item" onclick="toggleAccom(this)" data-id="c3" data-name="Recorded meetings or written summaries afterward" data-desc="Supports processing and retention for meetings with dense information.">
+          <div class="accom-check"></div>
+          <div class="accom-content"><div class="accom-name">Recorded meetings or written summaries afterward</div><div class="accom-desc">Supports processing and retention for meetings with dense information.</div></div>
+        </div>
+        <div class="accom-item" onclick="toggleAccom(this)" data-id="c4" data-name="Email-first communication preference" data-desc="Written channel as primary mode rather than in-person or phone.">
+          <div class="accom-check"></div>
+          <div class="accom-content"><div class="accom-name">Email-first communication preference</div><div class="accom-desc">Written channel as primary mode rather than in-person or phone.</div></div>
+        </div>
+        <div class="accom-item" onclick="toggleAccom(this)" data-id="c5" data-name="Written feedback in addition to verbal performance reviews" data-desc="Supports processing of feedback and reduces in-the-moment overwhelm.">
+          <div class="accom-check"></div>
+          <div class="accom-content"><div class="accom-name">Written feedback in addition to verbal performance reviews</div><div class="accom-desc">Supports processing of feedback and reduces in-the-moment overwhelm.</div></div>
+        </div>
+        <div class="accom-item" onclick="toggleAccom(this)" data-id="c6" data-name="Advance notice for non-routine requests or changes" data-desc="Reduces difficulty with unexpected transitions and last-minute demands.">
+          <div class="accom-check"></div>
+          <div class="accom-content"><div class="accom-name">Advance notice for non-routine requests or changes</div><div class="accom-desc">Reduces difficulty with unexpected transitions and last-minute demands.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accom-category" id="cat-work-structure">
+      <div class="cat-header" onclick="toggleCat(this)">
+        <span class="cat-icon">🧩</span>
+        <span class="cat-name">How Work Is Structured</span>
+        <span class="cat-toggle">▶</span>
+      </div>
+      <div class="cat-items">
+        <div class="accom-item" onclick="toggleAccom(this)" data-id="d1" data-name="Remote or hybrid work arrangement" data-desc="Ability to work from home some or all of the time to manage environment.">
+          <div class="accom-check"></div>
+          <div class="accom-content"><div class="accom-name">Remote or hybrid work arrangement</div><div class="accom-desc">Ability to work from home some or all of the time to manage environment.</div></div>
+        </div>
+        <div class="accom-item" onclick="toggleAccom(this)" data-id="d2" data-name="Reduced or modified attendance at non-essential meetings" data-desc="Limits social and cognitive load from meetings that don't require your input.">
+          <div class="accom-check"></div>
+          <div class="accom-content"><div class="accom-name">Reduced or modified attendance at non-essential meetings</div><div class="accom-desc">Limits social and cognitive load from meetings that don't require your input.</div></div>
+        </div>
+        <div class="accom-item" onclick="toggleAccom(this)" data-id="d3" data-name="Task management support or structured check-ins" data-desc="Regular structured touchpoints to support prioritization and executive function.">
+          <div class="accom-check"></div>
+          <div class="accom-content"><div class="accom-name">Task management support or structured check-ins</div><div class="accom-desc">Regular structured touchpoints to support prioritization and executive function.</div></div>
+        </div>
+        <div class="accom-item" onclick="toggleAccom(this)" data-id="d4" data-name="Job restructuring (redistribution of non-essential functions)" data-desc="Shifting tasks that are not central to your role to other team members.">
+          <div class="accom-check"></div>
+          <div class="accom-content"><div class="accom-name">Job restructuring (redistribution of non-essential functions)</div><div class="accom-desc">Shifting tasks that are not central to your role to other team members.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout teal" style="margin-top: 8px;">
+      <strong>Remember:</strong> You don't have to request everything at once. Start with the accommodation that would make the biggest practical difference right now.
+    </div>
+  </div>
+
+  <!-- PAGE 3: Request Builder -->
+  <div class="page" id="page-request">
+    <div class="page-header">
+      <div class="page-tag">7.4 How to Ask</div>
+      <h2>Build your accommodation request</h2>
+      <p>Fill in the fields below. Your email draft generates as you type. You don't have to name your diagnosis.</p>
+    </div>
+
+    <div class="card">
+      <h3><span class="icon">✏️</span> Your information</h3>
+
+      <div class="request-field">
+        <div class="req-label">Your name</div>
+        <input class="req-input" id="req-name" type="text" placeholder="Your name" oninput="updateEmail()" />
+      </div>
+
+      <div class="request-field">
+        <div class="req-label">Your manager or HR contact</div>
+        <input class="req-input" id="req-to" type="text" placeholder="Manager name or HR contact" oninput="updateEmail()" />
+      </div>
+
+      <div class="request-field">
+        <div class="req-label">Functional limitation description</div>
+        <div class="req-hint">Describe how your condition affects your work — without naming the diagnosis if you prefer. Example: "a medical condition that affects my ability to concentrate in high-stimulation environments."</div>
+        <textarea class="req-textarea" id="req-limitation" placeholder="a medical condition that affects my ability to..." oninput="updateEmail()"></textarea>
+      </div>
+
+      <div class="request-field">
+        <div class="req-label">The accommodation you're requesting</div>
+        <div class="req-hint">Be specific. Pull from your selections in the Accommodations tab, or describe in your own words.</div>
+        <textarea class="req-textarea" id="req-accommodation" placeholder="e.g., the ability to wear noise-canceling headphones during focused work, and written agendas for team meetings distributed 24 hours in advance" oninput="updateEmail()"></textarea>
+        <div id="selected-hint" style="margin-top:8px;font-size:12px;color:var(--subtle);display:none;">From your accommodation selections: <span id="selected-hint-list" style="color:var(--teal);font-weight:600;"></span></div>
+      </div>
+
+      <div class="request-field">
+        <div class="req-label">Law to cite (optional)</div>
+        <div class="req-hint">Leave as-is or modify if your state has additional protections.</div>
+        <input class="req-input" id="req-law" type="text" value="the Americans with Disabilities Act (ADA)" oninput="updateEmail()" />
+      </div>
+    </div>
+
+    <div class="card">
+      <h3><span class="icon">📧</span> Your request email</h3>
+      <div class="generated-email" id="generated-email">Fill in the fields above to generate your email draft.</div>
+      <button class="copy-btn" id="req-copy-btn" onclick="copyRequestEmail()">📋 Copy to clipboard</button>
+    </div>
+
+    <div class="callout orange">
+      <strong>Before you send:</strong> Keep a copy of this email with the date. This is the start of your paper trail. If your employer requests documentation, your healthcare provider writes a letter describing your functional limitations and recommended accommodations — not your full medical record.
+    </div>
+  </div>
+
+  <!-- PAGE 4: Early Warning / Burnout Check -->
+  <div class="page" id="page-burnout">
+    <div class="page-header">
+      <div class="page-tag">7.6 Early Warning Check</div>
+      <h2>Recognize the need before burnout</h2>
+      <p>Answer these questions about how work has felt over the past few weeks. This is for your awareness only — nothing is submitted or saved beyond this browser session.</p>
+    </div>
+
+    <div class="card">
+      <h3><span class="icon">🔍</span> How often do you experience this?</h3>
+
+      <div class="burnout-q" data-id="e1">
+        <div class="burnout-q-text">I feel more exhausted after work than the effort I put in seems to justify.</div>
+        <div class="burnout-scale">
+          <button class="scale-btn" onclick="setScale(this, 'e1', 0, 'sel-rarely')">Rarely</button>
+          <button class="scale-btn" onclick="setScale(this, 'e1', 1, 'sel-sometimes')">Sometimes</button>
+          <button class="scale-btn" onclick="setScale(this, 'e1', 2, 'sel-often')">Often</button>
+          <button class="scale-btn" onclick="setScale(this, 'e1', 3, 'sel-always')">Almost always</button>
+        </div>
+      </div>
+
+      <div class="burnout-q" data-id="e2">
+        <div class="burnout-q-text">I have difficulty switching off or recovering after the workday ends.</div>
+        <div class="burnout-scale">
+          <button class="scale-btn" onclick="setScale(this, 'e2', 0, 'sel-rarely')">Rarely</button>
+          <button class="scale-btn" onclick="setScale(this, 'e2', 1, 'sel-sometimes')">Sometimes</button>
+          <button class="scale-btn" onclick="setScale(this, 'e2', 2, 'sel-often')">Often</button>
+          <button class="scale-btn" onclick="setScale(this, 'e2', 3, 'sel-always')">Almost always</button>
+        </div>
+      </div>
+
+      <div class="burnout-q" data-id="e3">
+        <div class="burnout-q-text">I feel a sense of dread about specific work situations that used to feel manageable.</div>
+        <div class="burnout-scale">
+          <button class="scale-btn" onclick="setScale(this, 'e3', 0, 'sel-rarely')">Rarely</button>
+          <button class="scale-btn" onclick="setScale(this, 'e3', 1, 'sel-sometimes')">Sometimes</button>
+          <button class="scale-btn" onclick="setScale(this, 'e3', 2, 'sel-often')">Often</button>
+          <button class="scale-btn" onclick="setScale(this, 'e3', 3, 'sel-always')">Almost always</button>
+        </div>
+      </div>
+
+      <div class="burnout-q" data-id="e4">
+        <div class="burnout-q-text">I'm managing or compensating for a work difficulty rather than solving it.</div>
+        <div class="burnout-scale">
+          <button class="scale-btn" onclick="setScale(this, 'e4', 0, 'sel-rarely')">Rarely</button>
+          <button class="scale-btn" onclick="setScale(this, 'e4', 1, 'sel-sometimes')">Sometimes</button>
+          <button class="scale-btn" onclick="setScale(this, 'e4', 2, 'sel-often')">Often</button>
+          <button class="scale-btn" onclick="setScale(this, 'e4', 3, 'sel-always')">Almost always</button>
+        </div>
+      </div>
+
+      <div class="burnout-q" data-id="e5">
+        <div class="burnout-q-text">I'm adjusting how I spend my personal time in order to cope with how work is affecting me.</div>
+        <div class="burnout-scale">
+          <button class="scale-btn" onclick="setScale(this, 'e5', 0, 'sel-rarely')">Rarely</button>
+          <button class="scale-btn" onclick="setScale(this, 'e5', 1, 'sel-sometimes')">Sometimes</button>
+          <button class="scale-btn" onclick="setScale(this, 'e5', 2, 'sel-often')">Often</button>
+          <button class="scale-btn" onclick="setScale(this, 'e5', 3, 'sel-always')">Almost always</button>
+        </div>
+      </div>
+
+      <div class="burnout-q" data-id="e6">
+        <div class="burnout-q-text">I notice my sensory sensitivities or emotional regulation are harder outside of work hours — particularly on work days.</div>
+        <div class="burnout-scale">
+          <button class="scale-btn" onclick="setScale(this, 'e6', 0, 'sel-rarely')">Rarely</button>
+          <button class="scale-btn" onclick="setScale(this, 'e6', 1, 'sel-sometimes')">Sometimes</button>
+          <button class="scale-btn" onclick="setScale(this, 'e6', 2, 'sel-often')">Often</button>
+          <button class="scale-btn" onclick="setScale(this, 'e6', 3, 'sel-always')">Almost always</button>
+        </div>
+      </div>
+
+      <div class="burnout-result" id="burnout-result"></div>
+    </div>
+
+    <div class="card">
+      <h3><span class="icon">📝</span> Reflect: what might help?</h3>
+      <div style="margin-bottom:12px;font-size:14px;color:var(--subtle);line-height:1.6;">If you identified one pattern above, write one thing that could change it. Not a complete solution — just one thing. That's your starting point for an accommodation conversation.</div>
+      <textarea class="req-textarea" id="burnout-reflection" placeholder="The thing that would help most is..." style="min-height:100px;"></textarea>
+    </div>
+
+    <div class="callout teal">
+      <strong>The best time to request an accommodation is before the crisis.</strong> If two or more of these patterns showed up as "often" or "almost always," that's worth paying attention to now — not after a performance conversation forces your hand.
+    </div>
+  </div>
+
+</div>
+
+<script>
+let answers = {};
+let scaleAnswers = {};
+let selectedAccoms = {};
+
+function switchPage(id, tab) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  tab.classList.add('active');
+  if (id === 'request') updateEmailFromSelections();
+}
+
+// Decision guide
+function setAnswer(btn, key, val, cls) {
+  const group = btn.closest('.dq-options');
+  group.querySelectorAll('.dq-opt').forEach(b => b.className = 'dq-opt');
+  btn.classList.add(cls);
+  answers[key] = val;
+  evaluateDecision();
+}
+
+function evaluateDecision() {
+  const keys = ['need', 'specific', 'trust', 'culture', 'perf', 'provider'];
+  if (!keys.every(k => answers[k])) return;
+
+  const yesCount = keys.filter(k => answers[k] === 'yes').length;
+  const noCount = keys.filter(k => answers[k] === 'no').length;
+
+  const result = document.getElementById('decision-result');
+  result.className = 'decision-result visible';
+
+  if (yesCount >= 4) {
+    result.classList.add('lean-disclose');
+    result.innerHTML = `<div class="result-title" style="color:var(--teal)">Your answers lean toward: disclosing and requesting accommodations.</div>
+    <div class="result-text">You have a clear need, a sense of what to ask for, and conditions that suggest the conversation could go well. The potential benefit of an accommodation in your situation seems significant, and the conditions appear reasonably favorable.<br><br>That doesn't mean it's risk-free. Read the pros and cons section in the module before moving forward.</div>
+    <ul class="result-actions" style="color:var(--teal);margin-top:12px;">
+      <li>Identify your specific accommodation request (use the My Accommodations tab)</li>
+      <li>Draft your request email (use the Request Builder tab)</li>
+      <li>If you don't yet have a provider, find one before you need documentation</li>
+    </ul>`;
+  } else if (noCount >= 3) {
+    result.classList.add('lean-wait');
+    result.innerHTML = `<div class="result-title" style="color:var(--orange)">Your answers suggest: take more time before disclosing.</div>
+    <div class="result-text">One or more of your answers point to conditions that could make disclosure more complicated right now — a difficult manager relationship, a performance conversation already in progress, uncertainty about workplace culture, or not yet knowing what to ask for.<br><br>That doesn't mean never. It means the timing and preparation need more work before this is the right move.</div>
+    <ul class="result-actions" style="color:var(--orange);margin-top:12px;">
+      <li>Work on identifying what specific accommodation you'd request first</li>
+      <li>If you're in a performance conversation, consult with HR or an employment attorney before disclosing</li>
+      <li>Find and establish a relationship with a healthcare provider if you don't have one</li>
+    </ul>`;
+  } else {
+    result.classList.add('mixed');
+    result.innerHTML = `<div class="result-title" style="color:var(--navy)">Your answers are mixed — this takes more thought.</div>
+    <div class="result-text">You have some factors working in your favor and some that give pause. The decision isn't obviously yes or no right now. That's common, and it's worth sitting with rather than rushing.<br><br>The clearest next steps aren't about disclosure yet — they're about getting more clarity on what you need and what conditions you're working with.</div>
+    <ul class="result-actions" style="color:var(--navy);margin-top:12px;">
+      <li>Use the My Accommodations tab to clarify what you'd actually ask for</li>
+      <li>Complete the Early Warning Check to understand your urgency level</li>
+      <li>Revisit this after you have a clearer picture of your workplace culture</li>
+    </ul>`;
+  }
+}
+
+// Accommodations
+function toggleCat(header) {
+  header.classList.toggle('open');
+  header.nextElementSibling.classList.toggle('open');
+}
+
+function toggleAccom(item) {
+  const check = item.querySelector('.accom-check');
+  const name = item.querySelector('.accom-name');
+  const id = item.dataset.id;
+  const accomName = item.dataset.name;
+
+  if (check.classList.contains('checked')) {
+    check.classList.remove('checked');
+    name.classList.remove('done');
+    delete selectedAccoms[id];
+  } else {
+    check.classList.add('checked');
+    name.classList.add('done');
+    selectedAccoms[id] = accomName;
+  }
+  updateSelectedPreview();
+}
+
+function updateSelectedPreview() {
+  const list = document.getElementById('selected-accom-list');
+  const preview = document.getElementById('accom-selected-preview');
+  const items = Object.values(selectedAccoms);
+
+  if (items.length === 0) {
+    list.innerHTML = '<div style="font-size:13px;color:var(--subtle);font-style:italic;">None selected yet.</div>';
+    preview.style.display = 'none';
+    return;
+  }
+
+  preview.style.display = 'block';
+  list.innerHTML = items.map((name, i) => `<div class="preview-item"><span class="preview-num">${i+1}</span><span>${name}</span></div>`).join('');
+}
+
+// Request email
+function updateEmailFromSelections() {
+  const items = Object.values(selectedAccoms);
+  const hintEl = document.getElementById('selected-hint');
+  const hintList = document.getElementById('selected-hint-list');
+  if (items.length > 0) {
+    hintEl.style.display = 'block';
+    hintList.textContent = items.join('; ');
+  } else {
+    hintEl.style.display = 'none';
+  }
+  updateEmail();
+}
+
+function updateEmail() {
+  const name = document.getElementById('req-name').value.trim();
+  const to = document.getElementById('req-to').value.trim();
+  const limitation = document.getElementById('req-limitation').value.trim();
+  const accommodation = document.getElementById('req-accommodation').value.trim();
+  const law = document.getElementById('req-law').value.trim() || 'the Americans with Disabilities Act (ADA)';
+
+  if (!limitation && !accommodation) {
+    document.getElementById('generated-email').textContent = 'Fill in the fields above to generate your email draft.';
+    return;
+  }
+
+  const toLine = to ? `Hi ${to},\n\n` : '';
+  const fromLine = name ? `\n\nThank you,\n${name}` : '';
+  const limitationLine = limitation ? `I have ${limitation}` : 'I have a medical condition';
+  const accomLine = accommodation ? accommodation : '[please describe the specific accommodation]';
+
+  const email = `${toLine}I am writing to formally request a reasonable accommodation under ${law}.\n\n${limitationLine}. This condition affects my ability to perform optimally in certain aspects of my work environment.\n\nI am requesting the following reasonable accommodation: ${accomLine}.\n\nI am happy to provide documentation from my healthcare provider if required. I look forward to discussing this further and working through the interactive process with you.\n\nPlease let me know the next steps at your earliest convenience.${fromLine}`;
+
+  document.getElementById('generated-email').textContent = email;
+}
+
+function copyRequestEmail() {
+  const text = document.getElementById('generated-email').textContent;
+  if (text.includes('Fill in the fields')) return;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('req-copy-btn');
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '📋 Copy to clipboard'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// Burnout check
+function setScale(btn, id, val, cls) {
+  const group = btn.closest('.burnout-scale');
+  const allClasses = ['sel-rarely', 'sel-sometimes', 'sel-often', 'sel-always'];
+  group.querySelectorAll('.scale-btn').forEach(b => { allClasses.forEach(c => b.classList.remove(c)); });
+  btn.classList.add(cls);
+  scaleAnswers[id] = val;
+  evaluateBurnout();
+}
+
+function evaluateBurnout() {
+  const keys = ['e1','e2','e3','e4','e5','e6'];
+  if (!keys.every(k => scaleAnswers[k] !== undefined)) return;
+
+  const total = keys.reduce((sum, k) => sum + scaleAnswers[k], 0);
+  const result = document.getElementById('burnout-result');
+  result.className = 'burnout-result visible';
+
+  if (total <= 4) {
+    result.classList.add('low');
+    result.innerHTML = `<strong style="color:var(--green);">Your scores suggest: manageable right now.</strong><br><br>The patterns you're experiencing appear relatively infrequent. That's a good position to be in. Keep an eye on it — and use this check periodically, especially during transitions or particularly demanding stretches.`;
+  } else if (total <= 9) {
+    result.classList.add('moderate');
+    result.innerHTML = `<strong style="color:#92400E;">Your scores suggest: worth paying attention to.</strong><br><br>You're noticing several patterns with some regularity. This isn't a crisis — but it's a signal worth taking seriously. One or two accommodations, implemented now, may significantly reduce the load before it compounds.`;
+  } else if (total <= 14) {
+    result.classList.add('high');
+    result.innerHTML = `<strong style="color:var(--orange);">Your scores suggest: this is costing you more than it should.</strong><br><br>Multiple patterns are showing up often. This is the level where sustained masking, cognitive fatigue, or environmental mismatch starts to have a real cumulative impact. The time to act is now — not after a performance conversation, not after something breaks. Use the Accommodations and Request Builder tabs to identify and initiate what you need.`;
+  } else {
+    result.classList.add('critical');
+    result.innerHTML = `<strong style="color:var(--red);">Your scores suggest: urgent — please take this seriously.</strong><br><br>You're experiencing significant and frequent patterns across multiple areas. This is consistent with what happens before autistic burnout or serious cognitive fatigue takes hold. Please prioritize getting support — from a healthcare provider, from HR, or from a trusted person in your life — before the situation becomes harder to recover from.`;
+  }
+}
+
+// Init
+document.getElementById('req-law').value = 'the Americans with Disabilities Act (ADA)';
+</script>
+
+</body>
+</html>

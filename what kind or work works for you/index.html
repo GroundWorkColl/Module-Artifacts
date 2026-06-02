@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>What Kind of Work Works for You — GroundWork Collaborative</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --sand:#F5F0E8; --clay:#C4A882; --bark:#7A5C3A; --moss:#4A6741;
+    --charcoal:#232B30; --cream:#FDFAF5; --sky:#6A9BAF; --gold:#D4A843;
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--charcoal); min-height: 100vh; }
+  h1,h2,h3 { font-family: 'DM Serif Display', serif; }
+  .shell { max-width: 740px; margin: 0 auto; padding: 24px 20px 60px; }
+  .header { display:flex; align-items:center; gap:12px; padding-bottom:20px; border-bottom:2px solid var(--clay); margin-bottom:32px; }
+  .header-logo { width:36px; height:36px; background:var(--bark); border-radius:8px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:18px; }
+  .header-title { font-size:13px; font-weight:600; color:var(--bark); letter-spacing:0.08em; text-transform:uppercase; }
+  .progress-row { display:flex; gap:6px; margin-bottom:8px; }
+  .progress-dot { flex:1; height:4px; border-radius:2px; background:#DDD; transition:background 0.3s; }
+  .progress-dot.done { background:var(--moss); }
+  .progress-dot.active { background:var(--clay); }
+  .progress-label { font-size:12px; color:var(--bark); font-weight:500; margin-bottom:24px; }
+  .section-eyebrow { font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--clay); margin-bottom:6px; }
+  .section-title { font-family:'DM Serif Display',serif; font-size:28px; color:var(--charcoal); line-height:1.2; margin-bottom:10px; }
+  .section-subtitle { font-size:15px; color:#5A6470; line-height:1.6; margin-bottom:32px; }
+  .q-block { margin-bottom:28px; }
+  .q-label { font-size:15px; font-weight:600; color:var(--charcoal); margin-bottom:12px; display:block; line-height:1.4; }
+  .q-hint { font-size:12px; color:#7A8490; font-weight:400; display:block; margin-top:2px; }
+  .text-input,.textarea { width:100%; border:1.5px solid #D8D0C4; border-radius:8px; padding:11px 14px; font-size:15px; font-family:'DM Sans',sans-serif; color:var(--charcoal); background:#fff; outline:none; transition:border-color 0.2s; }
+  .text-input:focus,.textarea:focus { border-color:var(--clay); }
+  .textarea { resize:vertical; min-height:80px; }
+  .chip-grid { display:flex; flex-wrap:wrap; gap:8px; }
+  .chip { padding:8px 16px; border-radius:999px; border:1.5px solid #D8D0C4; font-size:14px; cursor:pointer; background:#fff; color:var(--charcoal); transition:all 0.15s; user-select:none; font-family:'DM Sans',sans-serif; }
+  .chip:hover { border-color:var(--clay); }
+  .chip.selected { background:var(--bark); border-color:var(--bark); color:#fff; }
+  .card-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  @media (max-width:480px) { .card-grid { grid-template-columns:1fr; } }
+  .radio-card { border:1.5px solid #D8D0C4; border-radius:10px; padding:14px 16px; cursor:pointer; background:#fff; transition:all 0.15s; user-select:none; }
+  .radio-card:hover { border-color:var(--clay); }
+  .radio-card.selected { border-color:var(--bark); background:#F8F1E8; }
+  .rc-icon { font-size:22px; margin-bottom:6px; }
+  .rc-label { font-size:14px; font-weight:600; color:var(--charcoal); margin-bottom:3px; }
+  .rc-desc { font-size:12px; color:#6A7480; line-height:1.4; }
+  .slider-wrap { padding:4px 0 8px; }
+  input[type="range"] { width:100%; accent-color:var(--bark); cursor:pointer; }
+  .slider-labels { display:flex; justify-content:space-between; font-size:12px; color:#7A8490; margin-top:6px; }
+  .yn-row { display:flex; gap:10px; }
+  .yn-btn { flex:1; padding:10px; border:1.5px solid #D8D0C4; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; background:#fff; color:var(--charcoal); transition:all 0.15s; font-family:'DM Sans',sans-serif; }
+  .yn-btn.selected { background:var(--bark); border-color:var(--bark); color:#fff; }
+  .btn-row { display:flex; gap:12px; margin-top:36px; }
+  .btn { padding:13px 28px; border-radius:8px; font-size:15px; font-weight:600; cursor:pointer; border:none; font-family:'DM Sans',sans-serif; transition:all 0.15s; }
+  .btn-primary { background:var(--bark); color:#fff; flex:1; }
+  .btn-primary:hover { background:#6A4A2C; }
+  .btn-secondary { background:transparent; color:var(--bark); border:1.5px solid var(--clay); }
+  .btn-secondary:hover { background:var(--sand); }
+  .results-intro { background:var(--bark); color:#fff; border-radius:12px; padding:24px 28px; margin-bottom:20px; }
+  .results-intro h2 { color:#fff; font-size:24px; margin-bottom:8px; }
+  .results-intro p { font-size:14px; opacity:0.88; line-height:1.6; }
+  .disclaimer-box { border:1.5px solid #C8D8DF; border-radius:10px; padding:20px 22px; background:#F2F7FA; margin-bottom:28px; }
+  .disclaimer-heading { font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--sky); margin-bottom:10px; }
+  .disclaimer-box p { font-size:13px; color:#4A5A64; line-height:1.7; margin-top:10px; }
+  .disclaimer-box p:first-of-type { margin-top:0; }
+  .career-card { border:1.5px solid #D8D0C4; border-radius:12px; padding:20px 22px; margin-bottom:14px; background:#fff; position:relative; overflow:hidden; }
+  .career-card::before { content:''; position:absolute; top:0; left:0; bottom:0; width:4px; border-radius:2px 0 0 2px; }
+  .career-card.tier-1::before { background:var(--moss); }
+  .career-card.tier-2::before { background:var(--gold); }
+  .career-card.tier-3::before { background:var(--sky); }
+  .career-card-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:8px; gap:12px; }
+  .career-title { font-family:'DM Serif Display',serif; font-size:18px; color:var(--charcoal); }
+  .match-badge { font-size:11px; font-weight:700; padding:3px 10px; border-radius:999px; white-space:nowrap; flex-shrink:0; }
+  .match-badge.tier-1 { background:#EAF4EA; color:var(--moss); }
+  .match-badge.tier-2 { background:#FDF5E0; color:#966A00; }
+  .match-badge.tier-3 { background:#E8F3F8; color:#2C6A82; }
+  .career-desc { font-size:13px; color:#5A6470; line-height:1.6; margin-bottom:10px; }
+  .examples-label { font-size:11px; color:var(--bark); font-weight:700; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:4px; }
+  .examples-text { font-size:12px; color:#5A6470; margin-bottom:10px; line-height:1.5; }
+  .tag-row { display:flex; flex-wrap:wrap; gap:6px; }
+  .tag { font-size:11px; padding:3px 10px; background:var(--sand); border-radius:999px; color:var(--bark); font-weight:500; }
+  hr.divider { border:none; border-top:1.5px solid #E8E0D4; margin:28px 0; }
+  .restart-btn { display:block; width:100%; padding:13px; border:1.5px solid var(--clay); border-radius:8px; background:transparent; color:var(--bark); font-size:15px; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif; margin-top:24px; transition:background 0.15s; }
+  .restart-btn:hover { background:var(--sand); }
+  .notice { font-size:12px; color:#5A6470; line-height:1.6; margin-top:12px; padding:14px 16px; background:var(--sand); border-radius:8px; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+  .fade-up { animation:fadeUp 0.35s ease both; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useCallback} = React;
+
+const STEPS=[
+  {id:'school',label:'Your Studies'},
+  {id:'beyond',label:'Beyond Class'},
+  {id:'strengths',label:'How You Work'},
+  {id:'environment',label:'Environment'},
+  {id:'energy',label:'Energy'},
+  {id:'values',label:'What Matters'},
+];
+
+const SUBJECTS=['Arts & Design','Business','Communications','Computer Science','Criminal Justice','Education','Engineering','Environmental Science','Healthcare / Nursing','History & Social Sciences','Math & Statistics','Music & Performing Arts','Philosophy / Ethics','Psychology','Science (Bio, Chem, Physics)','Undecided / Exploring'];
+
+const CLASS_Q=[
+  {value:'hands-on',label:'Hands-on labs or making things'},
+  {value:'discussion',label:'Small group discussion'},
+  {value:'deep-research',label:'Deep independent research'},
+  {value:'creative',label:'Creative projects'},
+  {value:'problem-solving',label:'Problem solving / puzzles'},
+  {value:'helping-others',label:'Working with or helping others'},
+  {value:'outdoor',label:'Fieldwork or outdoors'},
+  {value:'writing',label:'Writing and storytelling'},
+  {value:'data',label:'Data or spreadsheets'},
+  {value:'presenting',label:'Presenting and public speaking'},
+];
+
+const OUTSIDE=[
+  {value:'gaming',label:'🎮 Gaming / Modding'},
+  {value:'art-craft',label:'🎨 Art, craft, or making'},
+  {value:'animals',label:'🐾 Animals / pets / nature'},
+  {value:'volunteering',label:'🤝 Volunteering / community'},
+  {value:'caregiving',label:'💛 Caregiving'},
+  {value:'fitness',label:'🏃 Fitness / sports / movement'},
+  {value:'tech-building',label:'💻 Building / coding / fixing tech'},
+  {value:'writing-content',label:'✍️ Writing, blogging, or content'},
+  {value:'music',label:'🎵 Music, performance, or dance'},
+  {value:'cooking',label:'🍳 Cooking or food'},
+  {value:'organizing',label:'📋 Organizing / planning / systems'},
+  {value:'social-online',label:'📱 Running online communities'},
+  {value:'collecting',label:'🔍 Collecting / researching a topic'},
+  {value:'reading',label:'📚 Reading / learning deep dives'},
+];
+
+const STRENGTHS=[
+  {value:'people',icon:'🤝',label:'Working with People',desc:'Listening, coaching, teaching, leading'},
+  {value:'information',icon:'📊',label:'Working with Information',desc:'Research, writing, organizing, analysis'},
+  {value:'hands',icon:'🔧',label:'Hands-on and Tools',desc:'Building, fixing, physical or spatial work'},
+  {value:'creative',icon:'💡',label:'Creative Problem Solving',desc:'Design, new ideas, thinking differently'},
+];
+
+const ENVS=[
+  {value:'quiet-focused',icon:'🎧',label:'Quiet and focused',desc:'Low interruption, steady pace'},
+  {value:'collaborative',icon:'💬',label:'Team-oriented',desc:'Regular interaction and collaboration'},
+  {value:'varied-fast',icon:'⚡',label:'Fast-paced and varied',desc:'No two days the same'},
+  {value:'structured',icon:'📋',label:'Structured and predictable',desc:'Clear routines and expectations'},
+];
+
+const MODES=[
+  {value:'remote',label:'Remote',desc:'Mostly from home'},
+  {value:'inperson',label:'In-person',desc:'On-site every day'},
+  {value:'hybrid',label:'Hybrid',desc:'Mix of both'},
+  {value:'flexible',label:'No preference yet',desc:"I'm still figuring this out"},
+];
+
+const VALUES=[
+  {value:'helping',label:'Helping people directly'},
+  {value:'creativity',label:'Creative expression'},
+  {value:'problem-solving',label:'Solving hard problems'},
+  {value:'stability',label:'Job stability and security'},
+  {value:'growth',label:'Learning and growing fast'},
+  {value:'flexibility',label:'Scheduling flexibility'},
+  {value:'meaning',label:'Work that feels meaningful'},
+  {value:'teamwork',label:'Being part of a team'},
+  {value:'independence',label:'Working independently'},
+  {value:'impact',label:'Visible impact on the world'},
+];
+
+const has=(arr,v)=>arr&&arr.includes(v);
+const hasSubj=(arr,k)=>arr&&arr.some(s=>s.includes(k));
+
+const PATHS=[
+  {
+    title:'Creative and Design Work',
+    desc:'Fields where you shape how things look, feel, and function — visual communication, product and experience design, illustration, and any work where the output is something someone interacts with or sees.',
+    examples:'Graphic design, UX/UI, art direction, motion design, game design, industrial design',
+    tags:['Creative','Visual','Problem-solving','Detail-oriented'],
+    score:(a)=>{
+      let s=0;
+      if(has(a.classQualities,'creative'))s+=2;
+      if(has(a.classQualities,'problem-solving'))s+=2;
+      if(has(a.outside,'art-craft'))s+=3;
+      if(has(a.outside,'gaming'))s+=1;
+      if(has(a.outside,'tech-building'))s+=1;
+      if(has(a.strengths,'creative'))s+=3;
+      if(has(a.values,'creativity'))s+=3;
+      if(has(a.values,'problem-solving'))s+=1;
+      return s;
+    }
+  },
+  {
+    title:'Data, Research and Analysis',
+    desc:'Work that centers on finding patterns, answering questions with evidence, and helping organizations make decisions based on what the data actually says — spanning scientific research, business intelligence, and policy analysis.',
+    examples:'Data analysis, market research, lab research coordination, policy research, academic research support',
+    tags:['Analytical','Detail-oriented','Systematic','Independent'],
+    score:(a)=>{
+      let s=0;
+      if(has(a.classQualities,'data'))s+=3;
+      if(has(a.classQualities,'deep-research'))s+=3;
+      if(has(a.classQualities,'problem-solving'))s+=2;
+      if(has(a.strengths,'information'))s+=3;
+      if(hasSubj(a.subject,'Math')||hasSubj(a.subject,'Computer')||hasSubj(a.subject,'Science'))s+=2;
+      if(has(a.outside,'collecting'))s+=2;
+      if(has(a.outside,'reading'))s+=1;
+      if(has(a.values,'problem-solving'))s+=2;
+      return s;
+    }
+  },
+  {
+    title:'Human Services and Support Work',
+    desc:'Roles centered on supporting people through hard things — mental health, housing, disability, family challenges, or life transitions. This field rewards patience, emotional intelligence, and the ability to stay steady in complicated situations.',
+    examples:'Social services, peer support, case coordination, housing advocacy, crisis response, youth work',
+    tags:['Empathetic','People-first','Mission-driven','Resilient'],
+    score:(a)=>{
+      let s=0;
+      if(has(a.classQualities,'helping-others'))s+=3;
+      if(has(a.outside,'caregiving'))s+=3;
+      if(has(a.outside,'volunteering'))s+=2;
+      if(has(a.strengths,'people'))s+=3;
+      if(hasSubj(a.subject,'Psychology')||hasSubj(a.subject,'Social')||hasSubj(a.subject,'Education'))s+=2;
+      if(has(a.values,'helping'))s+=3;
+      if(has(a.values,'meaning'))s+=2;
+      return s;
+    }
+  },
+  {
+    title:'Media, Writing and Communications',
+    desc:'Anywhere words, stories, and ideas are the product — journalism, content strategy, copywriting, social media, technical writing, and scriptwriting. A wide field with many different working styles.',
+    examples:'Content creation, copywriting, journalism, newsletter writing, communications coordination, technical writing',
+    tags:['Communicator','Creative','Storyteller','Autonomous'],
+    score:(a)=>{
+      let s=0;
+      if(has(a.classQualities,'writing'))s+=3;
+      if(has(a.classQualities,'creative'))s+=2;
+      if(has(a.outside,'writing-content'))s+=3;
+      if(has(a.outside,'social-online'))s+=2;
+      if(has(a.outside,'reading'))s+=2;
+      if(has(a.strengths,'creative'))s+=2;
+      if(hasSubj(a.subject,'Communications')||hasSubj(a.subject,'History')||hasSubj(a.subject,'Arts'))s+=2;
+      if(has(a.values,'creativity'))s+=2;
+      if(has(a.values,'independence'))s+=1;
+      return s;
+    }
+  },
+  {
+    title:'Healthcare and Wellness',
+    desc:'A broad field that includes clinical support, rehabilitation, health education, and wellness work. Many roles are hands-on and relational — combining technical knowledge with direct work alongside people.',
+    examples:'Therapy support roles, health coaching, community health, rehabilitation assistance, wellness program coordination',
+    tags:['Hands-on','Caring','Science-grounded','Purposeful'],
+    score:(a)=>{
+      let s=0;
+      if(has(a.classQualities,'hands-on'))s+=2;
+      if(has(a.classQualities,'helping-others'))s+=2;
+      if(has(a.outside,'caregiving'))s+=3;
+      if(has(a.outside,'fitness'))s+=2;
+      if(has(a.outside,'animals'))s+=1;
+      if(has(a.strengths,'people'))s+=2;
+      if(has(a.strengths,'hands'))s+=2;
+      if(hasSubj(a.subject,'Healthcare')||hasSubj(a.subject,'Psychology')||hasSubj(a.subject,'Science'))s+=3;
+      if(has(a.values,'helping'))s+=3;
+      if(has(a.values,'meaning'))s+=2;
+      return s;
+    }
+  },
+  {
+    title:'Technology and Digital Systems',
+    desc:'Building, managing, and supporting the tools and infrastructure that organizations run on — from software development to IT support to systems thinking. Strong demand across nearly every industry.',
+    examples:'Software development, IT support, systems administration, cybersecurity, technical project coordination',
+    tags:['Logical','Problem-solving','Methodical','In-demand'],
+    score:(a)=>{
+      let s=0;
+      if(has(a.classQualities,'problem-solving'))s+=2;
+      if(has(a.outside,'gaming'))s+=2;
+      if(has(a.outside,'tech-building'))s+=4;
+      if(has(a.outside,'organizing'))s+=1;
+      if(has(a.strengths,'information'))s+=2;
+      if(has(a.strengths,'creative'))s+=1;
+      if(hasSubj(a.subject,'Computer')||hasSubj(a.subject,'Engineering')||hasSubj(a.subject,'Math'))s+=3;
+      if(has(a.values,'problem-solving'))s+=2;
+      if(has(a.values,'growth'))s+=1;
+      if(has(a.values,'stability'))s+=1;
+      return s;
+    }
+  },
+  {
+    title:'Environmental and Conservation Work',
+    desc:'Field-based and science-based roles focused on understanding, protecting, and restoring the natural world — fieldwork, data collection, community education, and policy. A strong fit if being outside is part of how you function best.',
+    examples:'Environmental monitoring, conservation programs, sustainability coordination, outdoor education, wildlife work',
+    tags:['Outdoors','Mission-driven','Hands-on','Science-based'],
+    score:(a)=>{
+      let s=0;
+      if(has(a.classQualities,'outdoor'))s+=3;
+      if(has(a.classQualities,'hands-on'))s+=2;
+      if(has(a.outside,'animals'))s+=3;
+      if(has(a.strengths,'hands'))s+=2;
+      if(hasSubj(a.subject,'Environmental')||hasSubj(a.subject,'Science'))s+=3;
+      if(has(a.values,'meaning'))s+=2;
+      if(has(a.values,'impact'))s+=2;
+      return s;
+    }
+  },
+  {
+    title:'Operations, Coordination and Planning',
+    desc:'The behind-the-scenes work that keeps organizations moving — managing logistics, coordinating people and resources, tracking moving parts, and solving problems before they become crises. People who thrive here often excel at seeing what is missing.',
+    examples:'Project coordination, event planning, office operations, program administration, logistics support',
+    tags:['Organized','Systems-minded','Reliable','Detail-driven'],
+    score:(a)=>{
+      let s=0;
+      if(has(a.classQualities,'helping-others'))s+=1;
+      if(has(a.classQualities,'presenting'))s+=1;
+      if(has(a.outside,'organizing'))s+=4;
+      if(has(a.outside,'volunteering'))s+=2;
+      if(has(a.outside,'social-online'))s+=2;
+      if(has(a.strengths,'people'))s+=2;
+      if(has(a.strengths,'information'))s+=2;
+      if(hasSubj(a.subject,'Business')||hasSubj(a.subject,'Communications'))s+=2;
+      if(has(a.values,'teamwork'))s+=2;
+      if(has(a.values,'stability'))s+=1;
+      return s;
+    }
+  },
+  {
+    title:'Education and Instructional Work',
+    desc:'Teaching, training, tutoring, and instructional design across settings — schools, community programs, corporate training, and online learning. This path rewards people who can take something complex and make it land for someone else.',
+    examples:'Classroom teaching, tutoring, instructional design, workforce training, community education, curriculum development',
+    tags:['People-centered','Communicator','Patient','Purposeful'],
+    score:(a)=>{
+      let s=0;
+      if(has(a.classQualities,'helping-others'))s+=2;
+      if(has(a.classQualities,'discussion'))s+=2;
+      if(has(a.classQualities,'presenting'))s+=2;
+      if(has(a.outside,'volunteering'))s+=2;
+      if(has(a.outside,'caregiving'))s+=1;
+      if(has(a.strengths,'people'))s+=3;
+      if(hasSubj(a.subject,'Education')||hasSubj(a.subject,'Psychology')||hasSubj(a.subject,'Music')||hasSubj(a.subject,'Arts'))s+=3;
+      if(has(a.values,'helping'))s+=2;
+      if(has(a.values,'meaning'))s+=2;
+      if(has(a.values,'impact'))s+=1;
+      return s;
+    }
+  },
+  {
+    title:'Trades, Craft and Food Work',
+    desc:'Hands-on fields where skill, precision, and craft are the core of the work — culinary arts, skilled trades, fabrication, and repair. These paths are often undervalued on paper and deeply satisfying in practice.',
+    examples:'Culinary and food service, carpentry, electrical, fabrication, repair and restoration, custom craft work',
+    tags:['Hands-on','Craft-driven','Tactile','Skilled'],
+    score:(a)=>{
+      let s=0;
+      if(has(a.classQualities,'hands-on'))s+=3;
+      if(has(a.outside,'cooking'))s+=4;
+      if(has(a.outside,'art-craft'))s+=2;
+      if(has(a.strengths,'hands'))s+=4;
+      if(has(a.strengths,'creative'))s+=1;
+      if(has(a.values,'creativity'))s+=1;
+      if(has(a.values,'independence'))s+=1;
+      return s;
+    }
+  },
+  {
+    title:'Movement, Fitness and Active Work',
+    desc:'Roles centered on physical health, movement, sport, and the outdoors — coaching, recreation programming, and outdoor leadership. A strong path for people who work best when their body is part of the equation.',
+    examples:'Athletic coaching, personal training, recreation coordination, outdoor leadership, adaptive fitness, sports administration',
+    tags:['Active','Motivating','People-centered','Energetic'],
+    score:(a)=>{
+      let s=0;
+      if(has(a.outside,'fitness'))s+=4;
+      if(has(a.classQualities,'helping-others'))s+=2;
+      if(has(a.classQualities,'outdoor'))s+=2;
+      if(has(a.strengths,'people'))s+=2;
+      if(has(a.strengths,'hands'))s+=1;
+      if(has(a.values,'helping'))s+=2;
+      if(has(a.values,'flexibility'))s+=1;
+      if(has(a.values,'meaning'))s+=1;
+      return s;
+    }
+  },
+  {
+    title:'Mission-Driven and Community Work',
+    desc:'Nonprofit, civic, advocacy, and community development roles where the work is explicitly about impact. These paths attract people who need their work to mean something and who are energized by connecting people to resources and each other.',
+    examples:'Community outreach, advocacy coordination, nonprofit program work, civic engagement, social enterprise, grant coordination',
+    tags:['Purpose-driven','Community-centered','Relational','Resourceful'],
+    score:(a)=>{
+      let s=0;
+      if(has(a.outside,'volunteering'))s+=3;
+      if(has(a.outside,'organizing'))s+=2;
+      if(has(a.outside,'social-online'))s+=1;
+      if(has(a.classQualities,'helping-others'))s+=2;
+      if(has(a.classQualities,'discussion'))s+=1;
+      if(has(a.strengths,'people'))s+=2;
+      if(has(a.values,'impact'))s+=4;
+      if(has(a.values,'meaning'))s+=3;
+      if(has(a.values,'helping'))s+=3;
+      return s;
+    }
+  },
+  {
+    title:'Arts, Music and Performance',
+    desc:'Creative fields centered on making, performing, and sharing artistic work — as a practitioner or in roles that support the arts ecosystem. Many paths here are non-linear and are built through portfolio, reputation, and persistence.',
+    examples:'Music performance, visual arts, theater, arts administration, music production, community arts programming',
+    tags:['Creative','Expressive','Self-directed','Craft-driven'],
+    score:(a)=>{
+      let s=0;
+      if(has(a.outside,'music'))s+=4;
+      if(has(a.outside,'art-craft'))s+=3;
+      if(has(a.classQualities,'creative'))s+=3;
+      if(has(a.strengths,'creative'))s+=2;
+      if(hasSubj(a.subject,'Music')||hasSubj(a.subject,'Arts'))s+=4;
+      if(has(a.values,'creativity'))s+=3;
+      if(has(a.values,'independence'))s+=1;
+      return s;
+    }
+  },
+];
+
+function rankPaths(a){
+  return PATHS.map(p=>({...p,sc:p.score(a)}))
+    .sort((x,y)=>y.sc-x.sc)
+    .map((p,i)=>({...p,tier:i<3?1:i<7?2:3}))
+    .slice(0,9);
+}
+
+function Chips({options,value=[],onChange,max}){
+  const toggle=(v)=>{
+    if(value.includes(v))onChange(value.filter(x=>x!==v));
+    else if(!max||value.length<max)onChange([...value,v]);
+  };
+  return(
+    <div className="chip-grid">
+      {options.map(o=>(
+        <button key={o.value||o} className={'chip'+(value.includes(o.value||o)?' selected':'')} onClick={()=>toggle(o.value||o)}>
+          {o.label||o}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function Cards({options,value,onChange}){
+  return(
+    <div className="card-grid">
+      {options.map(o=>(
+        <div key={o.value} className={'radio-card'+(value===o.value?' selected':'')} onClick={()=>onChange(o.value)}>
+          {o.icon&&<div className="rc-icon">{o.icon}</div>}
+          <div className="rc-label">{o.label}</div>
+          {o.desc&&<div className="rc-desc">{o.desc}</div>}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Slider({label,hint,min,max,left,right,value,onChange}){
+  return(
+    <div className="q-block">
+      <label className="q-label">{label}{hint&&<span className="q-hint">{hint}</span>}</label>
+      <div className="slider-wrap">
+        <input type="range" min={min} max={max} step={1} value={value} onChange={e=>onChange(Number(e.target.value))}/>
+        <div className="slider-labels"><span>{left}</span><span>{right}</span></div>
+      </div>
+    </div>
+  );
+}
+
+function YN({label,value,onChange}){
+  return(
+    <div className="q-block">
+      <label className="q-label">{label}</label>
+      <div className="yn-row">
+        <button className={'yn-btn'+(value===true?' selected':'')} onClick={()=>onChange(true)}>Yes</button>
+        <button className={'yn-btn'+(value===false?' selected':'')} onClick={()=>onChange(false)}>Not really</button>
+      </div>
+    </div>
+  );
+}
+
+function Step1({d,s}){return(
+  <div className="fade-up">
+    <div className="section-eyebrow">Section 1 of 6</div>
+    <h2 className="section-title">Your studies, in your own words</h2>
+    <p className="section-subtitle">There is no right answer here. This is about getting honest with yourself about where your curiosity actually lives.</p>
+    <div className="q-block">
+      <label className="q-label">What is your area of study or major?<span className="q-hint">Pick the closest match or the direction you are exploring</span></label>
+      <Chips options={SUBJECTS} value={d.subject||[]} onChange={v=>s({subject:v})} max={2}/>
+    </div>
+    <div className="q-block">
+      <label className="q-label">What kind of class experiences energize you most?<span className="q-hint">Select everything that sounds like you, not what sounds impressive</span></label>
+      <Chips options={CLASS_Q} value={d.classQualities||[]} onChange={v=>s({classQualities:v})}/>
+    </div>
+    <div className="q-block">
+      <label className="q-label">Name a class you genuinely loved and what made it click for you<span className="q-hint">Does not have to relate to your major</span></label>
+      <textarea className="textarea" placeholder="e.g. Environmental Ethics — it connected science to real decisions people actually have to make..." value={d.favClass||''} onChange={e=>s({favClass:e.target.value})}/>
+    </div>
+    <div className="q-block">
+      <label className="q-label">Is there a topic you could talk about for hours that barely comes up in your coursework?</label>
+      <input className="text-input" placeholder="e.g. behavioral economics, graphic novels, game design, marine biology..." value={d.deepInterest||''} onChange={e=>s({deepInterest:e.target.value})}/>
+    </div>
+  </div>
+);}
+
+function Step2({d,s}){return(
+  <div className="fade-up">
+    <div className="section-eyebrow">Section 2 of 6</div>
+    <h2 className="section-title">What you do when no one is grading you</h2>
+    <p className="section-subtitle">Your outside life is full of skills your transcript has never touched. This is where we start to see the real picture.</p>
+    <div className="q-block">
+      <label className="q-label">What do you actually do outside of class?<span className="q-hint">Pick everything that shows up in your real life, even casually</span></label>
+      <Chips options={OUTSIDE} value={d.outside||[]} onChange={v=>s({outside:v})}/>
+    </div>
+    <div className="q-block">
+      <label className="q-label">Tell me about a side project, role, or thing you built just because you wanted to<span className="q-hint">Ran a server, managed a community, sold something online, taught yourself something — all of it counts</span></label>
+      <textarea className="textarea" placeholder="e.g. I run a Discord server for indie game modders with about 400 members. I do most of the moderation and organize weekly events..." value={d.sideProject||''} onChange={e=>s({sideProject:e.target.value})}/>
+    </div>
+    <YN label="Do you have a special interest — something you have gone unusually deep on?" value={d.hasSpecialInterest} onChange={v=>s({hasSpecialInterest:v})}/>
+    {d.hasSpecialInterest&&(
+      <div className="q-block">
+        <label className="q-label">What is it?</label>
+        <input className="text-input" placeholder="e.g. Japanese woodworking joinery, competitive Pokemon, forensic accounting..." value={d.specialInterest||''} onChange={e=>s({specialInterest:e.target.value})}/>
+      </div>
+    )}
+  </div>
+);}
+
+function Step3({d,s}){
+  const primary=d.strengths&&d.strengths[0];
+  const extra=(d.strengths||[]).slice(1);
+  return(
+    <div className="fade-up">
+      <div className="section-eyebrow">Section 3 of 6</div>
+      <h2 className="section-title">How you actually work</h2>
+      <p className="section-subtitle">This is not about skills you learned in a class. It is about how you naturally show up.</p>
+      <div className="q-block">
+        <label className="q-label">Where do your strengths feel most natural?<span className="q-hint">Pick your top one</span></label>
+        <Cards options={STRENGTHS} value={primary} onChange={v=>s({strengths:[v,...extra]})}/>
+      </div>
+      <div className="q-block" style={{marginTop:16}}>
+        <label className="q-label">A second one, if it fits</label>
+        <div className="chip-grid">
+          {STRENGTHS.map(st=>(
+            <button key={st.value} className={'chip'+(extra.includes(st.value)?' selected':'')}
+              onClick={()=>{
+                const cur=(d.strengths||[]).slice(1);
+                const nx=cur.includes(st.value)?cur.filter(x=>x!==st.value):[...cur,st.value];
+                s({strengths:[primary,...nx].filter(Boolean)});
+              }}>
+              {st.icon} {st.label}
+            </button>
+          ))}
+        </div>
+      </div>
+      <Slider label="How do you feel about working with a team every day?" left="I prefer solo work" right="I thrive with others" min={1} max={5} value={d.teamPref!=null?d.teamPref:3} onChange={v=>s({teamPref:v})}/>
+      <Slider label="How much structure do you need in your day?" left="I need a clear structure" right="I like figuring it out as I go" min={1} max={5} value={d.structurePref!=null?d.structurePref:3} onChange={v=>s({structurePref:v})}/>
+    </div>
+  );
+}
+
+function Step4({d,s}){return(
+  <div className="fade-up">
+    <div className="section-eyebrow">Section 4 of 6</div>
+    <h2 className="section-title">The environment that sets you up to succeed</h2>
+    <p className="section-subtitle">Where you work matters as much as what you do. Be realistic about what actually helps you function.</p>
+    <div className="q-block">
+      <label className="q-label">Which work environment sounds most like you?</label>
+      <Cards options={ENVS} value={d.envType} onChange={v=>s({envType:v})}/>
+    </div>
+    <div className="q-block" style={{marginTop:16}}>
+      <label className="q-label">What is your work location preference?<span className="q-hint">There is no wrong answer</span></label>
+      <div className="card-grid">
+        {MODES.map(o=>(
+          <div key={o.value} className={'radio-card'+(d.workMode===o.value?' selected':'')} onClick={()=>s({workMode:o.value})}>
+            <div className="rc-label">{o.label}</div>
+            <div className="rc-desc">{o.desc}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+    <YN label="Do you have a consistent morning routine or schedule you need to protect?" value={d.routineMatters} onChange={v=>s({routineMatters:v})}/>
+    <YN label="Do you tend to feel wiped out after a lot of social interaction?" value={d.socialDrain} onChange={v=>s({socialDrain:v})}/>
+  </div>
+);}
+
+function Step5({d,s}){return(
+  <div className="fade-up">
+    <div className="section-eyebrow">Section 5 of 6</div>
+    <h2 className="section-title">Your energy and how you recharge</h2>
+    <p className="section-subtitle">Neurodivergent people often have a more specific relationship with stimulation, focus, and recovery. These questions help match you to work that fits your nervous system.</p>
+    <Slider label="How much variety do you need day-to-day to stay engaged?" left="I do my best work with consistency" right="I need constant novelty" min={1} max={5} value={d.varietyNeed!=null?d.varietyNeed:3} onChange={v=>s({varietyNeed:v})}/>
+    <Slider label="How do you handle working on one thing for a long stretch?" left="I lose focus fast" right="I can hyper-focus for hours" min={1} max={5} value={d.focusSpan!=null?d.focusSpan:3} onChange={v=>s({focusSpan:v})}/>
+    <Slider label="How sensitive are you to a noisy or visually busy environment?" left="Does not bother me at all" right="It makes it really hard to function" min={1} max={5} value={d.sensoryLoad!=null?d.sensoryLoad:3} onChange={v=>s({sensoryLoad:v})}/>
+    <YN label="When work touches something you care about, can you stay with it much longer than expected?" value={d.interestDriven} onChange={v=>s({interestDriven:v})}/>
+  </div>
+);}
+
+function Step6({d,s}){return(
+  <div className="fade-up">
+    <div className="section-eyebrow">Section 6 of 6</div>
+    <h2 className="section-title">What actually matters to you in a job</h2>
+    <p className="section-subtitle">Last section. Pick what genuinely resonates, not what sounds good in an interview.</p>
+    <div className="q-block">
+      <label className="q-label">What do you most want from your work?<span className="q-hint">Pick your top three</span></label>
+      <Chips options={VALUES} value={d.values||[]} onChange={v=>s({values:v})} max={3}/>
+    </div>
+    <div className="q-block">
+      <label className="q-label">Is there an industry or cause you feel pulled toward, even without experience in it yet?</label>
+      <input className="text-input" placeholder="e.g. mental health, gaming, renewable energy, education reform, food access..." value={d.industry||''} onChange={e=>s({industry:e.target.value})}/>
+    </div>
+    <div className="q-block">
+      <label className="q-label">Anything else you want the assessment to know about how you work?<span className="q-hint">Optional — but sometimes the thing you almost did not write is the most useful</span></label>
+      <textarea className="textarea" placeholder="e.g. I do really well when I can see the whole system. Or: I struggle with open-ended tasks without a clear outcome..." value={d.freeform||''} onChange={e=>s({freeform:e.target.value})}/>
+    </div>
+  </div>
+);}
+
+function Results({answers,onRestart}){
+  const paths=rankPaths(answers);
+  const label=(t)=>t===1?'Resonates with your profile':t===2?'Worth a closer look':'Also worth considering';
+  return(
+    <div className="fade-up">
+      <div className="results-intro">
+        <h2>Areas worth exploring</h2>
+        <p>Based on what you shared, these are broad work areas that align with how you described yourself. Use them as a starting point for curiosity — not as a list of places you should end up.</p>
+      </div>
+      <div className="disclaimer-box">
+        <div className="disclaimer-heading">Before you read these, a few honest things</div>
+        <p>This tool uses a small set of self-reported answers to surface patterns. It does not know your full story, and it cannot predict your career. These results are not recommendations. They are not assessments of your ability or potential. They are prompts — a way to start thinking differently about where your existing strengths, curiosity, and experience might have a place.</p>
+        <p>Neurodiverse learners in particular often find their best fit in places no algorithm would suggest. Your working style, your special interests, and the ways you have figured things out on your own may point to paths that are not in this list at all — and that is not a problem. It means you may need to build a picture that fits you specifically rather than defaulting to what looks familiar.</p>
+        <p>Career paths rarely move in a straight line. The goal right now is not certainty. It is to get curious, gather information, and let this be one small input among many — not the whole answer.</p>
+      </div>
+      <div style={{marginBottom:20}}>
+        <div className="section-eyebrow">Your results</div>
+        <p style={{fontSize:13,color:'#5A6470',marginTop:4}}>A lower-ranked area might still be the most interesting one for you. Read all of them before deciding what to explore further.</p>
+      </div>
+      {paths.map(p=>(
+        <div key={p.title} className={'career-card tier-'+p.tier}>
+          <div className="career-card-header">
+            <div className="career-title">{p.title}</div>
+            <span className={'match-badge tier-'+p.tier}>{label(p.tier)}</span>
+          </div>
+          <p className="career-desc">{p.desc}</p>
+          <div className="examples-label">This area includes work like</div>
+          <p className="examples-text">{p.examples}</p>
+          <div className="tag-row">{p.tags.map(t=><span key={t} className="tag">{t}</span>)}</div>
+        </div>
+      ))}
+      <hr className="divider"/>
+      <p style={{fontSize:14,color:'#5A6470',lineHeight:1.7}}>
+        <strong style={{color:'var(--charcoal)'}}>A next step that actually helps:</strong> Pick one or two areas that sparked something and look up three real job postings in that space. Read only the responsibilities section — skip the requirements for now. If the day-to-day sounds like something you could see yourself doing, write it down. In the next module we will start connecting what you found here to real roles and help you figure out how to talk about your experience in a way that lands.
+      </p>
+      {answers.deepInterest&&(
+        <div className="notice">You mentioned a deep interest in <strong>{answers.deepInterest}</strong>. That kind of focused, self-directed curiosity is genuinely rare. We will come back to how to surface it in your search.</div>
+      )}
+      {answers.hasSpecialInterest&&answers.specialInterest&&(
+        <div className="notice">Your special interest in <strong>{answers.specialInterest}</strong> may point toward industries or niches that did not surface here. Some of the most interesting career paths are built around a specific area of depth rather than a job title. Keep that in mind.</div>
+      )}
+      <button className="restart-btn" onClick={onRestart}>Start over</button>
+    </div>
+  );
+}
+
+function App(){
+  const [step,setStep]=useState(0);
+  const [ans,setAns]=useState({});
+  const [done,setDone]=useState(false);
+  const upd=useCallback((p)=>setAns(a=>Object.assign({},a,p)),[]);
+  const next=()=>{if(step<STEPS.length-1)setStep(s=>s+1);else setDone(true);};
+  const back=()=>setStep(s=>Math.max(0,s-1));
+  const restart=()=>{setStep(0);setAns({});setDone(false);};
+  const p={d:ans,s:upd};
+  return(
+    <div className="shell">
+      <header className="header">
+        <div className="header-logo">G</div>
+        <div>
+          <div className="header-title">GroundWork Collaborative</div>
+          <div style={{fontSize:12,color:'#7A8490'}}>Wired to Work: Module 1 — What Kind of Work Works for You</div>
+        </div>
+      </header>
+      {!done?(
+        <React.Fragment>
+          <div className="progress-row">
+            {STEPS.map((s,i)=>(
+              <div key={s.id} className={'progress-dot'+(i<step?' done':i===step?' active':'')}/>
+            ))}
+          </div>
+          <div className="progress-label">{step+1} of {STEPS.length} — {STEPS[step].label}</div>
+          {step===0&&<Step1 {...p}/>}
+          {step===1&&<Step2 {...p}/>}
+          {step===2&&<Step3 {...p}/>}
+          {step===3&&<Step4 {...p}/>}
+          {step===4&&<Step5 {...p}/>}
+          {step===5&&<Step6 {...p}/>}
+          <div className="btn-row">
+            {step>0&&<button className="btn btn-secondary" onClick={back}>Back</button>}
+            <button className="btn btn-primary" onClick={next}>
+              {step===STEPS.length-1?'See my path areas':'Continue'}
+            </button>
+          </div>
+        </React.Fragment>
+      ):(
+        <Results answers={ans} onRestart={restart}/>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+</script>
+</body>
+</html>

@@ -1,0 +1,766 @@
+<\!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 4: Interview</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <style>body { margin: 0; padding: 0; }</style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState } = React;
+
+const TEAL = "#1B6B72";
+const LIGHTGRAY = "#F5F7F8";
+const GOLD = "#B5860A";
+const WHITE = "#FFFFFF";
+
+const modules = [
+  {
+    id: 1,
+    title: "Video 4.1",
+    subtitle: "Know Your Format",
+    icon: "📞",
+    color: TEAL,
+    intro: "Before you prepare a single answer, you need to know one thing: what kind of interview is this? The format shapes everything.",
+    content: [
+      {
+        type: "subhead",
+        text: "Phone Screens",
+      },
+      {
+        type: "body",
+        text: "Phone screens are usually the first step. Thirty to forty-five minutes. One person. The goal is basic qualification. Can you do the role? Are your expectations in range? Are you a real person?",
+      },
+      {
+        type: "body",
+        text: "They are not the deep interview. They are a filter. Get through the filter and you get to the real conversation.",
+      },
+      {
+        type: "tips",
+        items: [
+          "Find a quiet room. Close the door. Silence background noise. Your interviewer can hear everything.",
+          "Have your resume open in front of you. Have notes. Phone interviews are the one format where visible cues are completely reasonable.",
+          "Stand up if it helps you project energy and think on your feet.",
+          "Smile even though they cannot see you. It changes the tone of your voice.",
+        ],
+      },
+      {
+        type: "subhead",
+        text: "Video Interviews",
+      },
+      {
+        type: "body",
+        text: "Video interviews are now standard. They may be live with one or more interviewers, or asynchronous — you record yourself answering questions with no one on the other end.",
+      },
+      {
+        type: "cards",
+        items: [
+          {
+            title: "Lighting",
+            desc: "Sit facing a window or lamp. Never have bright light or a window behind you. Backlight makes you look like a silhouette.",
+          },
+          {
+            title: "Camera",
+            desc: "Camera at eye level. Stack books under your laptop if needed. Look at the camera, not your own face on screen.",
+          },
+          {
+            title: "Background",
+            desc: "Clean and neutral. A plain wall or bookshelf works. Close every other tab and silence all notifications.",
+          },
+        ],
+      },
+      {
+        type: "subhead",
+        text: "In-Person / Live",
+      },
+      {
+        type: "body",
+        text: "In-person interviews are the most variable. They can be a single conversation, a panel of four, a tour, a working session, or all of the above back to back. Ask what to expect before you arrive.",
+      },
+      {
+        type: "tips",
+        items: [
+          "Arrive ten to fifteen minutes early. Do not go into the building more than five minutes ahead of your scheduled time.",
+          "Greet the receptionist warmly. They often talk to the hiring team.",
+          "Bring printed copies of your resume. At least three. More if you know it is a panel.",
+          "Turn your phone off before you walk in. Not on vibrate. Off.",
+        ],
+      },
+      {
+        type: "callout",
+        label: "The core rule:",
+        text: "No matter the format, your job in the first five minutes is to make the other person comfortable talking to you. The interview does not start when they ask the first question. It starts when they see you.",
+      },
+    ],
+    checklist: [
+      "Confirm the interview format when you receive the invitation",
+      "Test your tech setup the night before any video interview",
+      "Plan your arrival logistics for in-person: parking, entrance, timing",
+      "Prepare one quiet, neutral space for any phone or video interview",
+    ],
+  },
+  {
+    id: 2,
+    title: "Video 4.2",
+    subtitle: "Ask These Questions Before You Go",
+    icon: "❓",
+    color: "#2E86AB",
+    intro: "Here is something most candidates do not do: ask questions before the interview, not just during. That changes everything.",
+    content: [
+      {
+        type: "body",
+        text: "When an employer invites you to interview, they will give you a point of contact — usually someone from HR or the recruiter. That person expects to hear from you. Asking logistics questions is professional. It is not nervous. It is prepared.",
+      },
+      {
+        type: "subhead",
+        text: "When You Confirm",
+      },
+      {
+        type: "callout",
+        label: "Sample language:",
+        text: "Thank you for the invitation. I am looking forward to meeting the team on [date]. Could you let me know the address and best entrance to use? I also wanted to ask whether parking is available on site. Please let me know if there is anything I should bring or prepare in advance.",
+      },
+      {
+        type: "subhead",
+        text: "Logistics Questions Worth Asking",
+      },
+      {
+        type: "tips",
+        items: [
+          "Where is the interview? Full address and which entrance to use.",
+          "Is parking available? Is there a cost? What is the nearest transit stop?",
+          "Who will I be meeting with? How many people? Panel or one-on-ones?",
+          "How long should I expect the interview to take?",
+          "Is there anything I should bring? Portfolio, work samples, ID?",
+        ],
+      },
+      {
+        type: "subhead",
+        text: "Will You Get Questions in Advance?",
+      },
+      {
+        type: "body",
+        text: "Some employers share interview questions ahead of time. This is more common in structured interviews, government roles, nonprofits, and organizations that have made equity commitments in hiring. It is worth asking.",
+      },
+      {
+        type: "callout",
+        label: "Sample language:",
+        text: "I do my best thinking when I have had time to reflect. Do you happen to share interview questions in advance, or provide any guidance on focus areas?",
+      },
+      {
+        type: "subhead",
+        text: "What Format Should You Expect?",
+      },
+      {
+        type: "cards",
+        items: [
+          {
+            title: "Behavioral",
+            desc: "Questions that start with 'tell me about a time when.' Focus on past examples. The STAR method applies here.",
+          },
+          {
+            title: "Situational",
+            desc: "Hypothetical scenarios. 'What would you do if...' Focus on your reasoning process, not just the answer.",
+          },
+          {
+            title: "Technical",
+            desc: "Skills demonstration — often a test, task, or case study. Ask ahead so you know what to bring.",
+          },
+        ],
+      },
+    ],
+    checklist: [
+      "When you confirm your interview, include two or three logistics questions",
+      "Ask who you will be meeting with and how long to expect",
+      "Ask whether interview questions are shared in advance",
+      "Confirm the address, parking, and entrance",
+    ],
+  },
+  {
+    id: 3,
+    title: "Video 4.3",
+    subtitle: "How to Show Up",
+    icon: "🪞",
+    color: "#5C7A6E",
+    intro: "An interview is a first impression in a compressed window. Appearance is communication — it signals effort, self-awareness, and that you understood the room.",
+    content: [
+      {
+        type: "subhead",
+        text: "What to Wear",
+      },
+      {
+        type: "body",
+        text: "When in doubt, dress one level above the company's standard dress code. If they are business casual, dress business professional. If they are casual, dress business casual.",
+      },
+      {
+        type: "callout",
+        label: "One rule that applies everywhere:",
+        text: "Your interview is not the time to test the edges of the dress code. Dress intentionally. You can always adjust once you are inside. You cannot undo a first impression.",
+      },
+      {
+        type: "tips",
+        items: [
+          "Lay out your outfit the night before. Decision fatigue in the morning is real.",
+          "Comfortable and fitted. You will sit, stand, and walk. If something does not feel right at home, it will not feel right in the interview.",
+          "Wear new shoes in advance. Blisters on interview day are a distraction you do not need.",
+          "Minimal accessories. The focus should be on you, not what you are wearing.",
+        ],
+      },
+      {
+        type: "subhead",
+        text: "Hygiene for the Interview",
+      },
+      {
+        type: "body",
+        text: "Shower the morning of. Use deodorant. Brush your teeth. These are the non-negotiables. Scent is particularly important in a close-quarters conversation.",
+      },
+      {
+        type: "callout",
+        label: "On fragrance:",
+        text: "Keep scent minimal or none. Strong cologne or perfume in an interview room can be distracting, and for some interviewers, physically uncomfortable. Light is always the safer call.",
+      },
+      {
+        type: "body",
+        text: "If executive function makes pre-interview morning routines hard, build the checklist the night before. Lay out everything. Reduce the number of decisions you need to make on the morning itself.",
+      },
+      {
+        type: "subhead",
+        text: "Presence",
+      },
+      {
+        type: "body",
+        text: "Presence is not about being outgoing. It is about being there. Eye contact, an even tone, a calm greeting, listening before speaking.",
+      },
+      {
+        type: "tips",
+        items: [
+          "Make eye contact when you are listening and when you are making a point. Brief, confident eye contact reads as engaged.",
+          "Slow down your speech slightly. Nerves speed most people up. Pausing before you answer is thoughtfulness, not hesitation.",
+          "'Let me think about that for a second' is a complete and professional response before any answer.",
+        ],
+      },
+      {
+        type: "callout",
+        label: "One more thing:",
+        text: "Bring water. Not coffee. Water. You can sip it without consequence, it gives you a natural pause, and it keeps your voice from going flat.",
+      },
+    ],
+    checklist: [
+      "Research the dress code and lay out your outfit the night before",
+      "Plan your hygiene routine the morning of, not in the moment",
+      "Keep scent light or none",
+      "Bring printed resume copies, a notebook, and water",
+    ],
+  },
+  {
+    id: 4,
+    title: "Video 4.4",
+    subtitle: "Asking for Accommodations",
+    icon: "🤲",
+    color: "#6B4E71",
+    intro: "You have the right to request accommodations during the interview process. Not just on the job. During the interview itself.",
+    content: [
+      {
+        type: "body",
+        text: "Most people do not know this. Or they know it but assume asking will hurt their chances. Requesting an accommodation is a protected activity. Employers are prohibited from discriminating against you for asking. For most employers, a reasonable accommodation request is something their HR team knows how to handle.",
+      },
+      {
+        type: "subhead",
+        text: "What You Can Ask For",
+      },
+      {
+        type: "tips",
+        items: [
+          "Written questions in advance rather than verbal-only delivery",
+          "Extended time to complete a timed assessment or task",
+          "A quiet room rather than an open office or loud environment",
+          "Remote format instead of in-person if travel or sensory factors are a barrier",
+          "A break during a multi-hour interview process",
+          "Permission to take notes during the interview",
+        ],
+      },
+      {
+        type: "subhead",
+        text: "When to Ask",
+      },
+      {
+        type: "body",
+        text: "Ask when you confirm your interview time. Not the day before. Not the day of. When you are in communication with your HR or recruiting contact, before the interview date. This gives them time to arrange it and signals that you are organized and self-aware.",
+      },
+      {
+        type: "subhead",
+        text: "How to Ask",
+      },
+      {
+        type: "body",
+        text: "You do not owe a detailed explanation of your diagnosis or medical history. You are requesting a change to the process. Keep it brief, specific, and practical.",
+      },
+      {
+        type: "callout",
+        label: "Sample language:",
+        text: "I want to mention that I do my best work in lower-stimulation environments. If it is possible to conduct the interview in a quieter space rather than an open floor, I would really appreciate that. Please let me know if that is something you can arrange.",
+      },
+      {
+        type: "callout",
+        label: "Another example:",
+        text: "I process information best when I have written reference available. Would it be possible to receive the interview questions in writing in advance? I want to make sure I can give you my clearest, most thoughtful responses.",
+      },
+      {
+        type: "subhead",
+        text: "If They Say No",
+      },
+      {
+        type: "body",
+        text: "You now have useful information about how this employer handles difference and flexibility. That information is yours to weigh. You also have the option to proceed without the accommodation and assess the environment once you are inside.",
+      },
+    ],
+    checklist: [
+      "Identify any accommodations you may want to request before your next interview",
+      "Draft one sentence describing what you need — specific and practical",
+      "Ask for accommodations when you confirm the interview time, not the day before",
+    ],
+  },
+  {
+    id: 5,
+    title: "Video 4.5",
+    subtitle: "Getting Help to Prepare",
+    icon: "🎯",
+    color: "#8B5E3C",
+    intro: "Interviewing is a skill. Like any skill, it improves with practice. The people who walk in feeling confident are almost always the ones who practiced.",
+    content: [
+      {
+        type: "subhead",
+        text: "Career Centers",
+      },
+      {
+        type: "body",
+        text: "If you have access to a university or community college career center, use it. Career centers offer mock interviews, interview feedback, and coaching at no cost. Most alumni retain access for at least a year after graduation. Call and ask before you assume the door is closed.",
+      },
+      {
+        type: "subhead",
+        text: "One-Off Coaching Sessions",
+      },
+      {
+        type: "body",
+        text: "A single focused session with an interview coach can make a significant difference. One-off coaching is about getting targeted, honest feedback on a specific interview coming up.",
+      },
+      {
+        type: "checklist_inline",
+        items: [
+          "Bring the job description of the role you are interviewing for",
+          "Bring your resume",
+          "Bring two or three questions you want to practice answering",
+          "Name a specific area where you know you struggle: openings, gaps, thinking on your feet",
+        ],
+      },
+      {
+        type: "callout",
+        label: "On receiving feedback:",
+        text: "Prepare yourself to hear it as data, not judgment. One piece of critical feedback is worth more than three rounds of vague encouragement.",
+      },
+      {
+        type: "subhead",
+        text: "Mock Interviews",
+      },
+      {
+        type: "body",
+        text: "A mock interview is a practice run in interview conditions. You answer questions. Someone evaluates your answers, body language, pace, and presence. Then you debrief.",
+      },
+      {
+        type: "tips",
+        items: [
+          "Show up prepared, dressed, and on time. The more realistic the conditions, the more useful the practice.",
+          "Ask for specific feedback. 'Did I answer the question directly?' gets you more than 'How did I do?'",
+          "Do it more than once. The first time you say your answers out loud, they often sound different than they did in your head.",
+        ],
+      },
+      {
+        type: "subhead",
+        text: "Peer Partners and Online Platforms",
+      },
+      {
+        type: "body",
+        text: "A trusted friend can run a practice session. Give them the questions and specific things to watch for. For solo prep, platforms like Big Interview, Pramp, or Interviewing.io offer structured practice. Check what your career center provides before paying for something.",
+      },
+      {
+        type: "callout",
+        label: "The honest truth:",
+        text: "Most interview anxiety comes from uncertainty. Practice reduces uncertainty. It does not eliminate nerves. But it converts panic into preparation.",
+      },
+    ],
+    checklist: [
+      "Check whether your career center is accessible and schedule a mock interview",
+      "Identify one person in your network who can run a practice session with you",
+      "Prepare the questions you want to practice before any coaching session",
+      "Ask for specific feedback, not general impressions",
+    ],
+  },
+  {
+    id: 6,
+    title: "Video 4.6",
+    subtitle: "Questions to Ask the Interviewer",
+    icon: "💬",
+    color: TEAL,
+    intro: "'Do you have any questions for us?' is not a formality. It is an interview question. How you answer it communicates something real.",
+    content: [
+      {
+        type: "body",
+        text: "You are also genuinely trying to figure out if this is the right place for you. The questions you ask are how you do that.",
+      },
+      {
+        type: "subhead",
+        text: "Questions About the Role",
+      },
+      {
+        type: "tips",
+        items: [
+          "What does success look like in this role in the first ninety days?",
+          "What are the biggest challenges someone in this role is likely to face in the first year?",
+          "How has this role evolved? Is this a new position or a backfill?",
+          "What does a typical week look like for someone in this position?",
+        ],
+      },
+      {
+        type: "subhead",
+        text: "Questions About the Team and Manager",
+      },
+      {
+        type: "tips",
+        items: [
+          "What is the management style of the person I would report to?",
+          "How does the team communicate day to day? Slack, email, meetings?",
+          "How does the team handle disagreement or course corrections?",
+          "What do people tend to appreciate most about working on this team?",
+        ],
+      },
+      {
+        type: "subhead",
+        text: "Questions That Help You Assess Fit for Your Brain",
+      },
+      {
+        type: "body",
+        text: "You are gathering real information about the environment before you say yes. These are practical and appropriate for any candidate.",
+      },
+      {
+        type: "cards",
+        items: [
+          {
+            title: "Structure",
+            desc: "How structured is the onboarding process? How much of the work is independent versus collaborative?",
+          },
+          {
+            title: "Flexibility",
+            desc: "Is remote or flexible scheduling an option in this role? How does the team handle varying working styles?",
+          },
+          {
+            title: "Pace",
+            desc: "How would you describe the pace here? Is it more heads-down focused work, or fast-moving and reactive?",
+          },
+        ],
+      },
+      {
+        type: "subhead",
+        text: "What Not to Ask",
+      },
+      {
+        type: "callout",
+        label: "Save these for after you have an offer:",
+        text: "Salary, compensation, benefits, or time off. Asking before an offer can signal the job is a means to an end. You will have the right moment for all of it.",
+      },
+      {
+        type: "subhead",
+        text: "How to Close",
+      },
+      {
+        type: "body",
+        text: "Before you leave, close the conversation intentionally. Ask about next steps so you know what to expect.",
+      },
+      {
+        type: "callout",
+        label: "Sample closing:",
+        text: "Thank you for taking the time today. I genuinely enjoyed this conversation. Could you let me know what the next steps look like and roughly when you expect to be in touch? I am excited about this opportunity.",
+      },
+      {
+        type: "body",
+        text: "Then send a thank-you email within twenty-four hours. Reference something specific from the conversation. That specificity is what makes it land.",
+      },
+    ],
+    checklist: [
+      "Write five questions you would genuinely want answered about your next interview role",
+      "Include at least one question about what success looks like in the first ninety days",
+      "Draft your closing statement and practice saying it out loud",
+      "Send a thank-you email within twenty-four hours of every interview",
+    ],
+  },
+];
+
+function ContentBlock({ block }) {
+  if (block.type === "body") {
+    return (
+      <p style={{ fontSize: 15, lineHeight: 1.7, color: "#333", margin: "0 0 14px 0" }}>
+        {block.text}
+      </p>
+    );
+  }
+  if (block.type === "subhead") {
+    return (
+      <p style={{ fontSize: 13, fontWeight: 700, color: TEAL, textTransform: "uppercase", letterSpacing: 1, margin: "20px 0 8px 0" }}>
+        {block.text}
+      </p>
+    );
+  }
+  if (block.type === "callout") {
+    return (
+      <div style={{ background: "#EEF7F7", borderLeft: `4px solid ${TEAL}`, padding: "14px 16px", borderRadius: "0 8px 8px 0", margin: "16px 0" }}>
+        <p style={{ fontSize: 13, fontWeight: 700, color: TEAL, margin: "0 0 4px 0" }}>{block.label}</p>
+        <p style={{ fontSize: 15, lineHeight: 1.65, color: "#333", margin: 0 }}>{block.text}</p>
+      </div>
+    );
+  }
+  if (block.type === "cards") {
+    const cols = block.items.length === 3 ? "1fr 1fr 1fr" : "1fr 1fr";
+    return (
+      <div style={{ display: "grid", gridTemplateColumns: cols, gap: 10, margin: "12px 0 16px 0" }}>
+        {block.items.map((item, i) => (
+          <div key={i} style={{ background: LIGHTGRAY, borderRadius: 8, padding: "12px 14px", border: "1px solid #DDE3E6" }}>
+            <p style={{ fontSize: 13, fontWeight: 700, color: "#333", margin: "0 0 4px 0" }}>{item.title}</p>
+            <p style={{ fontSize: 13, lineHeight: 1.55, color: "#555", margin: 0 }}>{item.desc}</p>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  if (block.type === "tips") {
+    return (
+      <div style={{ margin: "12px 0 16px 0" }}>
+        {block.items.map((tip, i) => (
+          <div key={i} style={{ display: "flex", gap: 10, marginBottom: 8, alignItems: "flex-start" }}>
+            <span style={{ color: TEAL, fontWeight: 700, fontSize: 15, flexShrink: 0, marginTop: 2 }}>→</span>
+            <p style={{ fontSize: 15, lineHeight: 1.6, color: "#333", margin: 0 }}>{tip}</p>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  if (block.type === "checklist_inline") {
+    return (
+      <div style={{ margin: "12px 0 16px 0" }}>
+        {block.items.map((item, i) => (
+          <div key={i} style={{ display: "flex", gap: 10, marginBottom: 8, alignItems: "flex-start" }}>
+            <span style={{ color: "#AAAAAA", fontSize: 14, flexShrink: 0, marginTop: 2 }}>□</span>
+            <p style={{ fontSize: 15, lineHeight: 1.6, color: "#333", margin: 0 }}>{item}</p>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  return null;
+}
+
+function ChecklistSection({ items, checked, onToggle }) {
+  const done = items.filter((_, i) => checked[i]).length;
+  return (
+    <div style={{ marginTop: 20, background: LIGHTGRAY, borderRadius: 10, padding: "16px 18px", border: "1px solid #DDE3E6" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+        <p style={{ fontSize: 13, fontWeight: 700, color: TEAL, textTransform: "uppercase", letterSpacing: 1, margin: 0 }}>Action Steps</p>
+        <span style={{ fontSize: 12, color: done === items.length ? TEAL : "#999", fontWeight: 600 }}>
+          {done}/{items.length} done
+        </span>
+      </div>
+      {items.map((item, i) => (
+        <div
+          key={i}
+          onClick={() => onToggle(i)}
+          style={{
+            display: "flex", gap: 10, marginBottom: 8, alignItems: "flex-start",
+            cursor: "pointer", padding: "6px 8px", borderRadius: 6,
+            transition: "background 0.15s",
+            background: checked[i] ? "#E6F2F2" : "transparent",
+          }}
+        >
+          <div style={{
+            width: 18, height: 18, borderRadius: 4,
+            border: `2px solid ${checked[i] ? TEAL : "#CCCCCC"}`,
+            background: checked[i] ? TEAL : WHITE,
+            flexShrink: 0, marginTop: 2,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            transition: "all 0.15s",
+          }}>
+            {checked[i] && <span style={{ color: WHITE, fontSize: 11, fontWeight: 700 }}>✓</span>}
+          </div>
+          <p style={{
+            fontSize: 14, lineHeight: 1.55, color: checked[i] ? "#777" : "#333",
+            margin: 0, textDecoration: checked[i] ? "line-through" : "none",
+            transition: "all 0.15s",
+          }}>
+            {item}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Module4() {
+  const [current, setCurrent] = useState(0);
+  const [checkState, setCheckState] = useState(
+    modules.map((m) => m.checklist.map(() => false))
+  );
+
+  const mod = modules[current];
+
+  const toggleCheck = (modIdx, itemIdx) => {
+    setCheckState((prev) =>
+      prev.map((m, mi) =>
+        mi === modIdx ? m.map((v, ii) => (ii === itemIdx ? !v : v)) : m
+      )
+    );
+  };
+
+  const totalChecked = checkState.flat().filter(Boolean).length;
+  const totalItems = checkState.flat().length;
+
+  return (
+    <div style={{ fontFamily: "'Arial', sans-serif", minHeight: "100vh", background: "#F0F4F5", display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "24px 16px" }}>
+      <div style={{ width: "100%", maxWidth: 700 }}>
+
+        {/* Header */}
+        <div style={{ background: TEAL, borderRadius: 14, padding: "22px 26px", marginBottom: 16, color: WHITE }}>
+          <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", opacity: 0.75, margin: "0 0 6px 0" }}>The GroundWork Collective</p>
+          <h1 style={{ fontSize: 22, fontWeight: 800, margin: "0 0 4px 0" }}>Module 4: Interview</h1>
+          <p style={{ fontSize: 14, opacity: 0.85, margin: "0 0 16px 0" }}>Your Interview, Your Story to Tell</p>
+
+          {/* Video nav dots */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+              {modules.map((m, i) => (
+                <button
+                  key={m.id}
+                  onClick={() => setCurrent(i)}
+                  title={m.subtitle}
+                  style={{
+                    width: 34, height: 34, borderRadius: "50%", border: "2px solid",
+                    borderColor: i === current ? WHITE : "rgba(255,255,255,0.4)",
+                    background: i === current ? WHITE : "rgba(255,255,255,0.15)",
+                    color: i === current ? TEAL : WHITE,
+                    fontWeight: 700, fontSize: 14, cursor: "pointer",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    transition: "all 0.2s",
+                  }}
+                >
+                  {m.icon}
+                </button>
+              ))}
+            </div>
+            <span style={{ fontSize: 13, opacity: 0.8, whiteSpace: "nowrap", marginLeft: 12 }}>
+              {totalChecked}/{totalItems} steps done
+            </span>
+          </div>
+        </div>
+
+        {/* Progress bar */}
+        <div style={{ display: "flex", gap: 5, marginBottom: 16 }}>
+          {modules.map((_, i) => (
+            <div
+              key={i}
+              style={{
+                flex: 1, height: 4, borderRadius: 2,
+                backgroundColor: i <= current ? TEAL : "#DDE3E6",
+                transition: "background-color 0.3s",
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Main card */}
+        <div style={{ background: WHITE, borderRadius: 14, padding: "24px 28px", boxShadow: "0 2px 12px rgba(0,0,0,0.06)", marginBottom: 16 }}>
+
+          {/* Video header */}
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+            <span style={{ fontSize: 30 }}>{mod.icon}</span>
+            <div>
+              <p style={{ fontSize: 12, fontWeight: 700, color: TEAL, textTransform: "uppercase", letterSpacing: 1, margin: "0 0 2px 0" }}>{mod.title}</p>
+              <h2 style={{ fontSize: 19, fontWeight: 800, color: "#1A2A2D", margin: 0 }}>{mod.subtitle}</h2>
+            </div>
+          </div>
+
+          {/* Intro */}
+          <div style={{ background: LIGHTGRAY, borderRadius: 8, padding: "12px 14px", marginBottom: 20, borderLeft: "4px solid #DDE3E6" }}>
+            <p style={{ fontSize: 15, lineHeight: 1.6, color: "#444", fontStyle: "italic", margin: 0 }}>{mod.intro}</p>
+          </div>
+
+          {/* Content */}
+          <div>
+            {mod.content.map((block, i) => (
+              <ContentBlock key={i} block={block} />
+            ))}
+          </div>
+
+          {/* Checklist */}
+          {mod.checklist.length > 0 && (
+            <ChecklistSection
+              items={mod.checklist}
+              checked={checkState[current]}
+              onToggle={(i) => toggleCheck(current, i)}
+            />
+          )}
+        </div>
+
+        {/* Navigation */}
+        <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+          <button
+            onClick={() => setCurrent((p) => Math.max(0, p - 1))}
+            disabled={current === 0}
+            style={{
+              flex: 1, padding: "13px 0", borderRadius: 10,
+              border: "2px solid #DDE3E6",
+              background: current === 0 ? LIGHTGRAY : WHITE,
+              color: current === 0 ? "#BBBBBB" : "#333",
+              fontWeight: 700, fontSize: 14,
+              cursor: current === 0 ? "default" : "pointer",
+              transition: "all 0.2s",
+            }}
+          >
+            ← Previous
+          </button>
+          {current < modules.length - 1 ? (
+            <button
+              onClick={() => setCurrent((p) => Math.min(modules.length - 1, p + 1))}
+              style={{
+                flex: 2, padding: "13px 0", borderRadius: 10,
+                border: "none", background: TEAL, color: WHITE,
+                fontWeight: 700, fontSize: 14, cursor: "pointer",
+                transition: "all 0.2s",
+              }}
+            >
+              Next: {modules[current + 1].subtitle} →
+            </button>
+          ) : (
+            <div style={{ flex: 2, padding: "13px 16px", borderRadius: 10, background: "#E6F2F2", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <p style={{ color: TEAL, fontWeight: 800, fontSize: 14, margin: 0 }}>
+                {totalChecked === totalItems
+                  ? "✓ Module complete. You are ready to interview."
+                  : `${totalItems - totalChecked} action steps remaining across this module.`}
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <p style={{ textAlign: "center", fontSize: 12, color: "#AAAAAA", marginTop: 20 }}>
+          The GroundWork Collective · Module 4 of 11 · Built for the way you think
+        </p>
+      </div>
+    </div>
+  );
+}
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<Module4 />);
+  </script>
+</body>
+</html>

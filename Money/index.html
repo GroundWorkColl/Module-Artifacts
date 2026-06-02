@@ -1,0 +1,776 @@
+<\!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 5: Money Stuff Nobody Explains</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <style>body { margin: 0; padding: 0; }</style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState } = React;
+
+const TEAL = "#1B6B72";
+const LIGHTGRAY = "#F5F7F8";
+const GOLD = "#B5860A";
+const WHITE = "#FFFFFF";
+
+const modules = [
+  {
+    id: 1,
+    title: "Video 5.1",
+    subtitle: "Following Up After the Interview",
+    icon: "📧",
+    color: TEAL,
+    intro: "You walked out of the interview. You are not sure how it went. That is normal. Here is exactly what you do next.",
+    content: [
+      {
+        type: "subhead",
+        text: "The Thank-You Email",
+      },
+      {
+        type: "body",
+        text: "Send it within twenty-four hours. Keep it short — three to five sentences. Reference one specific thing from the conversation. That specificity is what separates a real thank-you from a template.",
+      },
+      {
+        type: "callout",
+        label: "What to include:",
+        text: "Thank them for their time. Name something specific you discussed — a challenge they mentioned, a project, something that stuck with you. Reaffirm your interest in the role. That is it.",
+      },
+      {
+        type: "body",
+        text: "If you met with multiple people, send individual emails to each. Reference something different from each conversation.",
+      },
+      {
+        type: "subhead",
+        text: "Following Up on a Decision",
+      },
+      {
+        type: "body",
+        text: "If their stated timeline has passed, you are allowed to follow up. One email. Polite and brief. Ask for a timeline update, not a decision.",
+      },
+      {
+        type: "callout",
+        label: "Sample language:",
+        text: "I wanted to follow up on our conversation from [date]. I remain very interested in the role and wanted to check in on the timeline. Please let me know if there is anything additional I can provide.",
+      },
+      {
+        type: "subhead",
+        text: "When You Get the Offer",
+      },
+      {
+        type: "body",
+        text: "You do not have to say yes on the spot. Employers expect candidates to ask for time to review. A reasonable request is twenty-four to forty-eight hours for a verbal offer. Three to five business days for a written offer.",
+      },
+      {
+        type: "callout",
+        label: "What to say:",
+        text: "Thank you so much. I am genuinely excited about this opportunity. Could I have until [specific date] to review the full offer? I want to make sure I am thoughtful about this.",
+      },
+      {
+        type: "body",
+        text: "They will almost always say yes. If they pressure you into an on-the-spot answer, that is also information about the company.",
+      },
+    ],
+    checklist: [
+      "Send thank-you emails within twenty-four hours of every interview",
+      "Reference something specific from the conversation — not a generic line",
+      "Mark the decision timeline and follow up once if it passes",
+      "When the offer comes: ask for time to review, do not accept on the spot",
+    ],
+  },
+  {
+    id: 2,
+    title: "Video 5.2",
+    subtitle: "How to Negotiate",
+    icon: "🤝",
+    color: "#2E86AB",
+    intro: "Negotiating a job offer is expected. It is not rude. It is not risky. And 85% of people who negotiate receive at least something of what they asked for.",
+    content: [
+      {
+        type: "subhead",
+        text: "Before You Negotiate: Know Your Numbers",
+      },
+      {
+        type: "body",
+        text: "Research market rate before you counter. Know the rate for this role, in this location, at this company size. Resources: LinkedIn Salary, Glassdoor, Levels.fyi for tech roles, Bureau of Labor Statistics for broader data.",
+      },
+      {
+        type: "tips",
+        items: [
+          "Have your target number and your bottom number ready before the conversation.",
+          "Give a specific number, not a range. They will anchor to the bottom of a range.",
+          "Do not apologize for negotiating. 'I am so sorry to ask...' weakens your position before you start.",
+        ],
+      },
+      {
+        type: "subhead",
+        text: "What You Can Negotiate",
+      },
+      {
+        type: "cards",
+        items: [
+          {
+            title: "Salary",
+            desc: "The most common lever. Research the market. Counter with a specific number and a brief, confident reason.",
+          },
+          {
+            title: "Signing Bonus",
+            desc: "Useful if you are leaving unvested equity or a bonus cycle. One-time payment. Check for clawback clauses.",
+          },
+          {
+            title: "Remote / Hybrid",
+            desc: "If it matters to your function or wellbeing, ask. Clarify fixed days vs. flexible before accepting.",
+          },
+          {
+            title: "Start Date / PTO",
+            desc: "Start date flexibility and additional PTO both have real value. PTO on a $60k salary is worth ~$230 per day.",
+          },
+        ],
+      },
+      {
+        type: "callout",
+        label: "Sample counter language:",
+        text: "I am very excited about this role. Based on my research and the market for this position in [city], I was hoping we could get to [specific number]. Is there flexibility there?",
+      },
+      {
+        type: "body",
+        text: "Then be quiet. Let them respond. Silence after a counter is normal. Do not fill it.",
+      },
+      {
+        type: "subhead",
+        text: "If They Cannot Move on Salary",
+      },
+      {
+        type: "body",
+        text: "Ask what else can move. Sign-on bonus, review cycle timing, remote days, PTO, professional development budget. A company with a hard salary cap often has flexibility elsewhere. You will not know unless you ask.",
+      },
+    ],
+    checklist: [
+      "Research market rate before any counter conversation",
+      "Write down your target number and your bottom number beforehand",
+      "Practice your counter language out loud before the call",
+      "Prepare one non-salary item to ask about if base salary cannot move",
+    ],
+  },
+  {
+    id: 3,
+    title: "Video 5.3",
+    subtitle: "Total Compensation — The Full Picture",
+    icon: "💰",
+    color: "#5C7A6E",
+    intro: "When a company says the salary is $60,000, that is not what you are being paid. Total compensation is the full picture — and it changes everything.",
+    content: [
+      {
+        type: "subhead",
+        text: "The Components of Total Comp",
+      },
+      {
+        type: "tips",
+        items: [
+          "Base salary: your fixed annual number before taxes.",
+          "Signing bonus: one-time at hire. Read the clawback clause — you may owe it back if you leave early.",
+          "Performance bonus: paid based on individual or company results, usually annually. Not guaranteed. Never budget around it.",
+          "Commission: a percentage of revenue you generate. More in Video 5.4.",
+          "Equity: company stock, RSUs, or stock options. More in Video 5.4.",
+          "Health insurance: the employer's premium contribution has real dollar value — often $3,000 to $5,000 per year.",
+          "Retirement match: a 3% match on a $60k salary is $1,800 per year you would not otherwise have.",
+          "PTO: two extra weeks of PTO on a $60k salary is worth roughly $2,300.",
+        ],
+      },
+      {
+        type: "callout",
+        label: "The point:",
+        text: "Two offers with the same base salary can have very different total compensation values. A company offering $60k with strong benefits and a 4% 401k match may be worth significantly more than $65k with no match and minimal coverage. You need the full picture before you compare.",
+      },
+      {
+        type: "subhead",
+        text: "How to Calculate It",
+      },
+      {
+        type: "body",
+        text: "When you receive an offer, ask for the full benefits summary. Add up what the employer contributes across health insurance, retirement match, and other monetary benefits. That is your actual offer.",
+      },
+      {
+        type: "cards",
+        items: [
+          {
+            title: "Base Salary",
+            desc: "The number on the offer letter. Starting point, not ending point.",
+          },
+          {
+            title: "Benefits Value",
+            desc: "Employer's health premium share + 401k match + PTO cash value. Often $5,000–$12,000 annually.",
+          },
+          {
+            title: "Variable Pay",
+            desc: "Bonus, commission, equity. Treat as potential upside, not guaranteed income.",
+          },
+        ],
+      },
+    ],
+    checklist: [
+      "Ask for the full benefits summary document when you receive an offer",
+      "Calculate the dollar value of health insurance, 401k match, and PTO",
+      "Compare total comp across offers — not just base salary",
+      "Read any clawback clause on a signing bonus before you accept",
+    ],
+  },
+  {
+    id: 4,
+    title: "Video 5.4",
+    subtitle: "How You Get Paid",
+    icon: "📅",
+    color: "#6B4E71",
+    intro: "Not every job pays the same way. Know the structure before you accept — it matters for budgeting, planning, and avoiding an avoidable surprise on payday.",
+    content: [
+      {
+        type: "subhead",
+        text: "Pay Frequency",
+      },
+      {
+        type: "cards",
+        items: [
+          {
+            title: "Weekly",
+            desc: "52 paychecks/year. Common in hourly, trades, or manufacturing. Easiest to budget week to week.",
+          },
+          {
+            title: "Bi-weekly",
+            desc: "26 paychecks/year. Most common for salaried roles. Two months each year will have three paychecks instead of two.",
+          },
+          {
+            title: "Semi-monthly",
+            desc: "24 paychecks/year. Fixed dates (commonly 1st and 15th). Different from bi-weekly. Simpler if bills align to the month.",
+          },
+          {
+            title: "Monthly",
+            desc: "12 paychecks/year. Less common in the U.S. Requires the most intentional cash flow management.",
+          },
+        ],
+      },
+      {
+        type: "subhead",
+        text: "Commission",
+      },
+      {
+        type: "body",
+        text: "Commission is income tied to revenue you generate. Common in sales, real estate, insurance, and recruiting.",
+      },
+      {
+        type: "tips",
+        items: [
+          "On-target earnings (OTE) is a projection, not a guarantee. Ask what percentage of reps actually hit OTE.",
+          "Understand your ramp period — most sales roles give lower quotas for the first 3 to 6 months.",
+          "Ask when commissions pay out: monthly, quarterly, after payment clears? Cash flow matters.",
+        ],
+      },
+      {
+        type: "subhead",
+        text: "Bonus",
+      },
+      {
+        type: "body",
+        text: "Bonuses come in several forms and are almost never guaranteed. Never build your monthly budget around a bonus you have not received yet.",
+      },
+      {
+        type: "tips",
+        items: [
+          "Signing bonus: one-time, at hire. Check for clawback if you leave within 12 to 24 months.",
+          "Annual performance bonus: based on your results and the company's. Often you are not eligible your first year.",
+          "Discretionary bonus: the company decides if and when. Least predictable.",
+        ],
+      },
+      {
+        type: "subhead",
+        text: "Equity",
+      },
+      {
+        type: "tips",
+        items: [
+          "RSUs (Restricted Stock Units): shares vested over time. Taxed as ordinary income when they vest.",
+          "Stock options: the right to buy shares at a set price. More common at early-stage private companies.",
+          "Vesting schedule: typical is 4 years with a 1-year cliff. You get nothing until month 12, then incrementally after.",
+          "For most entry-level roles, equity is a small portion of comp. Do not make a decision based primarily on equity projections from a startup.",
+        ],
+      },
+    ],
+    checklist: [
+      "Confirm pay frequency and first paycheck date before your start date",
+      "If your role includes commission: ask what percentage of reps actually hit OTE",
+      "If there is a signing bonus: read the clawback clause",
+      "If there is equity: understand the vesting schedule before counting it as compensation",
+    ],
+  },
+  {
+    id: 5,
+    title: "Video 5.5",
+    subtitle: "Your First Paycheck Decoded",
+    icon: "🧾",
+    color: "#8B5E3C",
+    intro: "You got your first paycheck. The number is lower than you expected. You are not being cheated. Here is where it went.",
+    content: [
+      {
+        type: "subhead",
+        text: "Gross Pay vs. Net Pay",
+      },
+      {
+        type: "body",
+        text: "Gross pay is your full salary divided by your number of pay periods. Net pay is what actually lands in your bank account after taxes and deductions. The gap between those two numbers is what this video explains.",
+      },
+      {
+        type: "subhead",
+        text: "Federal Income Tax",
+      },
+      {
+        type: "body",
+        text: "The amount withheld depends on your income level, filing status, and the W-4 form you completed when hired. Federal income tax is progressive — you pay different rates on different portions of your income. The first dollars are taxed at the lowest rate.",
+      },
+      {
+        type: "callout",
+        label: "On your W-4:",
+        text: "If you claimed too many allowances, you may owe at tax time. If too few, you get a refund but have been lending the government money all year. Aim for approximately even.",
+      },
+      {
+        type: "subhead",
+        text: "State and Local Taxes",
+      },
+      {
+        type: "body",
+        text: "Most states have their own income tax. Seven do not: Alaska, Florida, Nevada, South Dakota, Tennessee, Texas, and Wyoming. Cities like New York City and Philadelphia add a local tax on top of state. This is one reason location matters so much in offer comparisons.",
+      },
+      {
+        type: "subhead",
+        text: "FICA: Social Security and Medicare",
+      },
+      {
+        type: "cards",
+        items: [
+          {
+            title: "Social Security",
+            desc: "6.2% of gross wages up to $168,600 (2024 cap). Your employer matches this.",
+          },
+          {
+            title: "Medicare",
+            desc: "1.45% of all wages, no cap. Your employer matches this. Combined FICA = 7.65%.",
+          },
+        ],
+      },
+      {
+        type: "subhead",
+        text: "Other Common Deductions",
+      },
+      {
+        type: "tips",
+        items: [
+          "Health insurance premium: your share of the monthly cost. Deducted pre-tax — it reduces your taxable income.",
+          "401k contribution: pre-tax if traditional, after-tax if Roth.",
+          "Dental, vision, FSA, or HSA contributions: if you opted in, these come out here.",
+        ],
+      },
+      {
+        type: "callout",
+        label: "Quick math:",
+        text: "A $60,000 salary paid bi-weekly is $2,307 gross per paycheck. After federal tax, state tax, FICA, and health insurance, your net pay might land around $1,600 to $1,750. That gap is not a mistake. It is the reality of a paycheck nobody explains in advance.",
+      },
+    ],
+    checklist: [
+      "Review your W-4 when you are hired to confirm withholding is accurate",
+      "Look up the income tax rate for your state and city before comparing offers",
+      "When your first paycheck arrives: go line by line through every deduction",
+      "If a deduction looks wrong, bring your pay stub to HR within the first week",
+    ],
+  },
+  {
+    id: 6,
+    title: "Video 5.6",
+    subtitle: "The Real Cost of the Job",
+    icon: "🏙️",
+    color: "#2E86AB",
+    intro: "A job offer is a salary in a place, with a commute, in a context. Two offers with the same number can have very different financial realities.",
+    content: [
+      {
+        type: "subhead",
+        text: "Cost of Living",
+      },
+      {
+        type: "body",
+        text: "A $70,000 salary in Austin has approximately the same purchasing power as $107,000 in New York City or $109,000 in San Francisco. Run both offers through a cost of living calculator before comparing them. NerdWallet, CNN Money, and Numbeo all offer free tools.",
+      },
+      {
+        type: "cards",
+        items: [
+          {
+            title: "Austin, TX",
+            desc: "1-BR rent: ~$1,400–$1,700/mo. No state income tax. Lower COL. Salary goes further.",
+          },
+          {
+            title: "New York City",
+            desc: "1-BR Manhattan: $3,500–$4,500/mo. Federal + state + city income tax. High COL.",
+          },
+          {
+            title: "Columbus, OH",
+            desc: "1-BR: ~$900–$1,200/mo. Mid-range COL. Salary stretches considerably further.",
+          },
+          {
+            title: "Denver, CO",
+            desc: "1-BR: ~$1,700–$2,200/mo. Rising COL. State income tax of 4.4%.",
+          },
+        ],
+      },
+      {
+        type: "subhead",
+        text: "Hybrid vs. In-Office: Real Tradeoffs for ND Workers",
+      },
+      {
+        type: "tips",
+        items: [
+          "In-office: clearer start/end times, social structure, manager access. Sensory load in open plans can be significant.",
+          "Remote: full environmental control, fewer unplanned interactions, more focus time. Structure is entirely self-generated.",
+          "Hybrid: often the most workable — structured collaboration days, focused home days. Only if it is consistent and predictable.",
+          "Ask the actual policy: fixed days or flexible? What does the culture expect? An officially hybrid job where everyone is in five days is not hybrid.",
+        ],
+      },
+      {
+        type: "subhead",
+        text: "The Real Cost of Commuting",
+      },
+      {
+        type: "tips",
+        items: [
+          "Driving: a 30-mile round trip at IRS mileage rate costs roughly $20/day, or $5,000/year. Add parking.",
+          "Transit: monthly passes range from $90 (Boston) to $132 (NYC) — that is $1,000–$1,600/year.",
+          "Time: a 1-hour daily round trip is 250 hours per year — more than 6 full work weeks — and a significant cognitive cost.",
+        ],
+      },
+      {
+        type: "callout",
+        label: "The calculation:",
+        text: "Add your annual commuting cost to the comparison and subtract it from your net salary value. A higher salary with a $6,000 annual commute may net out below a lower salary with no commute cost.",
+      },
+    ],
+    checklist: [
+      "Run both offers through a cost of living calculator if the cities differ",
+      "Calculate monthly rent as a percentage of net monthly income (benchmark: under 30%)",
+      "Calculate the annual commuting cost: gas or transit plus realistic time value",
+      "Ask the specific hybrid policy before accepting: fixed days, flex days, or vague?",
+    ],
+  },
+  {
+    id: 7,
+    title: "Video 5.7",
+    subtitle: "Your Health Insurance Actually Matters",
+    icon: "🏥",
+    color: TEAL,
+    intro: "Open enrollment feels like a form you have to fill out to get hired. It is not. The plan you choose has real, ongoing financial consequences — especially right now.",
+    content: [
+      {
+        type: "subhead",
+        text: "The Three Main Plan Types",
+      },
+      {
+        type: "cards",
+        items: [
+          {
+            title: "HMO",
+            desc: "Lower premium. Requires a primary care physician and referrals for specialists. Stays in-network. Best for lower out-of-pocket if you do not have complex needs.",
+          },
+          {
+            title: "PPO",
+            desc: "Higher premium. No referral needed. More flexibility to see specialists directly. Best if you have ongoing care or value flexibility in providers.",
+          },
+          {
+            title: "HDHP + HSA",
+            desc: "Lowest premium. Highest deductible. Pairs with a Health Savings Account. Best if you are generally healthy and want to build long-term health savings.",
+          },
+        ],
+      },
+      {
+        type: "subhead",
+        text: "Key Terms",
+      },
+      {
+        type: "tips",
+        items: [
+          "Premium: what you pay monthly regardless of whether you use it.",
+          "Deductible: what you pay out of pocket before insurance starts covering costs.",
+          "Copay: a flat fee for specific services (e.g., $30 for a primary care visit).",
+          "Coinsurance: the percentage you pay after your deductible is met.",
+          "Out-of-pocket maximum: the most you will pay in a year before insurance covers 100%.",
+        ],
+      },
+      {
+        type: "subhead",
+        text: "Why This Matters More Than You Think",
+      },
+      {
+        type: "tips",
+        items: [
+          "If you take prescription medication: check each plan's formulary before choosing. Drug costs vary significantly.",
+          "If you see a therapist, psychiatrist, or other mental health provider: verify they are in-network. Out-of-network mental health care can cost 3 to 5 times more.",
+          "If you manage ADHD, autism, or other ND-related conditions: regular evaluations, therapy, or medication management have direct ongoing cost implications.",
+          "An HDHP with a high deductible is not free savings if you end up needing significant care.",
+        ],
+      },
+      {
+        type: "subhead",
+        text: "The HSA",
+      },
+      {
+        type: "body",
+        text: "If you choose an HDHP, you become eligible for a Health Savings Account. Pre-tax contributions, tax-free growth, tax-free withdrawals for medical expenses. 2024 individual limit: $4,150. Unused funds roll over indefinitely. One of the best savings tools available to most employees.",
+      },
+      {
+        type: "callout",
+        label: "The practical takeaway:",
+        text: "Do not pick the cheapest premium and assume you are saving money. Calculate your realistic total annual cost: 12 months of premiums plus estimated out-of-pocket based on how much care you actually use.",
+      },
+    ],
+    checklist: [
+      "List your current prescriptions and check each plan's formulary before choosing",
+      "Verify your therapist, psychiatrist, or regular providers are in-network",
+      "Calculate real annual cost per plan: (premium × 12) + estimated out-of-pocket",
+      "If you choose an HDHP, open an HSA immediately and begin contributing",
+    ],
+  },
+];
+
+function ContentBlock({ block }) {
+  if (block.type === "body") {
+    return (
+      <p style={{ fontSize: 15, lineHeight: 1.7, color: "#333", margin: "0 0 14px 0" }}>
+        {block.text}
+      </p>
+    );
+  }
+  if (block.type === "subhead") {
+    return (
+      <p style={{ fontSize: 13, fontWeight: 700, color: TEAL, textTransform: "uppercase", letterSpacing: 1, margin: "20px 0 8px 0" }}>
+        {block.text}
+      </p>
+    );
+  }
+  if (block.type === "callout") {
+    return (
+      <div style={{ background: "#EEF7F7", borderLeft: `4px solid ${TEAL}`, padding: "14px 16px", borderRadius: "0 8px 8px 0", margin: "16px 0" }}>
+        <p style={{ fontSize: 13, fontWeight: 700, color: TEAL, margin: "0 0 4px 0" }}>{block.label}</p>
+        <p style={{ fontSize: 15, lineHeight: 1.65, color: "#333", margin: 0 }}>{block.text}</p>
+      </div>
+    );
+  }
+  if (block.type === "cards") {
+    const cols = block.items.length <= 3 ? `repeat(${block.items.length}, 1fr)` : "1fr 1fr";
+    return (
+      <div style={{ display: "grid", gridTemplateColumns: cols, gap: 10, margin: "12px 0 16px 0" }}>
+        {block.items.map((item, i) => (
+          <div key={i} style={{ background: LIGHTGRAY, borderRadius: 8, padding: "12px 14px", border: "1px solid #DDE3E6" }}>
+            <p style={{ fontSize: 13, fontWeight: 700, color: "#333", margin: "0 0 4px 0" }}>{item.title}</p>
+            <p style={{ fontSize: 13, lineHeight: 1.55, color: "#555", margin: 0 }}>{item.desc}</p>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  if (block.type === "tips") {
+    return (
+      <div style={{ margin: "12px 0 16px 0" }}>
+        {block.items.map((tip, i) => (
+          <div key={i} style={{ display: "flex", gap: 10, marginBottom: 8, alignItems: "flex-start" }}>
+            <span style={{ color: TEAL, fontWeight: 700, fontSize: 15, flexShrink: 0, marginTop: 2 }}>→</span>
+            <p style={{ fontSize: 15, lineHeight: 1.6, color: "#333", margin: 0 }}>{tip}</p>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  return null;
+}
+
+function ChecklistSection({ items, checked, onToggle }) {
+  const done = items.filter((_, i) => checked[i]).length;
+  return (
+    <div style={{ marginTop: 20, background: LIGHTGRAY, borderRadius: 10, padding: "16px 18px", border: "1px solid #DDE3E6" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+        <p style={{ fontSize: 13, fontWeight: 700, color: TEAL, textTransform: "uppercase", letterSpacing: 1, margin: 0 }}>Action Steps</p>
+        <span style={{ fontSize: 12, color: done === items.length ? TEAL : "#999", fontWeight: 600 }}>
+          {done}/{items.length} done
+        </span>
+      </div>
+      {items.map((item, i) => (
+        <div
+          key={i}
+          onClick={() => onToggle(i)}
+          style={{
+            display: "flex", gap: 10, marginBottom: 8, alignItems: "flex-start",
+            cursor: "pointer", padding: "6px 8px", borderRadius: 6,
+            transition: "background 0.15s",
+            background: checked[i] ? "#E6F2F2" : "transparent",
+          }}
+        >
+          <div style={{
+            width: 18, height: 18, borderRadius: 4,
+            border: `2px solid ${checked[i] ? TEAL : "#CCCCCC"}`,
+            background: checked[i] ? TEAL : WHITE,
+            flexShrink: 0, marginTop: 2,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            transition: "all 0.15s",
+          }}>
+            {checked[i] && <span style={{ color: WHITE, fontSize: 11, fontWeight: 700 }}>✓</span>}
+          </div>
+          <p style={{
+            fontSize: 14, lineHeight: 1.55, color: checked[i] ? "#777" : "#333",
+            margin: 0, textDecoration: checked[i] ? "line-through" : "none",
+            transition: "all 0.15s",
+          }}>
+            {item}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Module5Money() {
+  const [current, setCurrent] = useState(0);
+  const [checkState, setCheckState] = useState(
+    modules.map((m) => m.checklist.map(() => false))
+  );
+
+  const mod = modules[current];
+
+  const toggleCheck = (modIdx, itemIdx) => {
+    setCheckState((prev) =>
+      prev.map((m, mi) =>
+        mi === modIdx ? m.map((v, ii) => (ii === itemIdx ? !v : v)) : m
+      )
+    );
+  };
+
+  const totalChecked = checkState.flat().filter(Boolean).length;
+  const totalItems = checkState.flat().length;
+
+  return (
+    <div style={{ fontFamily: "'Arial', sans-serif", minHeight: "100vh", background: "#F0F4F5", display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "24px 16px" }}>
+      <div style={{ width: "100%", maxWidth: 700 }}>
+
+        <div style={{ background: TEAL, borderRadius: 14, padding: "22px 26px", marginBottom: 16, color: WHITE }}>
+          <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", opacity: 0.75, margin: "0 0 6px 0" }}>The GroundWork Collective</p>
+          <h1 style={{ fontSize: 22, fontWeight: 800, margin: "0 0 4px 0" }}>Module 5: Follow Up, Negotiate & Money Stuff</h1>
+          <p style={{ fontSize: 14, opacity: 0.85, margin: "0 0 16px 0" }}>Money Stuff Nobody Explains</p>
+
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+              {modules.map((m, i) => (
+                <button
+                  key={m.id}
+                  onClick={() => setCurrent(i)}
+                  title={m.subtitle}
+                  style={{
+                    width: 34, height: 34, borderRadius: "50%", border: "2px solid",
+                    borderColor: i === current ? WHITE : "rgba(255,255,255,0.4)",
+                    background: i === current ? WHITE : "rgba(255,255,255,0.15)",
+                    color: i === current ? TEAL : WHITE,
+                    fontWeight: 700, fontSize: 14, cursor: "pointer",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    transition: "all 0.2s",
+                  }}
+                >
+                  {m.icon}
+                </button>
+              ))}
+            </div>
+            <span style={{ fontSize: 13, opacity: 0.8, whiteSpace: "nowrap", marginLeft: 12 }}>
+              {totalChecked}/{totalItems} steps done
+            </span>
+          </div>
+        </div>
+
+        <div style={{ display: "flex", gap: 5, marginBottom: 16 }}>
+          {modules.map((_, i) => (
+            <div key={i} style={{ flex: 1, height: 4, borderRadius: 2, backgroundColor: i <= current ? TEAL : "#DDE3E6", transition: "background-color 0.3s" }} />
+          ))}
+        </div>
+
+        <div style={{ background: WHITE, borderRadius: 14, padding: "24px 28px", boxShadow: "0 2px 12px rgba(0,0,0,0.06)", marginBottom: 16 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+            <span style={{ fontSize: 30 }}>{mod.icon}</span>
+            <div>
+              <p style={{ fontSize: 12, fontWeight: 700, color: TEAL, textTransform: "uppercase", letterSpacing: 1, margin: "0 0 2px 0" }}>{mod.title}</p>
+              <h2 style={{ fontSize: 19, fontWeight: 800, color: "#1A2A2D", margin: 0 }}>{mod.subtitle}</h2>
+            </div>
+          </div>
+
+          <div style={{ background: LIGHTGRAY, borderRadius: 8, padding: "12px 14px", marginBottom: 20, borderLeft: "4px solid #DDE3E6" }}>
+            <p style={{ fontSize: 15, lineHeight: 1.6, color: "#444", fontStyle: "italic", margin: 0 }}>{mod.intro}</p>
+          </div>
+
+          <div>
+            {mod.content.map((block, i) => (
+              <ContentBlock key={i} block={block} />
+            ))}
+          </div>
+
+          {mod.checklist.length > 0 && (
+            <ChecklistSection
+              items={mod.checklist}
+              checked={checkState[current]}
+              onToggle={(i) => toggleCheck(current, i)}
+            />
+          )}
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+          <button
+            onClick={() => setCurrent((p) => Math.max(0, p - 1))}
+            disabled={current === 0}
+            style={{
+              flex: 1, padding: "13px 0", borderRadius: 10,
+              border: "2px solid #DDE3E6",
+              background: current === 0 ? LIGHTGRAY : WHITE,
+              color: current === 0 ? "#BBBBBB" : "#333",
+              fontWeight: 700, fontSize: 14,
+              cursor: current === 0 ? "default" : "pointer",
+              transition: "all 0.2s",
+            }}
+          >
+            ← Previous
+          </button>
+          {current < modules.length - 1 ? (
+            <button
+              onClick={() => setCurrent((p) => Math.min(modules.length - 1, p + 1))}
+              style={{
+                flex: 2, padding: "13px 0", borderRadius: 10,
+                border: "none", background: TEAL, color: WHITE,
+                fontWeight: 700, fontSize: 14, cursor: "pointer",
+                transition: "all 0.2s",
+              }}
+            >
+              Next: {modules[current + 1].subtitle} →
+            </button>
+          ) : (
+            <div style={{ flex: 2, padding: "13px 16px", borderRadius: 10, background: "#E6F2F2", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <p style={{ color: TEAL, fontWeight: 800, fontSize: 14, margin: 0 }}>
+                {totalChecked === totalItems
+                  ? "✓ Module complete. Sign with confidence."
+                  : `${totalItems - totalChecked} action steps remaining across this module.`}
+              </p>
+            </div>
+          )}
+        </div>
+
+        <p style={{ textAlign: "center", fontSize: 12, color: "#AAAAAA", marginTop: 20 }}>
+          The GroundWork Collective · Module 5 of 11 · Built for the way you think
+        </p>
+      </div>
+    </div>
+  );
+}
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<Module5Money />);
+  </script>
+</body>
+</html>

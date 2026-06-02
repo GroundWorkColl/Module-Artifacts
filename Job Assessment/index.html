@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>What Kind of Work Actually Works for You — GroundWork Collective</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #F7F3EE;
+      --warm-white: #FDFAF6;
+      --terracotta: #C4612A;
+      --terracotta-light: #E8845A;
+      --terracotta-pale: #F5DDD0;
+      --forest: #2D4A35;
+      --forest-mid: #3D6147;
+      --forest-light: #D4E6D8;
+      --charcoal: #2A2825;
+      --stone: #7A7068;
+      --stone-light: #C8BFB5;
+      --gold: #C89A3A;
+      --gold-pale: #F5EBCF;
+      --alert: #9B3A2A;
+      --alert-pale: #F5DDD9;
+      --sky: #3A6B8A;
+      --sky-pale: #D4E8F0;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--charcoal);
+      min-height: 100vh;
+    }
+
+    h1, h2, h3 { font-family: 'DM Serif Display', Georgia, serif; }
+
+    .app-shell {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 16px 80px;
+    }
+
+    .site-header {
+      padding: 24px 0 16px;
+      border-bottom: 1px solid var(--stone-light);
+      margin-bottom: 32px;
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+    }
+    .site-header .brand { font-size: 12px; text-transform: uppercase; letter-spacing: .12em; color: var(--stone); font-weight: 500; }
+    .site-header .module-tag { font-size: 12px; color: var(--stone); }
+
+    .progress-wrap { margin-bottom: 36px; }
+    .progress-meta { display: flex; justify-content: space-between; font-size: 13px; color: var(--stone); margin-bottom: 8px; }
+    .progress-bar { height: 4px; background: var(--stone-light); border-radius: 2px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--terracotta); border-radius: 2px; transition: width .4s ease; }
+
+    .section-eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: .14em; color: var(--terracotta); font-weight: 600; margin-bottom: 8px; }
+    .section-title { font-size: 26px; line-height: 1.2; margin-bottom: 10px; }
+    .section-sub { font-size: 15px; color: var(--stone); line-height: 1.6; margin-bottom: 32px; }
+
+    .question-block { margin-bottom: 32px; }
+    .question-label { font-size: 15px; font-weight: 600; color: var(--charcoal); margin-bottom: 14px; line-height: 1.4; }
+    .question-hint { font-size: 13px; color: var(--stone); margin-top: -10px; margin-bottom: 14px; font-style: italic; }
+
+    .options-grid { display: flex; flex-direction: column; gap: 10px; }
+
+    .option-btn {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 14px 16px;
+      border: 1.5px solid var(--stone-light);
+      border-radius: 8px;
+      background: var(--warm-white);
+      cursor: pointer;
+      text-align: left;
+      transition: all .15s;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--charcoal);
+      line-height: 1.4;
+    }
+    .option-btn:hover { border-color: var(--terracotta-light); background: #FDF8F5; }
+    .option-btn.selected { border-color: var(--terracotta); background: var(--terracotta-pale); }
+    .option-btn.multi-selected { border-color: var(--forest-mid); background: var(--forest-light); }
+
+    .option-check {
+      width: 18px; height: 18px; flex-shrink: 0;
+      border: 1.5px solid var(--stone-light);
+      border-radius: 50%;
+      margin-top: 1px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all .15s;
+    }
+    .option-check.square { border-radius: 4px; }
+    .option-btn.selected .option-check,
+    .option-btn.multi-selected .option-check {
+      background: var(--forest-mid);
+      border-color: var(--forest-mid);
+    }
+    .option-check-dot {
+      width: 8px; height: 8px;
+      background: white;
+      border-radius: 50%;
+    }
+    .option-check.square .option-check-dot { border-radius: 2px; }
+    .option-text .opt-title { font-weight: 500; }
+    .option-text .opt-desc { font-size: 12px; color: var(--stone); margin-top: 2px; }
+
+    .multi-group { margin-bottom: 20px; }
+    .multi-group-label { font-size: 12px; text-transform: uppercase; letter-spacing: .1em; color: var(--stone); font-weight: 600; margin-bottom: 8px; padding-left: 2px; }
+    .multi-options { display: flex; flex-direction: column; gap: 8px; }
+
+    .nav-row { display: flex; align-items: center; justify-content: space-between; margin-top: 36px; gap: 12px; }
+    .btn-back {
+      padding: 10px 20px; border: 1.5px solid var(--stone-light); border-radius: 6px;
+      background: transparent; cursor: pointer; font-size: 14px; color: var(--stone);
+      font-family: 'DM Sans', sans-serif; font-weight: 500; transition: all .15s;
+    }
+    .btn-back:hover { border-color: var(--charcoal); color: var(--charcoal); }
+    .btn-next {
+      padding: 12px 32px; background: var(--forest); border: none; border-radius: 6px;
+      color: white; cursor: pointer; font-size: 15px; font-weight: 600;
+      font-family: 'DM Sans', sans-serif; flex: 1; max-width: 260px; transition: background .15s;
+    }
+    .btn-next:hover { background: var(--forest-mid); }
+    .btn-next:disabled { background: var(--stone-light); cursor: not-allowed; }
+    .btn-results {
+      padding: 14px 36px; background: var(--terracotta); border: none; border-radius: 6px;
+      color: white; cursor: pointer; font-size: 16px; font-weight: 600;
+      font-family: 'DM Sans', sans-serif; flex: 1; max-width: 300px; transition: background .15s;
+    }
+    .btn-results:hover { background: var(--terracotta-light); }
+
+    /* Results */
+    .results-header { margin-bottom: 40px; }
+    .results-header .eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: .14em; color: var(--terracotta); font-weight: 600; margin-bottom: 10px; }
+    .results-header h2 { font-size: 32px; line-height: 1.15; margin-bottom: 12px; }
+    .results-header p { font-size: 15px; color: var(--stone); line-height: 1.65; }
+
+    .result-card {
+      border: 1.5px solid var(--stone-light);
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 20px;
+      background: var(--warm-white);
+    }
+    .result-card.highlight { border-color: var(--terracotta); background: #FDF8F5; }
+    .result-card.insight { border-color: var(--gold); background: var(--gold-pale); }
+    .result-card.caution { border-color: var(--alert); background: var(--alert-pale); }
+    .result-card.confirm { border-color: var(--forest-mid); background: var(--forest-light); }
+    .result-card.sky { border-color: var(--sky); background: var(--sky-pale); }
+
+    .card-eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: .12em; font-weight: 600; margin-bottom: 6px; }
+    .result-card .card-eyebrow { color: var(--stone); }
+    .result-card.highlight .card-eyebrow { color: var(--terracotta); }
+    .result-card.insight .card-eyebrow { color: #7A5A10; }
+    .result-card.caution .card-eyebrow { color: var(--alert); }
+    .result-card.confirm .card-eyebrow { color: var(--forest-mid); }
+    .result-card.sky .card-eyebrow { color: var(--sky); }
+
+    .card-title { font-family: 'DM Serif Display', serif; font-size: 20px; margin-bottom: 10px; line-height: 1.25; }
+    .card-body { font-size: 14px; color: var(--charcoal); line-height: 1.7; }
+    .card-body p { margin-bottom: 8px; }
+    .card-body p:last-child { margin-bottom: 0; }
+
+    .flag-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--terracotta); color: white;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em;
+      padding: 4px 10px; border-radius: 4px; margin-bottom: 10px;
+    }
+
+    .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .tag { padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 500; background: var(--stone-light); color: var(--charcoal); }
+    .tag.green { background: var(--forest-light); color: var(--forest); }
+    .tag.orange { background: var(--terracotta-pale); color: var(--terracotta); }
+
+    .intro-screen { text-align: left; padding-top: 16px; }
+    .intro-screen .big-title { font-size: 38px; line-height: 1.1; margin-bottom: 20px; }
+    .intro-screen .intro-body { font-size: 16px; color: var(--stone); line-height: 1.7; margin-bottom: 12px; }
+    .intro-screen .intro-time { font-size: 13px; color: var(--stone-light); margin-bottom: 36px; display: flex; align-items: center; gap: 6px; }
+    .btn-start {
+      padding: 16px 44px; background: var(--terracotta); border: none; border-radius: 6px;
+      color: white; cursor: pointer; font-size: 17px; font-weight: 600;
+      font-family: 'DM Sans', sans-serif; transition: background .15s;
+    }
+    .btn-start:hover { background: var(--terracotta-light); }
+    .intro-list { list-style: none; margin: 20px 0 32px; display: flex; flex-direction: column; gap: 10px; }
+    .intro-list li { display: flex; align-items: baseline; gap: 10px; font-size: 14px; color: var(--charcoal); line-height: 1.5; }
+    .intro-list li::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--terracotta); flex-shrink: 0; margin-top: 6px; }
+
+    .btn-restart {
+      margin-top: 36px; padding: 12px 28px;
+      border: 1.5px solid var(--stone-light); border-radius: 6px;
+      background: transparent; cursor: pointer; font-size: 14px;
+      font-family: 'DM Sans', sans-serif; color: var(--stone); transition: all .15s;
+    }
+    .btn-restart:hover { border-color: var(--charcoal); color: var(--charcoal); }
+
+    @media (max-width: 520px) {
+      .intro-screen .big-title { font-size: 30px; }
+      .results-header h2 { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+const { useState, useMemo } = React;
+
+// ─── SECTIONS ────────────────────────────────────────────────────────────────
+
+const SECTIONS = [
+  {
+    id: 'strengths',
+    eyebrow: 'Section 1 of 6',
+    title: 'Your Strengths',
+    sub: 'Select everything that sounds like you. These don\'t have to come from school or a job title — real-life experience counts just as much.',
+    questions: [
+      {
+        id: 'strength_types',
+        label: 'Which of these feel like genuine strengths?',
+        hint: 'Select all that apply — most people have more than one.',
+        type: 'multi',
+        groups: [
+          {
+            label: 'Working with People',
+            options: [
+              { value: 'people_listen', label: 'Listening and supporting others' },
+              { value: 'people_teach', label: 'Teaching or explaining things clearly' },
+              { value: 'people_lead', label: 'Organizing or leading a group' },
+              { value: 'people_coach', label: 'Coaching or encouraging others' },
+            ]
+          },
+          {
+            label: 'Working with Information',
+            options: [
+              { value: 'info_organize', label: 'Organizing details or data' },
+              { value: 'info_write', label: 'Writing or communicating in words' },
+              { value: 'info_research', label: 'Researching or going deep on topics' },
+              { value: 'info_steps', label: 'Building or following precise systems' },
+            ]
+          },
+          {
+            label: 'Working with Hands or Tools',
+            options: [
+              { value: 'hands_build', label: 'Building, fixing, or making things' },
+              { value: 'hands_outdoor', label: 'Working outdoors or physically' },
+              { value: 'hands_craft', label: 'Hands-on or craft work' },
+            ]
+          },
+          {
+            label: 'Working Creatively',
+            options: [
+              { value: 'creative_design', label: 'Designing or making visual things' },
+              { value: 'creative_solve', label: 'Solving problems in unexpected ways' },
+              { value: 'creative_ideas', label: 'Generating new ideas' },
+              { value: 'creative_think', label: 'Thinking differently from the group' },
+            ]
+          }
+        ]
+      },
+      {
+        id: 'hidden_strengths',
+        label: 'Do any of these describe you?',
+        hint: 'These are real strengths employers value, even without an official title.',
+        type: 'multi_flat',
+        options: [
+          { value: 'hidden_interest', label: 'I have a deep special interest I\'ve spent years in' },
+          { value: 'hidden_project', label: 'I\'ve built or run something independently (project, community, side work)' },
+          { value: 'hidden_care', label: 'I\'ve had caregiving responsibilities (family, siblings, etc.)' },
+          { value: 'hidden_none', label: 'None of these apply', exclusive: true },
+        ]
+      }
+    ]
+  },
+  {
+    id: 'growth',
+    eyebrow: 'Section 2 of 6',
+    title: 'Areas for Growth',
+    sub: 'Everyone is still developing something. Knowing yours helps you find a role where you\'ll get support — not one where you\'ll be set up to struggle from day one.',
+    questions: [
+      {
+        id: 'growth_areas',
+        label: 'Where are you still actively working on yourself?',
+        hint: 'Select all that apply. These are not dealbreakers — they help you find the right fit.',
+        type: 'multi_flat',
+        options: [
+          { value: 'growth_voice', label: 'Speaking up in group settings or meetings' },
+          { value: 'growth_time', label: 'Managing my time without external reminders' },
+          { value: 'growth_organize', label: 'Staying consistently organized' },
+          { value: 'growth_tech', label: 'Getting comfortable with new technology' },
+          { value: 'growth_help', label: 'Asking for help before I\'m overwhelmed' },
+          { value: 'growth_feedback', label: 'Receiving feedback without it hitting hard personally' },
+          { value: 'growth_initiate', label: 'Getting started on tasks (initiation challenges)' },
+          { value: 'growth_none', label: 'I feel solid in all of these right now', exclusive: true },
+        ]
+      }
+    ]
+  },
+  {
+    id: 'environment',
+    eyebrow: 'Section 3 of 6',
+    title: 'Your Ideal Work Environment',
+    sub: 'Where and how you work affects your focus, energy, and nervous system every day. Answer based on where you actually do your best — not where you\'d prefer to be.',
+    questions: [
+      {
+        id: 'env_setting',
+        label: 'Think about a time you focused well and got things done. What did that setting look like?',
+        type: 'single',
+        options: [
+          { value: 'env_active', label: 'Active and social', desc: 'People around, conversations happening, energy in the room' },
+          { value: 'env_quiet', label: 'Quiet and controlled', desc: 'Minimal interruption, consistent conditions, space to concentrate' },
+          { value: 'env_physical', label: 'Physical and on the move', desc: 'Using my hands, being outdoors, varying locations' },
+          { value: 'env_structured', label: 'Structured and predictable', desc: 'Clear routine, defined tasks, consistent expectations each day' },
+          { value: 'env_unsure', label: 'I honestly haven\'t found that setting yet', desc: '' },
+        ]
+      },
+      {
+        id: 'env_pace',
+        label: 'What pace feels right to you in a work setting?',
+        type: 'single',
+        options: [
+          { value: 'pace_fast', label: 'Fast and varied', desc: 'A lot happening, things shift, I stay engaged through variety' },
+          { value: 'pace_steady', label: 'Steady and structured', desc: 'I know what to expect and can build a rhythm' },
+          { value: 'pace_mixed', label: 'A mix — focused time and collaborative bursts', desc: 'I need both modes in the same day' },
+          { value: 'pace_unsure', label: 'Still figuring it out', desc: '' },
+        ]
+      },
+      {
+        id: 'env_social',
+        label: 'How much daily interaction with other people do you want?',
+        type: 'single',
+        options: [
+          { value: 'social_high', label: 'A lot — I want to be around people throughout the day', desc: '' },
+          { value: 'social_some', label: 'Some — a few meaningful interactions is enough', desc: '' },
+          { value: 'social_low', label: 'Minimal — I do my best work independently', desc: '' },
+          { value: 'social_varied', label: 'It varies — I need both kinds of days', desc: '' },
+        ]
+      },
+      {
+        id: 'env_org_size',
+        label: 'What size organization appeals to you?',
+        type: 'single',
+        options: [
+          { value: 'size_large', label: 'Large organization (100+ people)', desc: 'More defined roles, established processes' },
+          { value: 'size_mid', label: 'Mid-size team (20–100 people)', desc: 'More visibility, some structure' },
+          { value: 'size_small', label: 'Small team (under 20)', desc: 'Your work is visible from day one, wear multiple hats' },
+          { value: 'size_no_pref', label: 'No strong preference yet', desc: '' },
+        ]
+      }
+    ]
+  },
+  {
+    id: 'schedule',
+    eyebrow: 'Section 4 of 6',
+    title: 'Scheduling and Flexibility',
+    sub: 'Your natural rhythm and real-life commitments matter. Flag them before you apply, not after you accept an offer.',
+    questions: [
+      {
+        id: 'peak_time',
+        label: 'When are you naturally sharpest?',
+        type: 'single',
+        options: [
+          { value: 'peak_early', label: 'Early morning', desc: 'Before 10am' },
+          { value: 'peak_mid', label: 'Mid-morning to afternoon', desc: '' },
+          { value: 'peak_late', label: 'Afternoon to evening', desc: '' },
+          { value: 'peak_inconsistent', label: 'Inconsistent', desc: 'Depends on sleep and other factors' },
+        ]
+      },
+      {
+        id: 'schedule_constraints',
+        label: 'Do you have fixed commitments that affect when you can work?',
+        hint: 'Real factors worth knowing before you apply.',
+        type: 'multi_flat',
+        options: [
+          { value: 'sched_morning', label: 'Morning commitments (childcare, long commute, medical routines)' },
+          { value: 'sched_afternoon', label: 'Afternoon or evening commitments' },
+          { value: 'sched_health', label: 'Regular health appointments or care needs to work around' },
+          { value: 'sched_free', label: 'Mostly flexible — few fixed constraints' },
+        ]
+      },
+      {
+        id: 'flexibility_need',
+        label: 'How important is schedule flexibility to you?',
+        type: 'single',
+        options: [
+          { value: 'flex_critical', label: 'Critical — I need it to function well day to day', desc: '' },
+          { value: 'flex_helpful', label: 'Helpful — I\'d prefer it, but I can work within structure', desc: '' },
+          { value: 'flex_fine', label: 'Not a priority — a consistent schedule actually helps me', desc: '' },
+        ]
+      }
+    ]
+  },
+  {
+    id: 'energy',
+    eyebrow: 'Section 5 of 6',
+    title: 'Energy and Stimulation',
+    sub: 'The stimulation level of a job can determine whether you thrive or drain out. This is one of the most skipped questions in a job search.',
+    questions: [
+      {
+        id: 'after_social',
+        label: 'After a long, busy, social day — how do you usually feel?',
+        type: 'single',
+        options: [
+          { value: 'social_energized', label: 'Energized — that\'s when I\'m at my best', desc: '' },
+          { value: 'social_neutral', label: 'Fine — it doesn\'t affect me much either way', desc: '' },
+          { value: 'social_drained', label: 'Drained — I need real alone time to recover', desc: '' },
+          { value: 'social_depends', label: 'Depends on the people and context', desc: '' },
+        ]
+      },
+      {
+        id: 'stimulation_level',
+        label: 'What level of stimulation do you prefer in a work setting?',
+        type: 'single',
+        options: [
+          { value: 'stim_high', label: 'High — loud, fast, lots of change', desc: 'I disengage without it' },
+          { value: 'stim_medium', label: 'Medium — active but organized', desc: 'Busy enough to stay focused, not chaotic' },
+          { value: 'stim_low', label: 'Low — quiet, calm, consistent', desc: 'I think better with less going on' },
+          { value: 'stim_variable', label: 'Variable — I need both modes', desc: 'Deep focus time and high-energy time' },
+        ]
+      },
+      {
+        id: 'energy_drain',
+        label: 'What tends to drain your energy at work or school?',
+        hint: 'Select all that apply.',
+        type: 'multi_flat',
+        options: [
+          { value: 'drain_noise', label: 'Loud or unpredictable environments' },
+          { value: 'drain_isolation', label: 'Working alone for long stretches without contact' },
+          { value: 'drain_ambiguity', label: 'Unclear expectations or vague direction' },
+          { value: 'drain_routine', label: 'Doing the same thing every day with no variety' },
+          { value: 'drain_conflict', label: 'Interpersonal tension or team conflict' },
+          { value: 'drain_multitask', label: 'Constant interruptions and task-switching' },
+        ]
+      }
+    ]
+  },
+  {
+    id: 'interests',
+    eyebrow: 'Section 6 of 6',
+    title: 'Special Interests',
+    sub: 'When your work connects to something you care about, harder days become more manageable. This is often where a job search finds its direction.',
+    questions: [
+      {
+        id: 'interest_areas',
+        label: 'Is there a cause, industry, or subject that actually interests you?',
+        hint: 'Select everything that pulls your attention — even loosely.',
+        type: 'multi_flat',
+        options: [
+          { value: 'int_animals', label: 'Animals / nature / environment' },
+          { value: 'int_health', label: 'Healthcare / wellness / mental health' },
+          { value: 'int_tech', label: 'Technology / engineering / data' },
+          { value: 'int_arts', label: 'Arts / design / media / entertainment' },
+          { value: 'int_sports', label: 'Sports / fitness / recreation' },
+          { value: 'int_education', label: 'Education / youth / social services' },
+          { value: 'int_food', label: 'Food / hospitality / service industries' },
+          { value: 'int_business', label: 'Business / finance / entrepreneurship' },
+          { value: 'int_community', label: 'Community / nonprofit / government' },
+          { value: 'int_trades', label: 'Skilled trades / construction / manufacturing' },
+          { value: 'int_none', label: 'No strong pull yet — still figuring this out', exclusive: true },
+        ]
+      }
+    ]
+  }
+];
+
+// ─── RECOMMENDATION ENGINE ────────────────────────────────────────────────────
+
+function generateResults(answers) {
+  const has = (id, val) => Array.isArray(answers[id]) ? answers[id].includes(val) : answers[id] === val;
+  const get = (id) => answers[id] || [];
+
+  const strengths = get('strength_types');
+  const growth = get('growth_areas');
+  const drains = get('energy_drain');
+
+  const isPeopleStrong = ['people_listen','people_teach','people_lead','people_coach'].some(v => strengths.includes(v));
+  const isCreativeStrong = ['creative_design','creative_solve','creative_ideas','creative_think'].some(v => strengths.includes(v));
+  const isInfoStrong = ['info_organize','info_write','info_research','info_steps'].some(v => strengths.includes(v));
+  const isHandsStrong = ['hands_build','hands_outdoor','hands_craft'].some(v => strengths.includes(v));
+
+  const energizedBySocial = has('after_social', 'social_energized');
+  const drainedBySocial = has('after_social', 'social_drained');
+
+  const highSocial = has('env_social', 'social_high');
+  const lowSocial = has('env_social', 'social_low');
+  const someSocial = has('env_social', 'social_some');
+
+  const highStim = has('stimulation_level', 'stim_high');
+  const lowStim = has('stimulation_level', 'stim_low');
+  const medStim = has('stimulation_level', 'stim_medium');
+  const varStim = has('stimulation_level', 'stim_variable');
+
+  const envActive = has('env_setting', 'env_active');
+  const envQuiet = has('env_setting', 'env_quiet');
+  const envPhysical = has('env_setting', 'env_physical');
+  const envStructured = has('env_setting', 'env_structured');
+
+  const paceFast = has('env_pace', 'pace_fast');
+  const paceSteady = has('env_pace', 'pace_steady');
+  const paceMixed = has('env_pace', 'pace_mixed');
+
+  const hasTimeIssue = has('growth_areas', 'growth_time');
+  const hasInitiationIssue = has('growth_areas', 'growth_initiate');
+  const hasVoiceIssue = has('growth_areas', 'growth_voice');
+
+  const wantsLargeOrg = has('env_org_size', 'size_large');
+  const wantsSmallOrg = has('env_org_size', 'size_small');
+
+  const needsFlex = has('flexibility_need', 'flex_critical');
+  const hasMorningConstraint = has('schedule_constraints', 'sched_morning');
+  const hasHealthConstraint = has('schedule_constraints', 'sched_health');
+
+  const interests = get('interest_areas');
+  const hiddenStrengths = get('hidden_strengths');
+
+  const results = [];
+
+  // ── 1. ENVIRONMENT PROFILE CARD ──────────────────────────────────────
+
+  // Determine the primary environment descriptor
+  let envTitle = '';
+  let envBody = [];
+
+  if (envActive && (highSocial || energizedBySocial) && (highStim || medStim || paceFast)) {
+    envTitle = 'You work best in active, people-centered environments';
+    envBody = [
+      'Your answers are consistent: you focus better with energy around you, you\'re fueled by other people, and you need variety to stay engaged. Quiet, isolated settings will work against you.',
+      'Look for workplaces with open team dynamics, regular collaboration, and a pace that keeps things moving. Think customer-facing roles, agency environments, busy teams, healthcare settings, education, or any industry where real-time problem solving with people is built into the job.',
+      'In your interviews, ask what a typical workday looks like hour by hour. You want to hear things like "a lot of back-and-forth with the team" and "things change fast" — not "mostly heads-down, self-directed work."'
+    ];
+  } else if (envQuiet && (lowSocial || someSocial) && (lowStim || varStim) && (drainedBySocial || drains.includes('drain_noise'))) {
+    envTitle = 'You do your best work in focused, lower-stimulation settings';
+    envBody = [
+      'Your profile is clear: sustained concentration in a predictable environment is where your output quality is highest. Constant noise, shifting priorities, and high-volume social interaction drain you rather than drive you.',
+      'This doesn\'t mean you can\'t work with people — it means the structure of the work matters. Look for roles with defined tasks, a consistent routine, and space to concentrate without constant interruption. Research roles, technical work, writing, finance, lab environments, and administrative roles in structured organizations often fit this profile.',
+      'When evaluating employers, ask about communication norms. "We do a lot of async communication" and "meetings are kept short and purposeful" are signals that point in the right direction for you.'
+    ];
+  } else if (envPhysical || isHandsStrong) {
+    envTitle = 'Physical, hands-on environments are where you\'re at your best';
+    envBody = [
+      'You thrive when the work is tangible and the environment is active in a physical sense. Sitting at a desk all day in a quiet building is likely to drain your engagement over time.',
+      'Look for roles where you can see what you\'ve made or fixed at the end of a day. Skilled trades, healthcare, construction, outdoor work, logistics, service industries, and physical production environments are worth exploring. Many of these sectors have strong hiring right now.',
+      'The trades and physical fields also tend to offer clear pathways and strong compensation that don\'t require a four-year degree as the starting point. Don\'t overlook them.'
+    ];
+  } else if (envStructured || paceSteady) {
+    envTitle = 'Structured, predictable environments bring out your best work';
+    envBody = [
+      'You operate well when you know what to expect. A clear routine, consistent expectations, and defined tasks let you build a rhythm and produce reliably — which is exactly what employers want.',
+      'Look for established organizations with documented processes, clear role definitions, and consistent schedules. Large companies, government agencies, healthcare systems, educational institutions, and financial firms often offer this kind of structure.',
+      'In interviews, ask how work gets assigned and how priorities are set. You want to hear "we have regular check-ins" and "roles are clearly defined" — not "it\'s different every day" or "we wear a lot of hats."'
+    ];
+  } else if (paceMixed || varStim) {
+    envTitle = 'You need both modes — focused time and collaborative energy';
+    envBody = [
+      'You\'re not purely social and you\'re not purely solo. Your best work happens when you have protected time to go deep and also regular interaction with a team.',
+      'Look for roles with a defined mix: project-based work, roles with both individual and team deliverables, or workplaces that value deep work alongside collaboration. Many knowledge-work roles — marketing, product, consulting, research — are structured this way.',
+      'Ask in interviews how the day is typically structured. "We have team time in the morning and focused work blocks in the afternoon" is a green flag for people with your profile.'
+    ];
+  } else {
+    envTitle = 'Your environment profile is still forming — that\'s a useful starting point';
+    envBody = [
+      'You haven\'t landed on a clear pattern yet, which is normal early in a job search. The best way to find your fit is to get into environments and pay attention to what energizes you vs. what drains you.',
+      'For now, choose variety over certainty in your early roles. Try to get experience in at least two different types of workplaces — fast-paced vs. structured, people-heavy vs. independent — so you have real data to work from.',
+      'The worksheet that goes with this module has space to track this as you go.'
+    ];
+  }
+
+  results.push({
+    type: 'highlight',
+    eyebrow: 'Your Environment Profile',
+    title: envTitle,
+    body: envBody
+  });
+
+  // ── 2. TENSION / INSIGHT CARDS ───────────────────────────────────────
+
+  // Creative + low stim + quiet: flag the tension
+  if (isCreativeStrong && lowStim && envQuiet && !drains.includes('drain_routine')) {
+    results.push({
+      type: 'insight',
+      eyebrow: 'Something to Watch',
+      badge: 'Worth a second look',
+      title: 'Creative strengths often need more stimulation than you realize',
+      body: [
+        'You identified strong creative skills but said you prefer quiet, low-stimulation settings. Those can coexist — but watch for this: creative work tends to benefit from exposure to new input, unexpected conversations, and a degree of novelty.',
+        'If your work environment is too quiet and too routine for too long, you may find your creative energy stalling even in a setting that feels comfortable.',
+        'Look for environments that give you focused time but also expose you to varied problems, new people, or cross-team collaboration. "Quiet but interesting" is the target — not just quiet.'
+      ]
+    });
+  }
+
+  // High stim preference + time/initiation issues: flag the tension
+  if ((highStim || paceFast) && (hasTimeIssue || hasInitiationIssue)) {
+    results.push({
+      type: 'caution',
+      eyebrow: 'Something to Watch',
+      badge: 'Worth a closer look',
+      title: 'High-energy environments add pressure on executive function',
+      body: [
+        'You\'re drawn to fast-paced, high-stimulation settings — and those environments are genuinely exciting. The tension is that they\'re also the most demanding on time management and self-starting. Competing priorities, constant input, and shifting urgency are exactly the conditions that make initiation and time tracking harder.',
+        'This doesn\'t mean you should avoid them. It means go in with systems: a task list reviewed every morning, a clear end-of-day check, and a manager you feel comfortable asking for explicit prioritization when things pile up.',
+        'The most dangerous version is a high-energy workplace with no structure and a manager who assumes you\'ll figure out what to do. Ask in interviews how priorities get set and communicated.'
+      ]
+    });
+  }
+
+  // People-strong + said low social: flag the mismatch
+  if (isPeopleStrong && lowSocial && !drainedBySocial) {
+    results.push({
+      type: 'insight',
+      eyebrow: 'Something to Watch',
+      badge: 'Worth a second look',
+      title: 'Your biggest strength shows up around other people',
+      body: [
+        'Working with people is clearly where you have genuine skill — but you said you prefer minimal daily interaction. It\'s worth examining that closely.',
+        'Sometimes this reflects past experience with the wrong kind of social environment — chaotic, draining, or conflict-heavy workplaces — rather than a true preference for isolation. If that\'s the case, the goal isn\'t less people, it\'s a better team.',
+        'Your strengths in people work are likely to go underused in a mostly-solo role. Consider roles with moderate, purposeful interaction — team meetings, client contact, or mentoring — rather than eliminating it entirely.'
+      ]
+    });
+  }
+
+  // Large org + voice issues: flag
+  if (wantsLargeOrg && hasVoiceIssue) {
+    results.push({
+      type: 'caution',
+      eyebrow: 'Something to Watch',
+      title: 'Large organizations often reward the loudest voices',
+      body: [
+        'You\'re drawn to a larger organization, but speaking up in group settings is something you\'re actively developing. In bigger companies, visibility often comes from how well you advocate for your own work in rooms full of people.',
+        'That\'s a learnable skill, and it gets easier with a manager who creates space for quieter voices. Ask in interviews how the team handles input and how decisions get made — you want a team where ideas travel through quality, not volume.',
+        'Starting in a role on a smaller team within a larger organization is often a better entry point than diving into a large, loud culture before you\'ve built that muscle.'
+      ]
+    });
+  }
+
+  // Drains from isolation + low social stated: check for conflict
+  if (drains.includes('drain_isolation') && lowSocial) {
+    results.push({
+      type: 'insight',
+      eyebrow: 'Something to Notice',
+      title: 'You said you want minimal interaction — but isolation drains you',
+      body: [
+        'You flagged that working alone for long stretches drains your energy, but also said you prefer minimal daily interaction. Those two things are worth reconciling before you narrow your job search.',
+        'What you may actually want is purposeful, low-pressure interaction — not the absence of it. Think structured check-ins, a small cohesive team, or regular project touchpoints — rather than either a constantly social environment or a fully isolated one.',
+        'Pay attention to team size and communication culture when you evaluate roles. A small team with regular contact is very different from a solo position with occasional check-ins.'
+      ]
+    });
+  }
+
+  // ── 3. STRENGTHS CARD ────────────────────────────────────────────────
+
+  const strengthCategories = [];
+  if (isPeopleStrong) strengthCategories.push('working with people');
+  if (isCreativeStrong) strengthCategories.push('creative thinking');
+  if (isInfoStrong) strengthCategories.push('working with information');
+  if (isHandsStrong) strengthCategories.push('hands-on and physical work');
+
+  let strengthBody = [];
+  if (strengthCategories.length > 0) {
+    strengthBody.push(`Your strongest areas: ${strengthCategories.join(', ')}. These point toward role types where you\'ll contribute confidently from the start — use them to filter job descriptions, not just to describe yourself in an interview.`);
+  }
+  if (hiddenStrengths.includes('hidden_interest')) {
+    strengthBody.push('A deep special interest is a real resume asset. The ability to self-teach, sustain focus, and go deep on a complex topic is exactly what many roles need. When you write applications, translate it accurately — don\'t downplay it.');
+  }
+  if (hiddenStrengths.includes('hidden_project')) {
+    strengthBody.push('Independent projects — whether that\'s a Discord community, a side business, or something you built because you wanted to — show initiative and self-direction. Depending on what it involved, it may translate directly into portfolio work.');
+  }
+  if (hiddenStrengths.includes('hidden_care')) {
+    strengthBody.push('Caregiving experience is consistently undervalued on resumes. Organizing competing needs, staying patient under pressure, and managing logistics for another person are real professional skills. Name them explicitly.');
+  }
+
+  if (strengthBody.length > 0) {
+    results.push({
+      type: 'sky',
+      eyebrow: 'Your Strengths',
+      title: 'What you bring to the table',
+      body: strengthBody
+    });
+  }
+
+  // ── 4. GROWTH AREAS CARD ─────────────────────────────────────────────
+
+  const growthSelected = growth.filter(g => g !== 'growth_none');
+  if (growthSelected.length > 0) {
+    let growthBody = ['Knowing your growth areas before you start is a genuine advantage. You can look for roles and managers that offer the right kind of support — rather than finding out where you struggle under pressure on week three of a new job.'];
+    if (hasTimeIssue || hasInitiationIssue) {
+      growthBody.push('Time management and initiation challenges are common and manageable with the right structure around you. Look for roles with clear deliverables, regular check-ins, and defined workflows. Avoid highly ambiguous roles with very little day-to-day guidance, especially for your first position.');
+    }
+    if (hasVoiceIssue) {
+      growthBody.push('Speaking up in groups builds through low-stakes practice. Look for a manager who actively invites input and creates space for quieter voices — not one who rewards whoever talks the most. Ask in interviews how the team handles disagreement and how ideas get surfaced.');
+    }
+    if (has('growth_areas', 'growth_feedback')) {
+      growthBody.push('If feedback tends to land hard, one reframe that helps over time: feedback is about a specific piece of work or a specific situation — it\'s not a statement about who you are. A manager who gives feedback consistently and specifically (not vaguely or rarely) makes this much easier to build.');
+    }
+    results.push({
+      type: 'highlight',
+      eyebrow: 'Growth Areas',
+      title: 'What to look for in your first role',
+      body: growthBody
+    });
+  }
+
+  // ── 5. SCHEDULING CARD ───────────────────────────────────────────────
+
+  if (needsFlex || hasMorningConstraint || hasHealthConstraint) {
+    let schedBody = ['Schedule fit should be a filter when you apply — not an afterthought after you accept an offer. Ask about start times, scheduling policies, and flexibility before you get to the offer stage.'];
+    if (hasMorningConstraint) {
+      schedBody.push('With morning commitments in your schedule, roles with very early start times will add friction immediately. Look for roles with a 9am or later start, or where there\'s built-in flexibility around the first hour of the day. Ask about this directly — most employers will answer honestly.');
+    }
+    if (hasHealthConstraint) {
+      schedBody.push('Roles with flexible scheduling, or workplaces with a culture of autonomy around appointments and medical needs, will serve you better long-term. You don\'t need to disclose anything specific — just ask how the team handles personal appointments or whether schedules have any built-in flexibility.');
+    }
+    results.push({
+      type: 'highlight',
+      eyebrow: 'Scheduling',
+      title: 'Flexibility is a real factor — treat it like one',
+      body: schedBody
+    });
+  }
+
+  // ── 6. SPECIAL INTERESTS CARD ────────────────────────────────────────
+
+  const interestLabels = {
+    int_animals: 'Animals / Environment',
+    int_health: 'Healthcare / Wellness',
+    int_tech: 'Technology / Data',
+    int_arts: 'Arts / Design / Media',
+    int_sports: 'Sports / Fitness',
+    int_education: 'Education / Social Services',
+    int_food: 'Food / Hospitality',
+    int_business: 'Business / Finance',
+    int_community: 'Community / Nonprofit',
+    int_trades: 'Skilled Trades',
+  };
+
+  const selectedInterests = interests.filter(i => i !== 'int_none').map(i => interestLabels[i]).filter(Boolean);
+
+  if (selectedInterests.length > 0) {
+    results.push({
+      type: 'confirm',
+      eyebrow: 'Special Interests',
+      title: 'Where your job search has a real starting point',
+      body: [
+        'When your work connects to something you actually care about, you bring sustained investment that shows — especially in interviews and in the way you approach problems on the job.',
+        'You don\'t need formal experience in these areas to start. Entry-level roles, administrative positions, and support roles in industries you care about give you the context to become genuinely useful over time. Start there.',
+        'Use these interests to filter your industry search — then apply your environment and strength profile to pick the right type of role within that industry.'
+      ],
+      tags: selectedInterests
+    });
+  } else {
+    results.push({
+      type: 'highlight',
+      eyebrow: 'Special Interests',
+      title: 'No strong direction yet — focus on role type first',
+      body: [
+        'Not having a clear industry pull is a valid starting point. A lot of people discover what they care about by working, not before it.',
+        'For now, focus your search on role type: what kind of work matches your strengths and environment needs. The industry direction tends to become clear once you\'re in motion and paying attention to what kinds of work engage you.'
+      ]
+    });
+  }
+
+  return results;
+}
+
+// ─── COMPONENTS ──────────────────────────────────────────────────────────────
+
+function CheckIcon() {
+  return (
+    <div className="option-check">
+      <div className="option-check-dot" />
+    </div>
+  );
+}
+
+function CheckSquareIcon() {
+  return (
+    <div className="option-check square">
+      <div className="option-check-dot" />
+    </div>
+  );
+}
+
+function SingleQuestion({ question, value, onChange }) {
+  return (
+    <div className="question-block">
+      <div className="question-label">{question.label}</div>
+      {question.hint && <div className="question-hint">{question.hint}</div>}
+      <div className="options-grid">
+        {question.options.map(opt => (
+          <button
+            key={opt.value}
+            className={`option-btn ${value === opt.value ? 'selected' : ''}`}
+            onClick={() => onChange(opt.value)}
+          >
+            <CheckIcon />
+            <div className="option-text">
+              <div className="opt-title">{opt.label}</div>
+              {opt.desc && <div className="opt-desc">{opt.desc}</div>}
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function MultiQuestion({ question, values, onChange }) {
+  const toggle = (val, exclusive) => {
+    let next;
+    if (exclusive) {
+      next = values.includes(val) ? [] : [val];
+    } else {
+      const exclusives = question.options.filter(o => o.exclusive).map(o => o.value);
+      const filtered = values.filter(v => !exclusives.includes(v));
+      next = filtered.includes(val) ? filtered.filter(v => v !== val) : [...filtered, val];
+    }
+    onChange(next);
+  };
+  return (
+    <div className="question-block">
+      <div className="question-label">{question.label}</div>
+      {question.hint && <div className="question-hint">{question.hint}</div>}
+      <div className="options-grid">
+        {question.options.map(opt => (
+          <button
+            key={opt.value}
+            className={`option-btn ${values.includes(opt.value) ? 'multi-selected' : ''}`}
+            onClick={() => toggle(opt.value, opt.exclusive)}
+          >
+            <CheckSquareIcon />
+            <div className="option-text">
+              <div className="opt-title">{opt.label}</div>
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function MultiGroupQuestion({ question, values, onChange }) {
+  const toggle = (val) => {
+    const next = values.includes(val) ? values.filter(v => v !== val) : [...values, val];
+    onChange(next);
+  };
+  return (
+    <div className="question-block">
+      <div className="question-label">{question.label}</div>
+      {question.hint && <div className="question-hint">{question.hint}</div>}
+      {question.groups.map(group => (
+        <div key={group.label} className="multi-group">
+          <div className="multi-group-label">{group.label}</div>
+          <div className="multi-options">
+            {group.options.map(opt => (
+              <button
+                key={opt.value}
+                className={`option-btn ${values.includes(opt.value) ? 'multi-selected' : ''}`}
+                onClick={() => toggle(opt.value)}
+              >
+                <CheckSquareIcon />
+                <div className="option-text">
+                  <div className="opt-title">{opt.label}</div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function SectionScreen({ section, answers, onAnswer, onNext, onBack, isFirst, isLast, progress }) {
+  const allAnswered = section.questions.every(q => {
+    const v = answers[q.id];
+    if (q.type === 'single') return !!v;
+    if (q.type === 'multi' || q.type === 'multi_flat') return Array.isArray(v) && v.length > 0;
+    return true;
+  });
+
+  return (
+    <div>
+      <div className="progress-wrap">
+        <div className="progress-meta">
+          <span>{section.eyebrow}</span>
+          <span>{Math.round(progress * 100)}% complete</span>
+        </div>
+        <div className="progress-bar">
+          <div className="progress-fill" style={{ width: `${progress * 100}%` }} />
+        </div>
+      </div>
+
+      <div className="section-eyebrow">{section.eyebrow}</div>
+      <h2 className="section-title">{section.title}</h2>
+      <p className="section-sub">{section.sub}</p>
+
+      {section.questions.map(q => {
+        if (q.type === 'single') return <SingleQuestion key={q.id} question={q} value={answers[q.id] || null} onChange={v => onAnswer(q.id, v)} />;
+        if (q.type === 'multi_flat') return <MultiQuestion key={q.id} question={q} values={answers[q.id] || []} onChange={v => onAnswer(q.id, v)} />;
+        if (q.type === 'multi') return <MultiGroupQuestion key={q.id} question={q} values={answers[q.id] || []} onChange={v => onAnswer(q.id, v)} />;
+        return null;
+      })}
+
+      <div className="nav-row">
+        {!isFirst ? <button className="btn-back" onClick={onBack}>← Back</button> : <div />}
+        {isLast
+          ? <button className="btn-results" onClick={onNext} disabled={!allAnswered}>See My Results →</button>
+          : <button className="btn-next" onClick={onNext} disabled={!allAnswered}>Continue →</button>
+        }
+      </div>
+    </div>
+  );
+}
+
+function ResultCard({ card }) {
+  return (
+    <div className={`result-card ${card.type}`}>
+      <div className="card-eyebrow">{card.eyebrow}</div>
+      {card.badge && <div className="flag-badge">⚡ {card.badge}</div>}
+      <div className="card-title">{card.title}</div>
+      <div className="card-body">
+        {card.body.filter(Boolean).map((para, i) => <p key={i}>{para}</p>)}
+      </div>
+      {card.tags && card.tags.length > 0 && (
+        <div className="tag-row">
+          {card.tags.map(tag => <span key={tag} className="tag green">{tag}</span>)}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ResultsScreen({ answers, onRestart }) {
+  const results = useMemo(() => generateResults(answers), [answers]);
+  return (
+    <div>
+      <div className="results-header">
+        <div className="eyebrow">Your Results</div>
+        <h2>What Kind of Work Actually Works for You</h2>
+        <p>Based on your answers across all six areas. Some cards will confirm what you already suspected. Others may push back. Both are useful.</p>
+      </div>
+
+      {results.map((card, i) => <ResultCard key={i} card={card} />)}
+
+      <div style={{ marginTop: 40, paddingTop: 28, borderTop: '1px solid var(--stone-light)' }}>
+        <p style={{ fontSize: 14, color: 'var(--stone)', lineHeight: 1.75 }}>
+          <strong style={{ color: 'var(--charcoal)' }}>This is a starting point, not a final exam.</strong> Your answers will sharpen as you learn more about what kinds of roles feel right and which feel off. Return to this and update your thinking as you go.
+        </p>
+      </div>
+
+      <button className="btn-restart" onClick={onRestart}>← Retake the Assessment</button>
+    </div>
+  );
+}
+
+function IntroScreen({ onStart }) {
+  return (
+    <div className="intro-screen">
+      <div className="section-eyebrow">Module 1 Companion · Career Fit</div>
+      <h1 className="big-title">What Kind of Work Actually Works for You</h1>
+      <p className="intro-body">
+        A lot of job searches skip this step entirely. People jump straight to applying without thinking about whether the role actually fits their energy, their working style, or the environment they function best in.
+      </p>
+      <p className="intro-body">
+        This assessment works through six areas and gives you a personalized read — including where your instincts might be pointing you somewhere that won't actually fit.
+      </p>
+
+      <ul className="intro-list">
+        <li>Your strengths, including ones that don't appear on a transcript</li>
+        <li>The environment and pace where you actually do your best work</li>
+        <li>What the data in your answers says — including where it pushes back</li>
+        <li>Scheduling factors worth knowing before you apply</li>
+        <li>Special interests that can give your search a real starting direction</li>
+      </ul>
+
+      <div className="intro-time">
+        <span>About 5–7 minutes</span>
+        <span>·</span>
+        <span>6 sections</span>
+        <span>·</span>
+        <span>Honest answers give better results</span>
+      </div>
+
+      <button className="btn-start" onClick={onStart}>Start the Assessment →</button>
+    </div>
+  );
+}
+
+// ─── APP ──────────────────────────────────────────────────────────────────────
+
+function App() {
+  const [screen, setScreen] = useState('intro');
+  const [sectionIndex, setSectionIndex] = useState(0);
+  const [answers, setAnswers] = useState({});
+
+  const handleAnswer = (questionId, value) => {
+    setAnswers(prev => ({ ...prev, [questionId]: value }));
+  };
+
+  const handleNext = () => {
+    if (sectionIndex < SECTIONS.length - 1) {
+      setSectionIndex(i => i + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      setScreen('results');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handleBack = () => {
+    if (sectionIndex > 0) {
+      setSectionIndex(i => i - 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handleRestart = () => {
+    setAnswers({});
+    setSectionIndex(0);
+    setScreen('intro');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  return (
+    <div className="app-shell">
+      <header className="site-header">
+        <span className="brand">GroundWork Collective</span>
+        <span className="module-tag">Module 1 · Career Fit</span>
+      </header>
+
+      {screen === 'intro' && <IntroScreen onStart={() => setScreen('section')} />}
+
+      {screen === 'section' && (
+        <SectionScreen
+          section={SECTIONS[sectionIndex]}
+          answers={answers}
+          onAnswer={handleAnswer}
+          onNext={handleNext}
+          onBack={handleBack}
+          isFirst={sectionIndex === 0}
+          isLast={sectionIndex === SECTIONS.length - 1}
+          progress={sectionIndex / SECTIONS.length}
+        />
+      )}
+
+      {screen === 'results' && <ResultsScreen answers={answers} onRestart={handleRestart} />}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

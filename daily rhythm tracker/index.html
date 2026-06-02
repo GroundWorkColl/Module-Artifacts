@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Daily Rhythm and Regulation, GroundWork Collective</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    background: #F7F4EE;
+    color: #2A2A2A;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; }
+  header { margin-bottom: 24px; }
+  h1 { font-size: 24px; margin: 0 0 4px 0; color: #2A5F3A; font-weight: 700; }
+  .sub { color: #5B6675; font-size: 14px; margin: 0; }
+  .card {
+    background: #FFFFFF;
+    border: 1px solid #E2DCCB;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 18px;
+    box-shadow: 0 1px 2px rgba(42, 95, 58, 0.04);
+  }
+  .card h2 { font-size: 17px; margin: 0 0 6px 0; color: #2A5F3A; font-weight: 600; }
+  .card .desc { font-size: 13px; color: #5B6675; margin: 0 0 14px 0; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  @media (max-width: 720px) {
+    .grid2, .grid3 { grid-template-columns: 1fr; }
+  }
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #3A4452;
+    margin-bottom: 6px;
+  }
+  input[type="text"], input[type="time"], input[type="date"], input[type="number"], select, textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #D4CCB7;
+    border-radius: 8px;
+    background: #FFFFFF;
+    font-family: inherit;
+    font-size: 14px;
+    color: #2A2A2A;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: 2px solid #A8C2A0;
+    outline-offset: 1px;
+    border-color: #7BB098;
+  }
+  textarea { resize: vertical; min-height: 70px; }
+  .hint { font-size: 12px; color: #7B8696; margin-top: 4px; font-style: italic; }
+  button {
+    background: #2A5F3A;
+    color: #FFFFFF;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  button:hover { background: #357548; }
+  button.secondary {
+    background: #F0EBDD;
+    color: #3A4452;
+    border: 1px solid #D4CCB7;
+  }
+  button.secondary:hover { background: #E2DCCB; }
+  button.danger {
+    background: transparent;
+    color: #A4453A;
+    border: 1px solid #DDB8B0;
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  .row { display: flex; gap: 10px; align-items: center; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  @media (max-width: 720px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+  .stat {
+    background: #EEF2EA;
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+  }
+  .stat .n { font-size: 26px; font-weight: 700; color: #2A5F3A; }
+  .stat .l { font-size: 12px; color: #5B6675; margin-top: 2px; }
+  .pill { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; margin-right: 6px; }
+  .pill.green { background: #DCEFE1; color: #2A5F3A; }
+  .pill.amber { background: #FFF1D6; color: #8A6A1F; }
+  .pill.red { background: #F4DCD7; color: #8A3A30; }
+  .pill.tag { background: #ECE5DA; color: #3A4452; margin-bottom: 6px; }
+  .chip {
+    background: #FFFFFF;
+    border: 1px solid #D4CCB7;
+    border-radius: 999px;
+    padding: 5px 12px;
+    font-size: 12px;
+    color: #3A4452;
+    cursor: pointer;
+    display: inline-block;
+    margin-right: 6px;
+    margin-bottom: 6px;
+  }
+  .chip.active { background: #2A5F3A; color: #FFFFFF; border-color: #2A5F3A; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; padding: 10px 8px; background: #EEF2EA; color: #2A5F3A; font-weight: 600; border-bottom: 1px solid #E2DCCB; }
+  td { padding: 10px 8px; border-bottom: 1px solid #F0EBDD; vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  .empty { padding: 22px; text-align: center; color: #7B8696; font-size: 14px; }
+  .chart-wrap { position: relative; height: 220px; }
+  .insight {
+    background: #EEF2EA;
+    border-left: 3px solid #7BB098;
+    padding: 12px 14px;
+    border-radius: 6px;
+    margin-top: 10px;
+    font-size: 13px;
+    color: #3A4452;
+  }
+  .insight strong { color: #2A5F3A; }
+  .syllabus {
+    background: #FBF8F0;
+    border: 1px dashed #C7BB9F;
+    border-radius: 10px;
+    padding: 16px;
+    font-size: 14px;
+    color: #3A4452;
+    line-height: 1.7;
+    margin-top: 12px;
+  }
+  .syllabus .k { font-weight: 700; color: #2A5F3A; }
+  .reality-check {
+    background: #FFF1D6;
+    border-left: 3px solid #E8C26B;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #5B4A1F;
+    margin-top: 8px;
+  }
+  .nav { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .nav button {
+    background: #F0EBDD;
+    color: #3A4452;
+    border: 1px solid #D4CCB7;
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+  .nav button.active { background: #2A5F3A; color: #FFFFFF; border-color: #2A5F3A; }
+  .section { display: none; }
+  .section.active { display: block; }
+  .footer { text-align: center; font-size: 12px; color: #7B8696; margin-top: 20px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Daily Rhythm and Regulation</h1>
+    <p class="sub">Build your week. Plan your day. Check in honestly. Catch dysregulation before it runs you.</p>
+  </header>
+
+  <div class="nav">
+    <button data-tab="week" class="active">Week</button>
+    <button data-tab="syllabus">Personal Syllabus</button>
+    <button data-tab="checkin">Daily Check In</button>
+    <button data-tab="trends">Trends</button>
+  </div>
+
+  <!-- WEEK -->
+  <div class="section active" id="tab-week">
+    <div class="card">
+      <h2>This Week's Intention</h2>
+      <p class="desc">One sentence. Small enough to actually hit. The goal is real, not heroic.</p>
+      <div class="grid2">
+        <div>
+          <label>Week starting</label>
+          <input type="date" id="weekStart" />
+        </div>
+        <div>
+          <label>Weekly intention</label>
+          <input type="text" id="weekIntention" placeholder="Apply to three roles I am excited about" />
+        </div>
+      </div>
+      <div class="grid3" style="margin-top:14px">
+        <div>
+          <label>Application target this week</label>
+          <input type="number" id="weekTarget" min="0" placeholder="3" />
+        </div>
+        <div>
+          <label>Networking target this week</label>
+          <input type="number" id="networkTarget" min="0" placeholder="2" />
+        </div>
+        <div>
+          <label>Rest day</label>
+          <select id="restDay">
+            <option value="">Choose</option>
+            <option>Monday</option><option>Tuesday</option><option>Wednesday</option>
+            <option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-top:14px"><button id="saveWeek">Save Week</button></div>
+      <div class="reality-check">Reality check. Two to four hours of focused search work per day beats eight hours of dopamine scrolling. One thoughtful application beats ten mass applies.</div>
+    </div>
+
+    <div class="card">
+      <h2>Today's Plan</h2>
+      <p class="desc">Three anchors and one small goal. Schedule self care like it matters, because it does.</p>
+      <div class="grid3">
+        <div>
+          <label>Wake time</label>
+          <input type="time" id="wakeTime" />
+        </div>
+        <div>
+          <label>Search window start</label>
+          <input type="time" id="searchStart" />
+        </div>
+        <div>
+          <label>Search window stop</label>
+          <input type="time" id="searchStop" />
+        </div>
+      </div>
+      <div style="margin-top:14px">
+        <label>One small goal for today</label>
+        <input type="text" id="todayGoal" placeholder="Finish my resume for the writing role" />
+        <div class="hint">If you cannot finish it in under two hours, it is too big. Break it down.</div>
+      </div>
+      <div style="margin-top:14px">
+        <label>Self care today (pick what you need)</label>
+        <div id="careChips"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PERSONAL SYLLABUS -->
+  <div class="section" id="tab-syllabus">
+    <div class="card">
+      <h2>Your Personal Syllabus</h2>
+      <p class="desc">Your own contract with yourself. Write it. Look at it Monday. Revise it Friday.</p>
+      <div class="grid2">
+        <div>
+          <label>Default wake time</label>
+          <input type="time" id="sylWake" />
+        </div>
+        <div>
+          <label>Default stop time</label>
+          <input type="time" id="sylStop" />
+        </div>
+        <div>
+          <label>Daily search hours</label>
+          <input type="number" id="sylHours" min="0" max="12" step="0.5" placeholder="2" />
+        </div>
+        <div>
+          <label>Daily application target</label>
+          <input type="number" id="sylDailyApps" min="0" placeholder="1" />
+        </div>
+      </div>
+      <div style="margin-top:14px">
+        <label>My regulation tools (what works for you)</label>
+        <textarea id="sylTools" placeholder="Walk after lunch. Headphones during applications. No screens after 9. Phone call with Mom Friday afternoon."></textarea>
+      </div>
+      <div style="margin-top:14px">
+        <label>What overwhelm looks like for me</label>
+        <textarea id="sylSigns" placeholder="Tight shoulders. Cant read full job descriptions. Snappy with family. Refreshing email instead of working."></textarea>
+        <div class="hint">Naming this early lets you catch it before it runs your day.</div>
+      </div>
+      <div style="margin-top:14px">
+        <label>What I do when overwhelm hits</label>
+        <textarea id="sylPlan" placeholder="Close laptop. Ten minutes outside. Text a friend. Move to a different room."></textarea>
+      </div>
+      <div style="margin-top:14px"><button id="saveSyl">Save Syllabus</button></div>
+      <div class="syllabus" id="sylPreview">Fill out your fields and click Save Syllabus.</div>
+    </div>
+  </div>
+
+  <!-- CHECK IN -->
+  <div class="section" id="tab-checkin">
+    <div class="card">
+      <h2>Daily Check In</h2>
+      <p class="desc">Honest takes the work out of guessing later. This is the data behind your trends.</p>
+      <div class="grid2">
+        <div>
+          <label>Date</label>
+          <input type="date" id="ciDate" />
+        </div>
+        <div>
+          <label>Overall regulation today</label>
+          <select id="ciReg">
+            <option value="3">Steady, regulated</option>
+            <option value="2">Mostly okay, some friction</option>
+            <option value="1">Edge of overwhelm</option>
+            <option value="0">Dysregulated</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid3" style="margin-top:14px">
+        <div>
+          <label>Sleep last night (hours)</label>
+          <input type="number" id="ciSleep" min="0" max="14" step="0.5" />
+        </div>
+        <div>
+          <label>Did I hit my goal today</label>
+          <select id="ciGoal">
+            <option value="yes">Yes</option>
+            <option value="partial">Partly</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <div>
+          <label>Movement or fresh air</label>
+          <select id="ciMove">
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-top:14px">
+        <label>Where did dysregulation show up</label>
+        <div id="dysChips"></div>
+      </div>
+      <div style="margin-top:14px">
+        <label>What I tried (and what worked)</label>
+        <textarea id="ciTried" placeholder="Walked for 15 minutes after the rejection email. Came back, applied to one role and stopped."></textarea>
+      </div>
+      <div style="margin-top:14px">
+        <label>One thing I will do differently tomorrow</label>
+        <input type="text" id="ciDiff" placeholder="Start with the easy task instead of the hardest one" />
+      </div>
+      <div style="margin-top:14px"><button id="saveCi">Save Check In</button></div>
+    </div>
+
+    <div class="card">
+      <h2>Recent Check Ins</h2>
+      <div id="ciTable"></div>
+    </div>
+  </div>
+
+  <!-- TRENDS -->
+  <div class="section" id="tab-trends">
+    <div class="card">
+      <h2>Snapshot</h2>
+      <div class="stats">
+        <div class="stat"><div class="n" id="streak">0</div><div class="l">Check In Streak</div></div>
+        <div class="stat"><div class="n" id="avgReg">0</div><div class="l">Avg Regulation</div></div>
+        <div class="stat"><div class="n" id="avgSleep">0</div><div class="l">Avg Sleep</div></div>
+        <div class="stat"><div class="n" id="goalHit">0%</div><div class="l">Goal Hit Rate</div></div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <h2>Regulation Over Time</h2>
+        <div class="chart-wrap"><canvas id="regChart"></canvas></div>
+        <div class="insight" id="regInsight">Log a few check ins to see your trend.</div>
+      </div>
+      <div class="card">
+        <h2>Where Dysregulation Lives</h2>
+        <div class="chart-wrap"><canvas id="dysChart"></canvas></div>
+        <div class="insight" id="dysInsight">Patterns will show up after a week or two of check ins.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">Your data lives in this view, on this device. GroundWork Collective Module 1 companion tool.</div>
+</div>
+
+<script>
+const STORE_KEY = "gwc_rhythm_v1";
+const CARE_OPTIONS = [
+  "Walk", "Fresh air", "Movement", "Stretch",
+  "Headphones", "Quiet room", "Sunlight",
+  "Cook a real meal", "Call a friend",
+  "Body double", "Hard stop on screens",
+  "Therapy or session", "Hobby time"
+];
+const DYS_OPTIONS = [
+  "After rejection email", "Mid afternoon slump",
+  "Reading job descriptions", "Comparing on LinkedIn",
+  "Family or roommate", "Sleep was off",
+  "Hungry or under fueled", "Too much noise",
+  "Too much screen time", "Cover letter writing",
+  "Application form portals"
+];
+
+let store = loadStore();
+let activeCare = new Set();
+let activeDys = new Set();
+let regChart, dysChart;
+
+function loadStore() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  return { week: {}, today: {}, syllabus: {}, checkins: [] };
+}
+function saveStore() { try { localStorage.setItem(STORE_KEY, JSON.stringify(store)); } catch (e) {} }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+function esc(s) { return String(s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c])); }
+
+// Tabs
+document.querySelectorAll(".nav button").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll(".nav button").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById("tab-" + btn.dataset.tab).classList.add("active");
+    if (btn.dataset.tab === "trends") renderTrends();
+    if (btn.dataset.tab === "checkin") renderCheckinTable();
+  };
+});
+
+// Chips
+function renderChips(host, options, activeSet) {
+  const el = document.getElementById(host);
+  el.innerHTML = "";
+  options.forEach(opt => {
+    const chip = document.createElement("span");
+    chip.className = "chip" + (activeSet.has(opt) ? " active" : "");
+    chip.textContent = opt;
+    chip.onclick = () => {
+      if (activeSet.has(opt)) activeSet.delete(opt);
+      else activeSet.add(opt);
+      renderChips(host, options, activeSet);
+    };
+    el.appendChild(chip);
+  });
+}
+renderChips("careChips", CARE_OPTIONS, activeCare);
+renderChips("dysChips", DYS_OPTIONS, activeDys);
+
+// Load saved
+function loadForms() {
+  const w = store.week || {};
+  document.getElementById("weekStart").value = w.start || "";
+  document.getElementById("weekIntention").value = w.intention || "";
+  document.getElementById("weekTarget").value = w.target || "";
+  document.getElementById("networkTarget").value = w.networkTarget || "";
+  document.getElementById("restDay").value = w.restDay || "";
+  const t = store.today || {};
+  document.getElementById("wakeTime").value = t.wake || "";
+  document.getElementById("searchStart").value = t.start || "";
+  document.getElementById("searchStop").value = t.stop || "";
+  document.getElementById("todayGoal").value = t.goal || "";
+  (t.care || []).forEach(c => activeCare.add(c));
+  renderChips("careChips", CARE_OPTIONS, activeCare);
+  const s = store.syllabus || {};
+  document.getElementById("sylWake").value = s.wake || "";
+  document.getElementById("sylStop").value = s.stop || "";
+  document.getElementById("sylHours").value = s.hours || "";
+  document.getElementById("sylDailyApps").value = s.apps || "";
+  document.getElementById("sylTools").value = s.tools || "";
+  document.getElementById("sylSigns").value = s.signs || "";
+  document.getElementById("sylPlan").value = s.plan || "";
+  renderSylPreview();
+  document.getElementById("ciDate").value = new Date().toISOString().slice(0, 10);
+}
+
+document.getElementById("saveWeek").onclick = () => {
+  store.week = {
+    start: document.getElementById("weekStart").value,
+    intention: document.getElementById("weekIntention").value,
+    target: document.getElementById("weekTarget").value,
+    networkTarget: document.getElementById("networkTarget").value,
+    restDay: document.getElementById("restDay").value,
+  };
+  store.today = {
+    wake: document.getElementById("wakeTime").value,
+    start: document.getElementById("searchStart").value,
+    stop: document.getElementById("searchStop").value,
+    goal: document.getElementById("todayGoal").value,
+    care: Array.from(activeCare),
+  };
+  saveStore();
+  flash("saveWeek", "Saved");
+};
+
+document.getElementById("saveSyl").onclick = () => {
+  store.syllabus = {
+    wake: document.getElementById("sylWake").value,
+    stop: document.getElementById("sylStop").value,
+    hours: document.getElementById("sylHours").value,
+    apps: document.getElementById("sylDailyApps").value,
+    tools: document.getElementById("sylTools").value,
+    signs: document.getElementById("sylSigns").value,
+    plan: document.getElementById("sylPlan").value,
+  };
+  saveStore();
+  renderSylPreview();
+  flash("saveSyl", "Saved");
+};
+
+document.getElementById("saveCi").onclick = () => {
+  const entry = {
+    id: uid(),
+    date: document.getElementById("ciDate").value || new Date().toISOString().slice(0, 10),
+    reg: parseInt(document.getElementById("ciReg").value, 10),
+    sleep: parseFloat(document.getElementById("ciSleep").value) || null,
+    goal: document.getElementById("ciGoal").value,
+    move: document.getElementById("ciMove").value,
+    dys: Array.from(activeDys),
+    tried: document.getElementById("ciTried").value,
+    diff: document.getElementById("ciDiff").value,
+  };
+  store.checkins.push(entry);
+  saveStore();
+  document.getElementById("ciTried").value = "";
+  document.getElementById("ciDiff").value = "";
+  document.getElementById("ciSleep").value = "";
+  activeDys.clear();
+  renderChips("dysChips", DYS_OPTIONS, activeDys);
+  renderCheckinTable();
+  flash("saveCi", "Saved");
+};
+
+function flash(btnId, text) {
+  const b = document.getElementById(btnId);
+  const orig = b.textContent;
+  b.textContent = text;
+  setTimeout(() => { b.textContent = orig; }, 1200);
+}
+
+function renderSylPreview() {
+  const s = store.syllabus || {};
+  const filled = s.wake || s.stop || s.hours || s.apps || s.tools || s.signs || s.plan;
+  if (!filled) {
+    document.getElementById("sylPreview").textContent = "Fill out your fields and click Save Syllabus.";
+    return;
+  }
+  document.getElementById("sylPreview").innerHTML = [
+    '<div><span class="k">Wake.</span> ' + esc(s.wake || "Not set") + '</div>',
+    '<div><span class="k">Stop.</span> ' + esc(s.stop || "Not set") + '</div>',
+    '<div><span class="k">Search hours.</span> ' + esc(s.hours || "Not set") + '</div>',
+    '<div><span class="k">Daily target.</span> ' + esc(s.apps || "Not set") + ' application(s)</div>',
+    '<div><span class="k">Tools.</span> ' + esc(s.tools || "") + '</div>',
+    '<div><span class="k">Overwhelm signs.</span> ' + esc(s.signs || "") + '</div>',
+    '<div><span class="k">Plan when it hits.</span> ' + esc(s.plan || "") + '</div>',
+  ].join("");
+}
+
+function renderCheckinTable() {
+  const host = document.getElementById("ciTable");
+  const rows = store.checkins.slice().sort((a, b) => (b.date || "").localeCompare(a.date || "")).slice(0, 14);
+  if (rows.length === 0) {
+    host.innerHTML = '<div class="empty">No check ins yet. Save your first one to start a streak.</div>';
+    return;
+  }
+  const REG_LABELS = ["Dysregulated", "Edge", "Mostly okay", "Steady"];
+  const REG_CLASS = ["red", "red", "amber", "green"];
+  const html = ['<table><thead><tr><th>Date</th><th>Regulation</th><th>Sleep</th><th>Goal</th><th>Dysregulation</th><th>What worked</th><th></th></tr></thead><tbody>'];
+  rows.forEach(c => {
+    const reg = REG_LABELS[c.reg] || "";
+    const cls = REG_CLASS[c.reg] || "amber";
+    const dys = (c.dys || []).map(d => '<span class="pill tag">' + esc(d) + '</span>').join(" ");
+    html.push('<tr>');
+    html.push('<td>' + esc(c.date) + '</td>');
+    html.push('<td><span class="pill ' + cls + '">' + reg + '</span></td>');
+    html.push('<td>' + (c.sleep != null ? c.sleep + ' h' : '-') + '</td>');
+    html.push('<td>' + esc(c.goal) + '</td>');
+    html.push('<td>' + dys + '</td>');
+    html.push('<td>' + esc(c.tried) + '</td>');
+    html.push('<td><button class="danger" data-id="' + c.id + '">Remove</button></td>');
+    html.push('</tr>');
+  });
+  html.push('</tbody></table>');
+  host.innerHTML = html.join("");
+  host.querySelectorAll("button.danger").forEach(b => {
+    b.onclick = () => {
+      const id = b.getAttribute("data-id");
+      store.checkins = store.checkins.filter(c => c.id !== id);
+      saveStore();
+      renderCheckinTable();
+    };
+  });
+}
+
+function renderTrends() {
+  const c = store.checkins.slice().sort((a, b) => (a.date || "").localeCompare(b.date || ""));
+  const last14 = c.slice(-14);
+  // Stats
+  const streak = computeStreak(c);
+  document.getElementById("streak").textContent = streak;
+  const regs = last14.map(x => x.reg).filter(x => x != null);
+  const sleeps = last14.map(x => x.sleep).filter(x => x != null);
+  const avgReg = regs.length ? (regs.reduce((a, b) => a + b, 0) / regs.length).toFixed(1) : "0";
+  const avgSleep = sleeps.length ? (sleeps.reduce((a, b) => a + b, 0) / sleeps.length).toFixed(1) : "0";
+  const goals = last14.map(x => x.goal);
+  const yes = goals.filter(g => g === "yes").length;
+  const goalPct = goals.length ? Math.round((yes / goals.length) * 100) : 0;
+  document.getElementById("avgReg").textContent = avgReg + " / 3";
+  document.getElementById("avgSleep").textContent = avgSleep + " h";
+  document.getElementById("goalHit").textContent = goalPct + "%";
+
+  // Reg chart
+  if (regChart) regChart.destroy();
+  const ctx = document.getElementById("regChart");
+  regChart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: last14.map(x => x.date),
+      datasets: [{
+        label: "Regulation",
+        data: last14.map(x => x.reg),
+        borderColor: "#2A5F3A",
+        backgroundColor: "rgba(123, 176, 152, 0.25)",
+        fill: true,
+        tension: 0.3,
+        pointBackgroundColor: "#2A5F3A",
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { min: 0, max: 3, ticks: { stepSize: 1, callback: v => ["Dys", "Edge", "OK", "Steady"][v] || "" } },
+        x: { ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 7 } }
+      }
+    }
+  });
+
+  // Dys chart
+  const dysCounts = {};
+  c.forEach(x => (x.dys || []).forEach(d => { dysCounts[d] = (dysCounts[d] || 0) + 1; }));
+  const dysEntries = Object.entries(dysCounts).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  if (dysChart) dysChart.destroy();
+  const ctx2 = document.getElementById("dysChart");
+  dysChart = new Chart(ctx2, {
+    type: "bar",
+    data: {
+      labels: dysEntries.length ? dysEntries.map(e => e[0]) : ["No data yet"],
+      datasets: [{
+        label: "Times noted",
+        data: dysEntries.length ? dysEntries.map(e => e[1]) : [0],
+        backgroundColor: "#C97F73",
+        borderRadius: 6,
+      }]
+    },
+    options: {
+      indexAxis: "y",
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { x: { beginAtZero: true, ticks: { precision: 0 } } }
+    }
+  });
+
+  // Insights
+  const regInsight = document.getElementById("regInsight");
+  if (last14.length < 3) {
+    regInsight.textContent = "Log a few check ins to see your trend.";
+  } else {
+    const recent = last14.slice(-3).reduce((a, b) => a + b.reg, 0) / 3;
+    if (recent <= 1.3) regInsight.innerHTML = "Recent regulation is <strong>low</strong>. Drop one application from this week. Add an hour of rest. The search is a marathon.";
+    else if (recent >= 2.4) regInsight.innerHTML = "Steady stretch. Notice what is working and keep it.";
+    else regInsight.innerHTML = "Middle range. Look at your top dysregulation source and plan around it tomorrow.";
+  }
+  const dysInsight = document.getElementById("dysInsight");
+  if (dysEntries.length === 0) {
+    dysInsight.textContent = "Patterns will show up after a week or two of check ins.";
+  } else {
+    const top = dysEntries[0][0];
+    dysInsight.innerHTML = "Top trigger so far. <strong>" + esc(top) + "</strong>. Build one specific plan for it in your personal syllabus.";
+  }
+}
+
+function computeStreak(c) {
+  if (c.length === 0) return 0;
+  const dates = new Set(c.map(x => x.date));
+  let streak = 0;
+  let d = new Date();
+  while (true) {
+    const iso = d.toISOString().slice(0, 10);
+    if (dates.has(iso)) { streak++; d.setDate(d.getDate() - 1); }
+    else if (streak === 0) { d.setDate(d.getDate() - 1); if (d.getTime() < Date.now() - 2 * 86400000) break; }
+    else break;
+  }
+  return streak;
+}
+
+loadForms();
+renderCheckinTable();
+</script>
+</body>
+</html>
