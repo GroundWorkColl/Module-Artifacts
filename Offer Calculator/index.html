@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offer Calculator — GroundWork Collective</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 0; background: #F0F4F5; font-family: 'Segoe UI', system-ui, sans-serif; }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type=number] { -moz-appearance: textfield; }
+    input, select { outline: none; }
+    input:focus, select:focus { border-color: #1B6B72 !important; box-shadow: 0 0 0 3px rgba(27,107,114,0.15); }
+    .tooltip-wrap { position: relative; display: inline-block; }
+    .tooltip-wrap .tooltip-box {
+      visibility: hidden; opacity: 0; transition: opacity 0.2s;
+      background: #1B2A4A; color: #fff; font-size: 12px; line-height: 1.5;
+      border-radius: 8px; padding: 10px 12px; width: 260px;
+      position: absolute; bottom: calc(100% + 6px); left: 0; z-index: 100;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .tooltip-wrap:hover .tooltip-box { visibility: visible; opacity: 1; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useMemo } = React;
+
+    const TEAL = "#1B6B72";
+    const NAVY = "#1B2A4A";
+    const GOLD = "#B5860A";
+    const RED = "#C0392B";
+    const GREEN = "#2E7D52";
+    const LIGHTGRAY = "#F5F7F8";
+    const WHITE = "#FFFFFF";
+    const BORDER = "#DDE3E6";
+
+    // State tax rates (approximate flat/blended for simplicity)
+    const STATE_TAXES = {
+      "AL": 5.0, "AK": 0, "AZ": 2.5, "AR": 4.7, "CA": 9.3, "CO": 4.4,
+      "CT": 6.99, "DE": 6.6, "FL": 0, "GA": 5.75, "HI": 8.25, "ID": 5.8,
+      "IL": 4.95, "IN": 3.23, "IA": 6.0, "KS": 5.7, "KY": 5.0, "LA": 4.25,
+      "ME": 7.15, "MD": 5.75, "MA": 5.0, "MI": 4.25, "MN": 7.85, "MS": 5.0,
+      "MO": 5.4, "MT": 6.75, "NE": 6.84, "NV": 0, "NH": 0, "NJ": 6.37,
+      "NM": 5.9, "NY": 6.85, "NC": 4.75, "ND": 2.5, "OH": 3.99, "OK": 4.75,
+      "OR": 8.75, "PA": 3.07, "RI": 5.99, "SC": 6.5, "SD": 0, "TN": 0,
+      "TX": 0, "UT": 4.85, "VT": 8.75, "VA": 5.75, "WA": 0, "WV": 6.5,
+      "WI": 7.65, "WY": 0, "DC": 8.5
+    };
+
+    const STATES = Object.keys(STATE_TAXES).sort();
+
+    // Federal income tax brackets 2024 (single filer)
+    function calcFederalTax(income) {
+      const brackets = [
+        [11600, 0.10],
+        [47150, 0.12],
+        [100525, 0.22],
+        [191950, 0.24],
+        [243725, 0.32],
+        [609350, 0.35],
+        [Infinity, 0.37],
+      ];
+      let tax = 0;
+      let prev = 0;
+      for (const [limit, rate] of brackets) {
+        if (income <= prev) break;
+        tax += Math.min(income, limit) * rate - prev * rate;
+        prev = limit;
+      }
+      return tax;
+    }
+
+    function calcFICA(income) {
+      const ss = Math.min(income, 168600) * 0.062;
+      const medicare = income * 0.0145;
+      return ss + medicare;
+    }
+
+    function fmt(n) {
+      if (isNaN(n) || n === null) return "$0";
+      return "$" + Math.round(n).toLocaleString();
+    }
+
+    function fmtK(n) {
+      if (isNaN(n) || n === null) return "$0";
+      if (Math.abs(n) >= 1000) return "$" + (n / 1000).toFixed(1).replace(/\.0$/, "") + "k";
+      return "$" + Math.round(n).toLocaleString();
+    }
+
+    const defaultOffer = {
+      label: "Offer A",
+      baseSalary: "",
+      signingBonus: "",
+      annualBonus: "",
+      annualBonusType: "dollar",
+      bonusLikelihood: "50",
+      commissionOTE: "",
+      rsus: "",
+      vestingYears: "4",
+      // Benefits
+      healthPremiumMonthly: "",
+      employerHealthMonthly: "",
+      retirementMatchPct: "",
+      retirementMatchCap: "",
+      ptoWeeks: "",
+      profDevBudget: "",
+      // Work setup
+      workStyle: "hybrid",
+      commuteDaysPerWeek: "3",
+      commuteRoundTripMiles: "",
+      commuteMode: "drive",
+      monthlyTransitCost: "",
+      parkingMonthly: "",
+      // Taxes
+      state: "TX",
+      cityTaxPct: "",
+      // Pay
+      payFrequency: "biweekly",
+      my401kPct: "",
+    };
+
+    function InputRow({ label, hint, children }) {
+      return (
+        <div style={{ marginBottom: 16 }}>
+          <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: NAVY, marginBottom: 4 }}>{label}</label>
+          {hint && <p style={{ fontSize: 12, color: "#6B7B8A", margin: "0 0 6px 0", lineHeight: 1.4 }}>{hint}</p>}
+          {children}
+        </div>
+      );
+    }
+
+    function NumberInput({ value, onChange, prefix = "$", placeholder = "0" }) {
+      return (
+        <div style={{ position: "relative" }}>
+          {prefix && <span style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", color: "#6B7B8A", fontSize: 14, fontWeight: 600 }}>{prefix}</span>}
+          <input
+            type="number"
+            value={value}
+            onChange={e => onChange(e.target.value)}
+            placeholder={placeholder}
+            style={{ width: "100%", padding: prefix ? "10px 10px 10px 24px" : "10px", border: `1px solid ${BORDER}`, borderRadius: 8, fontSize: 14, color: NAVY, background: WHITE }}
+          />
+        </div>
+      );
+    }
+
+    function SelectInput({ value, onChange, options }) {
+      return (
+        <select
+          value={value}
+          onChange={e => onChange(e.target.value)}
+          style={{ width: "100%", padding: "10px", border: `1px solid ${BORDER}`, borderRadius: 8, fontSize: 14, color: NAVY, background: WHITE, cursor: "pointer" }}
+        >
+          {options.map(([val, label]) => <option key={val} value={val}>{label}</option>)}
+        </select>
+      );
+    }
+
+    function SectionHeader({ icon, title, color = TEAL }) {
+      return (
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16, paddingBottom: 10, borderBottom: `2px solid ${color}` }}>
+          <span style={{ fontSize: 18 }}>{icon}</span>
+          <h3 style={{ color, fontSize: 15, fontWeight: 700, margin: 0, textTransform: "uppercase", letterSpacing: "0.5px" }}>{title}</h3>
+        </div>
+      );
+    }
+
+    function calcOffer(o) {
+      const base = parseFloat(o.baseSalary) || 0;
+      const signing = parseFloat(o.signingBonus) || 0;
+      const bonusRaw = parseFloat(o.annualBonus) || 0;
+      const bonusTarget = o.annualBonusType === "percent" ? base * (bonusRaw / 100) : bonusRaw;
+      const bonusPct = parseFloat(o.bonusLikelihood) / 100 || 0;
+      const expectedBonus = bonusTarget * bonusPct;
+      const ote = parseFloat(o.commissionOTE) || 0;
+      const rsus = parseFloat(o.rsus) || 0;
+      const vestingYears = parseFloat(o.vestingYears) || 4;
+      const annualEquity = rsus / vestingYears;
+
+      // Benefits value
+      const healthPremium = (parseFloat(o.healthPremiumMonthly) || 0) * 12;
+      const employerHealth = (parseFloat(o.employerHealthMonthly) || 0) * 12;
+      const matchPct = parseFloat(o.retirementMatchPct) / 100 || 0;
+      const matchCap = parseFloat(o.retirementMatchCap) / 100 || matchPct;
+      const retirementMatch = base * Math.min(matchPct, matchCap);
+      const ptoWeeks = parseFloat(o.ptoWeeks) || 0;
+      const ptoValue = base / 52 * ptoWeeks;
+      const profDev = parseFloat(o.profDevBudget) || 0;
+
+      const totalBenefitsValue = employerHealth + retirementMatch + ptoValue + profDev;
+
+      // Commute cost
+      const commuteDays = parseFloat(o.commuteDaysPerWeek) || 0;
+      const commuteWeeksPerYear = 50;
+      let annualCommuteCost = 0;
+      if (o.commuteMode === "drive") {
+        const miles = parseFloat(o.commuteRoundTripMiles) || 0;
+        annualCommuteCost = miles * 0.67 * commuteDays * commuteWeeksPerYear;
+        const parking = (parseFloat(o.parkingMonthly) || 0) * 12;
+        annualCommuteCost += parking;
+      } else {
+        annualCommuteCost = (parseFloat(o.monthlyTransitCost) || 0) * 12;
+      }
+
+      // Commute time value (at $15/hr implicit)
+      const commuteHoursPerYear = commuteDays * commuteWeeksPerYear;
+      const commuteTimeValue = commuteHoursPerYear * 15;
+
+      // Total compensation (guaranteed base + certain benefits)
+      const guaranteedComp = base + totalBenefitsValue;
+      // Total with expected variable
+      const totalComp = base + totalBenefitsValue + expectedBonus + annualEquity;
+
+      // Tax calculation
+      const stateTaxRate = STATE_TAXES[o.state] || 0;
+      const cityTax = parseFloat(o.cityTaxPct) / 100 || 0;
+      const my401k = base * (parseFloat(o.my401kPct) / 100 || 0);
+      const taxableIncome = Math.max(0, base - my401k);
+
+      const federalTax = calcFederalTax(taxableIncome);
+      const stateTax = taxableIncome * (stateTaxRate / 100);
+      const cityTaxAmt = taxableIncome * cityTax;
+      const fica = calcFICA(base);
+      const totalTax = federalTax + stateTax + cityTaxAmt + fica;
+
+      const netPay = base - totalTax - my401k - (healthPremium);
+
+      const payPeriods = { weekly: 52, biweekly: 26, semimonthly: 24, monthly: 12 }[o.payFrequency] || 26;
+      const grossPerPaycheck = base / payPeriods;
+      const netPerPaycheck = netPay / payPeriods;
+
+      const realValue = totalComp - annualCommuteCost - commuteTimeValue;
+
+      return {
+        base, signing, expectedBonus, bonusTarget, bonusPct, annualEquity, rsus, vestingYears,
+        healthPremium, employerHealth, retirementMatch, ptoValue, profDev, totalBenefitsValue,
+        annualCommuteCost, commuteTimeValue, commuteHoursPerYear, commuteDays,
+        guaranteedComp, totalComp, netPay, netPerPaycheck, grossPerPaycheck,
+        federalTax, stateTax, cityTaxAmt, fica, totalTax, my401k,
+        taxableIncome, realValue, stateTaxRate, payPeriods,
+      };
+    }
+
+    function OfferForm({ offer, onChange, label }) {
+      const set = (key) => (val) => onChange({ ...offer, [key]: val });
+
+      return (
+        <div style={{ background: WHITE, borderRadius: 14, padding: 24, border: `1px solid ${BORDER}` }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+            <input
+              value={offer.label}
+              onChange={e => onChange({ ...offer, label: e.target.value })}
+              style={{ fontSize: 17, fontWeight: 700, color: NAVY, border: "none", background: "transparent", width: "100%", padding: 0 }}
+              placeholder="Offer name (e.g. Company A)"
+            />
+          </div>
+
+          {/* Instructions */}
+          <div style={{ background: "#EEF7F7", borderLeft: `4px solid ${TEAL}`, borderRadius: "0 8px 8px 0", padding: "12px 14px", marginBottom: 20 }}>
+            <p style={{ fontSize: 13, color: TEAL, fontWeight: 700, margin: "0 0 4px 0" }}>How to use this tool</p>
+            <p style={{ fontSize: 12, color: NAVY, margin: 0, lineHeight: 1.6 }}>Not every field applies to every job. If you do not have the information or it does not apply, leave it blank. The calculator will work with whatever you have.</p>
+          </div>
+
+          {/* COMPENSATION */}
+          <SectionHeader icon="💰" title="Compensation" />
+          <InputRow label="Base Salary (annual)" hint="The number on the offer letter.">
+            <NumberInput value={offer.baseSalary} onChange={set("baseSalary")} />
+          </InputRow>
+          <InputRow label="Signing Bonus" hint="One-time. Check for clawback if you leave within 12–24 months.">
+            <NumberInput value={offer.signingBonus} onChange={set("signingBonus")} />
+          </InputRow>
+          <InputRow label="Annual Bonus Target" hint="Enter a dollar amount or a percentage of your base salary.">
+            <div style={{ display: "flex", gap: 8 }}>
+              <div style={{ flex: 1 }}>
+                <NumberInput value={offer.annualBonus} onChange={set("annualBonus")} prefix={offer.annualBonusType === "percent" ? "%" : "$"} placeholder={offer.annualBonusType === "percent" ? "e.g. 10" : "e.g. 5000"} />
+              </div>
+              <div style={{ display: "flex", border: `1px solid ${BORDER}`, borderRadius: 8, overflow: "hidden", flexShrink: 0 }}>
+                {[["dollar","$"],["percent","%"]].map(([val, lbl]) => (
+                  <button key={val} onClick={() => onChange({ ...offer, annualBonusType: val })} style={{
+                    padding: "0 14px", fontSize: 14, fontWeight: 700, border: "none", cursor: "pointer",
+                    background: offer.annualBonusType === val ? TEAL : WHITE,
+                    color: offer.annualBonusType === val ? WHITE : "#888",
+                  }}>{lbl}</button>
+                ))}
+              </div>
+            </div>
+          </InputRow>
+          <InputRow label="Bonus likelihood" hint="If you are unsure, use 50/50 or 25%. Use 0% to exclude it from your total compensation calculation entirely.">
+            <SelectInput value={offer.bonusLikelihood} onChange={set("bonusLikelihood")} options={[["100","Almost certain (100%)"],["75","Likely (75%)"],["50","Unsure — use 50/50"],["25","Uncertain — use 25%"],["0","Leave out of my total comp (0%)"]]} />
+          </InputRow>
+          <InputRow label="On-Target Earnings (if applicable)" hint="Total expected earnings including commission, if this role has variable pay. Ask what percentage of people in this role actually hit OTE.">
+            <NumberInput value={offer.commissionOTE} onChange={set("commissionOTE")} />
+          </InputRow>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            <InputRow label="RSUs / Equity (if applicable)">
+              <NumberInput value={offer.rsus} onChange={set("rsus")} />
+            </InputRow>
+            <InputRow label="Vesting period">
+              <SelectInput value={offer.vestingYears} onChange={set("vestingYears")} options={[["1","1 year"],["2","2 years"],["3","3 years"],["4","4 years (standard)"],["5","5 years"]]} />
+            </InputRow>
+          </div>
+
+          {/* BENEFITS */}
+          <div style={{ marginTop: 24 }}>
+            <SectionHeader icon="🏥" title="Benefits" color="#2E86AB" />
+            <InputRow label="Your monthly health insurance premium" hint="What comes out of your paycheck each month.">
+              <NumberInput value={offer.healthPremiumMonthly} onChange={set("healthPremiumMonthly")} />
+            </InputRow>
+            <InputRow label="Employer monthly health contribution (if provided)" hint="The amount your employer pays is part of your compensation. If it has been provided, include it.">
+              <NumberInput value={offer.employerHealthMonthly} onChange={set("employerHealthMonthly")} />
+            </InputRow>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <InputRow label="401(k) match %" hint="e.g. 4 for 4%">
+                <NumberInput value={offer.retirementMatchPct} onChange={set("retirementMatchPct")} prefix="%" />
+              </InputRow>
+              <InputRow label="Match cap %" hint="Up to what % of your salary they match">
+                <NumberInput value={offer.retirementMatchCap} onChange={set("retirementMatchCap")} prefix="%" />
+              </InputRow>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <InputRow label="PTO (weeks)" hint="Two weeks PTO on $60k ≈ $2,300/yr value">
+                <NumberInput value={offer.ptoWeeks} onChange={set("ptoWeeks")} prefix="" placeholder="e.g. 3" />
+              </InputRow>
+              <InputRow label="Annual professional dev budget">
+                <NumberInput value={offer.profDevBudget} onChange={set("profDevBudget")} />
+              </InputRow>
+            </div>
+          </div>
+
+          {/* COMMUTE */}
+          <div style={{ marginTop: 24 }}>
+            <SectionHeader icon="🏙️" title="Work Setup & Commute" color="#5C7A6E" />
+            <InputRow label="Work arrangement">
+              <SelectInput value={offer.workStyle} onChange={set("workStyle")} options={[["remote","Fully remote"],["hybrid","Hybrid (some days in office)"],["inoffice","Fully in-office"]]} />
+            </InputRow>
+            {(offer.workStyle === "hybrid" || offer.workStyle === "inoffice") && (
+              <>
+                <InputRow label="Days in office per week">
+                  <SelectInput value={offer.commuteDaysPerWeek} onChange={set("commuteDaysPerWeek")} options={[["1","1 day"],["2","2 days"],["3","3 days"],["4","4 days"],["5","5 days (full time)"]]} />
+                </InputRow>
+                <InputRow label="How do you get there?">
+                  <SelectInput value={offer.commuteMode} onChange={set("commuteMode")} options={[["drive","Drive"],["transit","Public transit / rideshare"]]} />
+                </InputRow>
+                {offer.commuteMode === "drive" ? (
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                    <InputRow label="Round-trip miles per day">
+                      <NumberInput value={offer.commuteRoundTripMiles} onChange={set("commuteRoundTripMiles")} prefix="" placeholder="e.g. 30" />
+                    </InputRow>
+                    <InputRow label="Monthly parking cost">
+                      <NumberInput value={offer.parkingMonthly} onChange={set("parkingMonthly")} />
+                    </InputRow>
+                  </div>
+                ) : (
+                  <InputRow label="Monthly transit / rideshare cost">
+                    <NumberInput value={offer.monthlyTransitCost} onChange={set("monthlyTransitCost")} />
+                  </InputRow>
+                )}
+              </>
+            )}
+          </div>
+
+          {/* TAXES */}
+          <div style={{ marginTop: 24 }}>
+            <SectionHeader icon="🧾" title="Taxes & Paycheck" color="#6B4E71" />
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <InputRow label="State">
+                <select
+                  value={offer.state}
+                  onChange={e => onChange({ ...offer, state: e.target.value })}
+                  style={{ width: "100%", padding: "10px", border: `1px solid ${BORDER}`, borderRadius: 8, fontSize: 14, color: NAVY, background: WHITE, cursor: "pointer" }}
+                >
+                  {STATES.map(s => <option key={s} value={s}>{s} ({STATE_TAXES[s] === 0 ? "no income tax" : STATE_TAXES[s] + "%"})</option>)}
+                </select>
+              </InputRow>
+              <InputRow label={
+                <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  City / local tax %
+                  <span className="tooltip-wrap" style={{ cursor: "help" }}>
+                    <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 16, height: 16, borderRadius: "50%", background: "#DDE3E6", fontSize: 10, fontWeight: 700, color: NAVY }}>?</span>
+                    <span className="tooltip-box">
+                      Some cities charge a local income tax on top of state. Check yours at <strong>smartasset.com/taxes/income-taxes</strong> or search "[your city] local income tax rate." Common examples: NYC adds ~3.9%, Philadelphia ~3.75%. Leave blank if none.
+                    </span>
+                  </span>
+                </span>
+              } hint="NYC, Philadelphia, and some other cities add local tax. Leave blank if none.">
+                <NumberInput value={offer.cityTaxPct} onChange={set("cityTaxPct")} prefix="%" />
+              </InputRow>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <InputRow label="Pay frequency">
+                <SelectInput value={offer.payFrequency} onChange={set("payFrequency")} options={[["weekly","Weekly (52/yr)"],["biweekly","Bi-weekly (26/yr)"],["semimonthly","Semi-monthly (24/yr)"],["monthly","Monthly (12/yr)"]]} />
+              </InputRow>
+              <InputRow label="Your 401(k) contribution %" hint="Pre-tax. Reduces your taxable income.">
+                <NumberInput value={offer.my401kPct} onChange={set("my401kPct")} prefix="%" />
+              </InputRow>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function ResultBar({ label, value, max, color, sublabel }) {
+      const pct = max > 0 ? Math.min(100, (value / max) * 100) : 0;
+      return (
+        <div style={{ marginBottom: 12 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+            <span style={{ fontSize: 13, color: NAVY, fontWeight: 600 }}>{label}</span>
+            <span style={{ fontSize: 13, color: color || TEAL, fontWeight: 700 }}>{fmt(value)}</span>
+          </div>
+          <div style={{ background: LIGHTGRAY, borderRadius: 4, height: 8, overflow: "hidden" }}>
+            <div style={{ width: pct + "%", background: color || TEAL, height: "100%", borderRadius: 4, transition: "width 0.4s" }} />
+          </div>
+          {sublabel && <p style={{ fontSize: 11, color: "#888", margin: "3px 0 0 0" }}>{sublabel}</p>}
+        </div>
+      );
+    }
+
+    function OfferSummary({ offer, calc, color }) {
+      return (
+        <div style={{ background: WHITE, borderRadius: 14, padding: 20, border: `2px solid ${color}` }}>
+          <h3 style={{ color, fontSize: 16, fontWeight: 700, margin: "0 0 16px 0" }}>{offer.label || "Offer"}</h3>
+
+          {/* Total comp breakdown */}
+          <div style={{ marginBottom: 20 }}>
+            <p style={{ fontSize: 12, fontWeight: 700, color: "#888", textTransform: "uppercase", letterSpacing: 0.5, margin: "0 0 10px 0" }}>Total Compensation</p>
+            <ResultBar label="Base Salary" value={calc.base} max={calc.totalComp} color={color} />
+            {calc.totalBenefitsValue > 0 && <ResultBar label="Benefits Value" value={calc.totalBenefitsValue} max={calc.totalComp} color="#2E86AB" sublabel={`${calc.employerHealth > 0 ? "Employer health " + fmt(calc.employerHealth/12) + "/mo · " : ""}401k match ${fmt(calc.retirementMatch)} · PTO ${fmt(calc.ptoValue)}`} />}
+            {calc.expectedBonus > 0 && <ResultBar label={`Expected Bonus (${Math.round(calc.bonusPct*100)}% likelihood)`} value={calc.expectedBonus} max={calc.totalComp} color={GOLD} sublabel={`Target: ${fmt(calc.bonusTarget)}`} />}
+            {calc.annualEquity > 0 && <ResultBar label={`Equity (${calc.vestingYears}-yr vest)`} value={calc.annualEquity} max={calc.totalComp} color="#6B4E71" sublabel={`Total grant ${fmt(calc.rsus)} · Annual ${fmt(calc.annualEquity)}`} />}
+          </div>
+
+          {/* Big numbers */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 20 }}>
+            <div style={{ background: LIGHTGRAY, borderRadius: 10, padding: 14, textAlign: "center" }}>
+              <p style={{ fontSize: 11, color: "#888", margin: "0 0 4px 0", textTransform: "uppercase", fontWeight: 700 }}>Total Comp</p>
+              <p style={{ fontSize: 22, fontWeight: 800, color, margin: 0 }}>{fmtK(calc.totalComp)}</p>
+              <p style={{ fontSize: 11, color: "#888", margin: "4px 0 0 0" }}>incl. expected variable</p>
+            </div>
+            <div style={{ background: LIGHTGRAY, borderRadius: 10, padding: 14, textAlign: "center" }}>
+              <p style={{ fontSize: 11, color: "#888", margin: "0 0 4px 0", textTransform: "uppercase", fontWeight: 700 }}>Real Value</p>
+              <p style={{ fontSize: 22, fontWeight: 800, color: calc.realValue >= calc.base ? GREEN : RED, margin: 0 }}>{fmtK(calc.realValue)}</p>
+              <p style={{ fontSize: 11, color: "#888", margin: "4px 0 0 0" }}>after commute costs</p>
+            </div>
+          </div>
+
+          {/* Paycheck */}
+          {calc.base > 0 && (
+            <div style={{ background: "#F0FAF0", border: `1px solid #B2D8C0`, borderRadius: 10, padding: 16, marginBottom: 16 }}>
+              <p style={{ fontSize: 12, fontWeight: 700, color: GREEN, textTransform: "uppercase", letterSpacing: 0.5, margin: "0 0 12px 0" }}>Estimated Paycheck</p>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                <div>
+                  <p style={{ fontSize: 11, color: "#6B7B8A", margin: "0 0 2px 0" }}>Gross per paycheck</p>
+                  <p style={{ fontSize: 16, fontWeight: 700, color: NAVY, margin: 0 }}>{fmt(calc.grossPerPaycheck)}</p>
+                </div>
+                <div>
+                  <p style={{ fontSize: 11, color: "#6B7B8A", margin: "0 0 2px 0" }}>Est. net per paycheck</p>
+                  <p style={{ fontSize: 16, fontWeight: 700, color: GREEN, margin: 0 }}>{fmt(calc.netPerPaycheck)}</p>
+                </div>
+              </div>
+              <div style={{ borderTop: `1px solid #B2D8C0`, marginTop: 10, paddingTop: 10 }}>
+                <p style={{ fontSize: 11, color: "#6B7B8A", margin: "0 0 6px 0" }}>Annual tax breakdown (estimated)</p>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 4 }}>
+                  <p style={{ fontSize: 12, color: "#555", margin: 0 }}>Federal: {fmt(calc.federalTax)}</p>
+                  <p style={{ fontSize: 12, color: "#555", margin: 0 }}>State ({calc.stateTaxRate}%): {fmt(calc.stateTax)}</p>
+                  <p style={{ fontSize: 12, color: "#555", margin: 0 }}>FICA: {fmt(calc.fica)}</p>
+                  {calc.cityTaxAmt > 0 && <p style={{ fontSize: 12, color: "#555", margin: 0 }}>City: {fmt(calc.cityTaxAmt)}</p>}
+                  <p style={{ fontSize: 12, color: "#555", margin: 0 }}>Total tax: {fmt(calc.totalTax)}</p>
+                  {calc.my401k > 0 && <p style={{ fontSize: 12, color: "#555", margin: 0 }}>401k: {fmt(calc.my401k)}</p>}
+                </div>
+              </div>
+              <p style={{ fontSize: 11, color: "#888", margin: "8px 0 0 0" }}>Estimate only. Uses 2024 federal brackets, single filer. Your actual paycheck will vary. See disclaimer below.</p>
+            </div>
+          )}
+
+          {/* Commute */}
+          {calc.annualCommuteCost > 0 && (
+            <div style={{ background: "#FFF8EE", border: `1px solid #E8C97A`, borderRadius: 10, padding: 14, marginBottom: 16 }}>
+              <p style={{ fontSize: 12, fontWeight: 700, color: GOLD, textTransform: "uppercase", letterSpacing: 0.5, margin: "0 0 8px 0" }}>The Real Cost of This Commute</p>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                <div>
+                  <p style={{ fontSize: 11, color: "#6B7B8A", margin: "0 0 2px 0" }}>Annual commute cost</p>
+                  <p style={{ fontSize: 15, fontWeight: 700, color: GOLD, margin: 0 }}>{fmt(calc.annualCommuteCost)}</p>
+                </div>
+                <div>
+                  <p style={{ fontSize: 11, color: "#6B7B8A", margin: "0 0 2px 0" }}>Hours per year in transit</p>
+                  <p style={{ fontSize: 15, fontWeight: 700, color: GOLD, margin: 0 }}>{Math.round(calc.commuteHoursPerYear)} hrs</p>
+                </div>
+              </div>
+              <p style={{ fontSize: 11, color: "#888", margin: "8px 0 0 0" }}>Driving cost at $0.67/mile (2024 IRS rate) + parking. Time valued at $15/hr.</p>
+            </div>
+          )}
+
+          {/* Remote note */}
+          {offer.workStyle === "remote" && (
+            <div style={{ background: "#EEF7F7", borderLeft: `4px solid ${TEAL}`, borderRadius: "0 8px 8px 0", padding: 12 }}>
+              <p style={{ fontSize: 12, color: TEAL, fontWeight: 700, margin: "0 0 4px 0" }}>Remote Work Note</p>
+              <p style={{ fontSize: 12, color: NAVY, margin: 0, lineHeight: 1.5 }}>Full environmental control and no sensory load in transit — real value for many neurodivergent workers. But structure is entirely self-generated. Make sure you have what you need to build it before accepting.</p>
+            </div>
+          )}
+          {/* Disclaimer */}
+          <div style={{ background: "#FFF8EE", border: `1px solid #E8C97A`, borderRadius: 8, padding: 12, marginTop: 14 }}>
+            <p style={{ fontSize: 11, color: GOLD, fontWeight: 700, margin: "0 0 4px 0", textTransform: "uppercase", letterSpacing: 0.5 }}>For informational and guidance purposes only</p>
+            <p style={{ fontSize: 11, color: "#5A4A1A", margin: 0, lineHeight: 1.6 }}>This calculator provides estimates based on the information you enter and publicly available tax rates. It does not guarantee an accurate depiction of your future paychecks. Actual deductions will vary based on your filing status, benefits elections, pre-tax deductions, employer-specific policies, and other factors not captured here. Use this as a starting point — not a financial plan. Consult your HR team or a tax professional for exact figures.</p>
+          </div>
+        </div>
+      );
+    }
+
+    function CompareRow({ label, a, b, higherIsBetter = true }) {
+      const aNum = typeof a === "number" ? a : 0;
+      const bNum = typeof b === "number" ? b : 0;
+      const aWins = higherIsBetter ? aNum >= bNum : aNum <= bNum;
+      const bWins = higherIsBetter ? bNum >= aNum : bNum <= aNum;
+      const tie = aNum === bNum;
+      return (
+        <tr>
+          <td style={{ padding: "10px 12px", fontSize: 13, color: NAVY, fontWeight: 500, borderBottom: `1px solid ${BORDER}` }}>{label}</td>
+          <td style={{ padding: "10px 12px", fontSize: 13, fontWeight: 700, color: !tie && aWins ? GREEN : NAVY, textAlign: "right", borderBottom: `1px solid ${BORDER}`, background: !tie && aWins ? "#F0FFF4" : "transparent" }}>
+            {fmt(aNum)} {!tie && aWins && "✓"}
+          </td>
+          <td style={{ padding: "10px 12px", fontSize: 13, fontWeight: 700, color: !tie && bWins ? GREEN : NAVY, textAlign: "right", borderBottom: `1px solid ${BORDER}`, background: !tie && bWins ? "#F0FFF4" : "transparent" }}>
+            {fmt(bNum)} {!tie && bWins && "✓"}
+          </td>
+        </tr>
+      );
+    }
+
+    function App() {
+      const [offerA, setOfferA] = useState({ ...defaultOffer, label: "Offer A" });
+      const [offerB, setOfferB] = useState({ ...defaultOffer, label: "Offer B", state: "CA" });
+      const [activeTab, setActiveTab] = useState("inputs");
+      const [comparing, setComparing] = useState(false);
+
+      const calcA = useMemo(() => calcOffer(offerA), [offerA]);
+      const calcB = useMemo(() => calcOffer(offerB), [offerB]);
+
+      const tabs = [
+        { id: "inputs", label: "📝 Enter Offers" },
+        { id: "results", label: "📊 See Results" },
+        { id: "compare", label: "⚖️ Compare Side-by-Side" },
+      ];
+
+      return (
+        <div style={{ minHeight: "100vh", background: "#F0F4F5" }}>
+          {/* Header */}
+          <div style={{ background: TEAL, padding: "20px 24px 0" }}>
+            <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", opacity: 0.75, color: WHITE, margin: "0 0 4px 0" }}>The GroundWork Collective</p>
+            <h1 style={{ fontSize: 20, fontWeight: 800, color: WHITE, margin: "0 0 4px 0" }}>Offer Calculator</h1>
+            <p style={{ fontSize: 13, opacity: 0.85, color: WHITE, margin: "0 0 18px 0" }}>Enter what they offered. See what it is actually worth.</p>
+            <div style={{ display: "flex", gap: 4 }}>
+              {tabs.map(t => (
+                <button key={t.id} onClick={() => setActiveTab(t.id)} style={{
+                  padding: "10px 16px", fontSize: 13, fontWeight: 600, border: "none", cursor: "pointer",
+                  background: activeTab === t.id ? WHITE : "rgba(255,255,255,0.2)",
+                  color: activeTab === t.id ? TEAL : WHITE,
+                  borderRadius: "8px 8px 0 0",
+                }}>
+                  {t.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ maxWidth: 900, margin: "0 auto", padding: "24px 16px" }}>
+
+            {/* INPUTS TAB */}
+            {activeTab === "inputs" && (
+              <div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+                  <OfferForm offer={offerA} onChange={setOfferA} label="A" />
+                  <OfferForm offer={offerB} onChange={setOfferB} label="B" />
+                </div>
+                <div style={{ textAlign: "center", marginTop: 24 }}>
+                  <button onClick={() => setActiveTab("results")} style={{ padding: "14px 40px", background: TEAL, color: WHITE, border: "none", borderRadius: 10, fontSize: 15, fontWeight: 700, cursor: "pointer" }}>
+                    Calculate Both Offers →
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* RESULTS TAB */}
+            {activeTab === "results" && (
+              <div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 24 }}>
+                  <OfferSummary offer={offerA} calc={calcA} color={TEAL} />
+                  <OfferSummary offer={offerB} calc={calcB} color="#6B4E71" />
+                </div>
+
+                {/* Negotiate callout */}
+                <div style={{ background: WHITE, borderRadius: 14, padding: 20, border: `1px solid ${BORDER}`, marginBottom: 20 }}>
+                  <h3 style={{ color: NAVY, fontSize: 15, fontWeight: 700, margin: "0 0 12px 0" }}>🤝 Before You Accept — Negotiate</h3>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                    {[
+                      ["Base salary", "The most common lever. Counter with a specific number and a brief, confident reason. Don't give a range — they'll anchor to the bottom."],
+                      ["Signing bonus", "Useful if you're leaving unvested equity. One-time. Check for clawback if you leave within 12–24 months."],
+                      ["401(k) match", "Ask if there's flexibility. Even 0.5% more on a $60k salary is $300/yr compounding tax-deferred."],
+                      ["PTO", "Extra PTO on a $60k salary is worth about $230/day. Two extra days = $460. Ask."],
+                    ].map(([title, tip]) => (
+                      <div key={title} style={{ background: LIGHTGRAY, borderRadius: 8, padding: 12 }}>
+                        <p style={{ fontSize: 13, fontWeight: 700, color: TEAL, margin: "0 0 4px 0" }}>{title}</p>
+                        <p style={{ fontSize: 13, color: "#444", margin: 0, lineHeight: 1.5 }}>{tip}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ background: "#EEF7F7", borderLeft: `4px solid ${TEAL}`, borderRadius: "0 8px 8px 0", padding: 12, marginTop: 14 }}>
+                    <p style={{ fontSize: 13, color: NAVY, margin: 0, lineHeight: 1.5 }}><strong>Script:</strong> "I am very excited about this role. Based on my research and the market for this position, I was hoping we could get to [specific number]. Is there flexibility there?" Then be quiet. Let them respond.</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* COMPARE TAB */}
+            {activeTab === "compare" && (
+              <div>
+                <div style={{ background: WHITE, borderRadius: 14, overflow: "hidden", border: `1px solid ${BORDER}`, marginBottom: 20 }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                    <thead>
+                      <tr style={{ background: NAVY }}>
+                        <th style={{ padding: "14px 12px", textAlign: "left", color: WHITE, fontSize: 14, fontWeight: 700 }}>Category</th>
+                        <th style={{ padding: "14px 12px", textAlign: "right", color: WHITE, fontSize: 14, fontWeight: 700 }}>{offerA.label || "Offer A"}</th>
+                        <th style={{ padding: "14px 12px", textAlign: "right", color: WHITE, fontSize: 14, fontWeight: 700 }}>{offerB.label || "Offer B"}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr style={{ background: "#F8FFFE" }}>
+                        <td colSpan={3} style={{ padding: "10px 12px", fontSize: 12, fontWeight: 700, color: TEAL, textTransform: "uppercase", letterSpacing: 0.5 }}>Compensation</td>
+                      </tr>
+                      <CompareRow label="Base Salary" a={calcA.base} b={calcB.base} />
+                      <CompareRow label="Expected Bonus" a={calcA.expectedBonus} b={calcB.expectedBonus} />
+                      <CompareRow label="Annual Equity Value" a={calcA.annualEquity} b={calcB.annualEquity} />
+                      <CompareRow label="Total Comp (w/ variable)" a={calcA.totalComp} b={calcB.totalComp} />
+                      <tr style={{ background: "#F8FFFE" }}>
+                        <td colSpan={3} style={{ padding: "10px 12px", fontSize: 12, fontWeight: 700, color: "#2E86AB", textTransform: "uppercase", letterSpacing: 0.5 }}>Benefits</td>
+                      </tr>
+                      <CompareRow label="Benefits Value (annual)" a={calcA.totalBenefitsValue} b={calcB.totalBenefitsValue} />
+                      <CompareRow label="Health Premium (annual)" a={calcA.healthPremium} b={calcB.healthPremium} higherIsBetter={false} />
+                      <CompareRow label="401(k) Match" a={calcA.retirementMatch} b={calcB.retirementMatch} />
+                      <CompareRow label="PTO Value" a={calcA.ptoValue} b={calcB.ptoValue} />
+                      <tr style={{ background: "#F8FFFE" }}>
+                        <td colSpan={3} style={{ padding: "10px 12px", fontSize: 12, fontWeight: 700, color: GOLD, textTransform: "uppercase", letterSpacing: 0.5 }}>Real Cost After Commute</td>
+                      </tr>
+                      <CompareRow label="Annual Commute Cost" a={calcA.annualCommuteCost} b={calcB.annualCommuteCost} higherIsBetter={false} />
+                      <CompareRow label="Real Value (after commute)" a={calcA.realValue} b={calcB.realValue} />
+                      <tr style={{ background: "#F8FFFE" }}>
+                        <td colSpan={3} style={{ padding: "10px 12px", fontSize: 12, fontWeight: 700, color: "#6B4E71", textTransform: "uppercase", letterSpacing: 0.5 }}>Take-Home Pay</td>
+                      </tr>
+                      <CompareRow label="Total Tax Burden" a={calcA.totalTax} b={calcB.totalTax} higherIsBetter={false} />
+                      <CompareRow label="Est. Annual Net Pay" a={calcA.netPay} b={calcB.netPay} />
+                      <CompareRow label="Est. Net Per Paycheck" a={calcA.netPerPaycheck} b={calcB.netPerPaycheck} />
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Decision callout */}
+                <div style={{ background: WHITE, borderRadius: 14, padding: 20, border: `1px solid ${BORDER}` }}>
+                  <h3 style={{ color: NAVY, fontSize: 15, fontWeight: 700, margin: "0 0 12px 0" }}>📋 Before You Decide</h3>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
+                    {[
+                      ["Ask for the full benefits summary", "Request it in writing before accepting. The dollar value of health, retirement, and PTO often surprises people."],
+                      ["Calculate real cost of living", "If the roles are in different cities, run both through a cost-of-living calculator. A $70k salary in Austin ≈ $107k in NYC."],
+                      ["Read every clawback clause", "Signing bonus, equity, and sometimes relocation assistance come with repayment requirements if you leave early. Know the terms."],
+                    ].map(([title, tip]) => (
+                      <div key={title} style={{ background: LIGHTGRAY, borderRadius: 8, padding: 12 }}>
+                        <p style={{ fontSize: 13, fontWeight: 700, color: NAVY, margin: "0 0 4px 0" }}>{title}</p>
+                        <p style={{ fontSize: 12, color: "#555", margin: 0, lineHeight: 1.5 }}>{tip}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <p style={{ textAlign: "center", fontSize: 12, color: "#AAAAAA", marginTop: 24 }}>
+              The GroundWork Collective · Module 5 · Built for the way you think
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

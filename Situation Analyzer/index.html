@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hard or Toxic? Situation Analyzer — GroundWork Collective</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <style>body { margin: 0; padding: 0; background: #F9F7F4; }</style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState } = React;
+
+const TEAL = "#1B6B72";
+const NAVY = "#1B2A4A";
+const ORANGE = "#D97B2B";
+const RED = "#C0392B";
+const LIGHTGRAY = "#F5F7F8";
+const WHITE = "#FFFFFF";
+const WARMGRAY = "#F9F7F4";
+
+const toxicSignals = [
+  "retaliat", "gaslight", "bully", "hostile", "threaten", "humiliat",
+  "sabotag", "isolat", "punish", "silenc", "yell", "scream",
+  "discriminat", "harass", "target", "exclud", "demean", "belittl",
+  "manipulat", "undermin", "blame", "shame", "blackmail", "intimi",
+  "unsafe", "afraid", "fear", "dread", "panic", "sleep",
+  "health", "anxiety", "depress", "crying", "nausea", "sick",
+  "can not eat", "cannot eat", "can not sleep", "cannot sleep",
+  "shut down", "breaking down", "break down", "falling apart",
+  "everyone knows", "always wrong", "never good enough",
+  "no one believes", "told me i was crazy", "making it up",
+  "walked on eggshells", "eggshells", "constantly watched",
+  "written up for no reason", "set up to fail", "impossible standard",
+  "fired if", "threatened my job", "everyone else gets",
+  "talked about behind", "spread rumors", "lied about me",
+  "took credit", "stole my", "blocked my", "denied promot",
+];
+
+const hardSignals = [
+  "new role", "new job", "first time", "learning", "stretch",
+  "unfamiliar", "outside my comfort", "comfort zone", "challenge",
+  "adjusting", "growing", "growth", "feedback", "constructive",
+  "difficult project", "hard project", "complex", "deadline",
+  "high expectations", "more responsibility", "promoted",
+  "new team", "new manager", "new skill", "training",
+  "public speaking", "presentation", "leading for the first time",
+  "imposter", "not sure if i can", "overwhelm", "workload",
+  "keeping up", "pace", "behind", "catching up",
+  "different style", "communication style", "adjust to",
+  "getting used to", "still figuring out",
+];
+
+const boundarySignals = [
+  "after hours", "weekend", "vacation", "time off", "pto",
+  "personal time", "no boundary", "boundaries", "always available",
+  "expected to respond", "late night", "early morning",
+  "too much work", "overloaded", "burnout", "burned out",
+  "saying no", "can not say no", "cannot say no", "guilt",
+  "taking on too much", "everyone asks me", "dumped on me",
+  "not my job", "scope", "expected to do everything",
+];
+
+const interpersonalSignals = [
+  "manager", "boss", "supervisor", "coworker", "colleague",
+  "team lead", "director", "hr", "human resources",
+  "meeting", "one on one", "1:1", "email", "slack",
+  "said to me", "told me", "called me", "in front of",
+  "behind my back", "talks about", "treats me",
+  "different than others", "plays favorites", "favorite",
+  "clique", "inner circle", "left out", "not invited",
+];
+
+const systemicSignals = [
+  "culture", "company", "organization", "policy", "policies",
+  "leadership", "management", "environment", "system",
+  "everyone", "nobody", "no one", "always been this way",
+  "that is just how", "normal here", "high turnover",
+  "people leave", "people quit", "retention",
+  "unwritten rule", "unspoken", "expected to",
+  "accommodat", "disclosure", "diagnosed", "neurodiv",
+  "mask", "masking", "hide who", "pretend", "act normal",
+];
+
+function analyzeSituation(text) {
+  const lower = text.toLowerCase();
+  let toxicScore = 0, hardScore = 0, boundaryScore = 0, interpersonalScore = 0, systemicScore = 0;
+
+  toxicSignals.forEach((s) => { if (lower.includes(s)) { toxicScore += 2; } });
+  hardSignals.forEach((s) => { if (lower.includes(s)) { hardScore += 2; } });
+  boundarySignals.forEach((s) => { if (lower.includes(s)) { boundaryScore += 1; } });
+  interpersonalSignals.forEach((s) => { if (lower.includes(s)) { interpersonalScore += 1; } });
+  systemicSignals.forEach((s) => { if (lower.includes(s)) { systemicScore += 1; } });
+
+  const total = toxicScore + hardScore;
+  let category;
+  if (total === 0) { category = "grey"; }
+  else {
+    const toxicRatio = toxicScore / Math.max(total, 1);
+    if (toxicRatio >= 0.65) category = "toxic";
+    else if (toxicRatio <= 0.3) category = "hard";
+    else category = "grey";
+  }
+
+  let situationType = "general";
+  if (interpersonalScore >= 2 && systemicScore >= 2) situationType = "both";
+  else if (systemicScore >= 2) situationType = "systemic";
+  else if (interpersonalScore >= 1) situationType = "interpersonal";
+  else if (boundaryScore >= 2) situationType = "boundary";
+
+  return { category, toxicScore, hardScore, boundaryScore, situationType };
+}
+
+const categoryContent = {
+  hard: {
+    title: "This Looks Hard, Not Toxic",
+    icon: "💪",
+    color: TEAL,
+    core: "What you described sounds genuinely uncomfortable. That discomfort is valid. Based on the details you shared, this situation carries the markers of something that is hard rather than harmful. Hard situations stretch you into unfamiliar territory. They feel heavy. They test your capacity. For neurodivergent professionals, hard can feel amplified because your nervous system processes intensity differently. That does not mean something is wrong with you. It means you feel the weight of growth more acutely than others might.",
+  },
+  grey: {
+    title: "This Falls in the Grey Zone",
+    icon: "⚖️",
+    color: ORANGE,
+    core: "What you described has elements that could go either direction. Some of what you are experiencing may be the natural discomfort of a hard situation. Some of it may signal something more concerning. The grey zone is the most difficult place to be because your brain wants a clear answer and there is not one yet. For neurodivergent professionals, this ambiguity is especially taxing. Your pattern-recognition instincts are firing, but the data is not conclusive. That tension is not a flaw in your thinking. It is an accurate read of a genuinely ambiguous situation.",
+  },
+  toxic: {
+    title: "This Has Signs of a Toxic Dynamic",
+    icon: "🚩",
+    color: RED,
+    core: "Based on what you shared, this goes beyond hard. The patterns you described point to an environment or dynamic that is causing real harm. This is not about your resilience or your ability to handle pressure. Toxic dynamics are defined by the behavior of the environment, not the endurance of the person in it. For neurodivergent professionals, toxic environments exact a higher toll because they often attack the exact areas where you are already working hardest: communication, social navigation, masking, and sensory regulation.",
+  },
+};
+
+const solutionPaths = {
+  hard: {
+    interpersonal: [
+      { step: "Name the specific friction", detail: "Write down exactly what is hard about this interaction. \"My manager gives feedback in a way that feels harsh\" is more solvable than \"my manager is difficult.\" Get specific about the behavior, not the person." },
+      { step: "Request a style conversation", detail: "Ask for 10 minutes. Use this frame: \"I want to work well with you. I have noticed that I process feedback best when it is [specific]. Can we try that approach?\" You are not complaining. You are offering a collaboration." },
+      { step: "Build your own adaptation plan", detail: "Identify one thing you can adjust on your end. Maybe it is how you prepare for meetings with this person. Maybe it is processing time after interactions. Work with what you can control while the relationship develops." },
+      { step: "Set a review window", detail: "Give this approach three weeks. Mark it on your calendar. If things improve, keep going. If nothing changes after genuine effort from your side, revisit whether this is actually a grey zone situation." },
+    ],
+    systemic: [
+      { step: "Separate the system from your performance", detail: "A fast-paced culture, unclear expectations, or high-pressure environment is not a personal failing. Write down what about the system feels hard, separate from how you are performing within it." },
+      { step: "Find your leverage points", detail: "You cannot change company culture alone. You can change how you move through it. Identify one workflow, one communication pattern, or one boundary that would make this 20% more manageable." },
+      { step: "Seek out others navigating the same thing", detail: "You are likely not the only one finding this hard. A trusted colleague who shares your experience can help you reality-check what is \"normal hard\" versus \"this should not be this way.\"" },
+      { step: "Decide your timeline", detail: "Open-ended endurance drains you. Bounded commitment is sustainable. \"I will give this six months and reassess\" gives your brain a container. Without that, hard turns into hopeless." },
+    ],
+    boundary: [
+      { step: "Identify your most depleted boundary", detail: "Where is energy leaking most? Time? Emotional labor? Scope of work? Pick the one that, if addressed, would create the biggest relief. Start there." },
+      { step: "Set one boundary this week", detail: "It does not need to be dramatic. \"I will close my laptop at 6pm\" or \"I will not respond to non-urgent messages on weekends\" counts. Practice the muscle before you need it for bigger asks." },
+      { step: "Prepare your language", detail: "Boundaries are easier to hold when you have rehearsed the words. Try: \"I can take that on if we reprioritize X\" or \"I am at capacity this week. Can we revisit this Monday?\"" },
+      { step: "Monitor the response", detail: "How people respond to your boundaries tells you what kind of environment you are in. Healthy environments adjust. Problematic ones push back or punish. Pay attention." },
+    ],
+    general: [
+      { step: "Get specific about the discomfort", detail: "\"This feels hard\" is a starting point, not an ending point. Write down what exactly is hard. The task itself? The pace? The expectations? A relationship? Specificity turns anxiety into action items." },
+      { step: "Ask for what you need", detail: "Whether it is clarity on expectations, more time, or a different approach to communication, make the ask. Frame it around outcomes: \"I want to do this well. Here is what would help me get there.\"" },
+      { step: "Build in recovery", detail: "Hard situations require more energy. Plan for that. Block time after draining meetings. Protect your lunch break. Give your nervous system space to come back down." },
+      { step: "Track your progress", detail: "Hard situations feel endless when you cannot see movement. Keep a brief weekly note. \"What went better this week?\" Even small shifts matter. They prove you are adapting, even when it does not feel like it." },
+    ],
+  },
+  grey: {
+    interpersonal: {
+      signals: {
+        towardHard: ["The person may not realize the impact of their behavior", "There is no clear pattern of targeting you specifically", "You have not yet tried a direct conversation about it", "Others seem to have a neutral or positive experience with this person"],
+        towardToxic: ["The behavior continues or escalates after you have raised it", "You are treated differently than others in similar roles", "You find yourself rehearsing conversations or dreading interactions", "Your concerns have been minimized, dismissed, or turned back on you"],
+      },
+      conversationPrep: {
+        title: "Preparing for the Conversation",
+        steps: [
+          { label: "Choose your timing", detail: "Request a private, scheduled conversation. Do not bring this up in the hallway, right after an incident, or when either of you is stressed. \"Can we schedule 15 minutes this week? There is something I would like to discuss.\"" },
+          { label: "Use the SBI framework", detail: "Situation: \"In yesterday's team meeting...\" Behavior: \"...when my suggestion was passed over and then repeated by someone else...\" Impact: \"...I felt dismissed and I want to understand what happened.\" Stick to observable facts. Leave out interpretations." },
+          { label: "State what you need, not what they did wrong", detail: "\"I need to feel that my contributions are heard\" lands better than \"You never listen to me.\" The goal is to open a door, not win an argument." },
+          { label: "Plan your exit point", detail: "Decide in advance what response would be acceptable. If they dismiss, deflect, or blame you, that is data. You do not have to resolve everything in one conversation. You are testing the waters." },
+        ],
+      },
+      inYourControl: ["How and when you raise concerns", "Documenting what happens (dates, specifics, witnesses)", "How much emotional energy you invest in each interaction", "Seeking outside perspective from a mentor or trusted peer", "Your own professional performance and communication", "Whether you escalate to HR or leadership"],
+      notInYourControl: ["How the other person responds to feedback", "Whether they change their behavior", "How leadership or HR handles your concern", "Other people's perceptions of the situation", "The other person's intentions or motivations", "Company culture and how it rewards or punishes behavior"],
+      boundaryStrategies: [
+        { boundary: "Interaction boundaries", how: "Limit voluntary one-on-one time with this person. Keep interactions task-focused and documented. Follow up verbal conversations with a brief email summary: \"Just to confirm, we agreed on X.\"" },
+        { boundary: "Emotional boundaries", how: "You do not owe this person your emotional processing. It is okay to have a neutral, professional response in the moment and process your feelings later with someone safe. \"Thank you for that feedback. I will think about it\" buys you space." },
+        { boundary: "Narrative boundaries", how: "Do not let this person's behavior become the story you tell yourself about your competence. Separate their actions from your worth. \"This is how they behave\" is different from \"this is what I deserve.\"" },
+      ],
+    },
+    systemic: {
+      signals: {
+        towardHard: ["The company is going through a transition and things feel unstable but temporary", "Leadership acknowledges the problems and is working toward solutions", "You see other people with similar needs being supported", "Policies exist even if the execution is imperfect"],
+        towardToxic: ["Problems are structural and have been this way for a long time", "Leadership dismisses or normalizes the issues", "People who raise concerns are penalized, directly or indirectly", "Turnover is high and exit interviews change nothing"],
+      },
+      conversationPrep: {
+        title: "Preparing to Raise Systemic Concerns",
+        steps: [
+          { label: "Find your ally first", detail: "Before going to leadership, find one person who shares your concern. You are not building a coalition to complain. You are validating your perception and strengthening your voice." },
+          { label: "Frame it as a business problem", detail: "\"I have noticed that the team's response time has increased since the restructure\" is heard differently than \"This new process is terrible.\" Connect your concern to outcomes that leadership cares about." },
+          { label: "Bring a suggestion, not just a complaint", detail: "\"What if we tried a weekly sync instead of daily standups?\" or \"Could we pilot flexible deadlines for this quarter?\" Solutions make you a partner, not a problem." },
+          { label: "Document the conversation and the response", detail: "Send a follow-up email: \"Thanks for the conversation today. My understanding is that we agreed to try X.\" This creates a record and accountability without being adversarial." },
+        ],
+      },
+      inYourControl: ["How you frame concerns when raising them", "Building relationships with people who share your perspective", "Documenting patterns over time (not just individual incidents)", "Your decision about how long to stay and under what conditions", "Seeking accommodations if you have not already", "Protecting your energy and professional reputation"],
+      notInYourControl: ["Whether the culture shifts", "How quickly leadership acts on feedback", "Whether others see or acknowledge the same problems", "The pace of systemic change", "Unwritten rules and how they are enforced", "How your disclosure or accommodation request is received"],
+      boundaryStrategies: [
+        { boundary: "Energy boundaries", how: "Stop giving 120% to a system that returns 50%. Match your output to what is sustainable, not what is implicitly expected. Excellence at the cost of your health is not excellence." },
+        { boundary: "Disclosure boundaries", how: "You decide what you share, with whom, and when. \"I work best with written instructions\" does not require a diagnosis attached. Share what gets you what you need, nothing more." },
+        { boundary: "Exit planning boundaries", how: "Having a plan to leave is not disloyalty. It is self-respect. Update your resume. Keep your network active. Knowing you have options reduces the power a toxic system holds over you." },
+      ],
+    },
+    boundary: {
+      signals: {
+        towardHard: ["You have not yet communicated your limits clearly", "The requests are coming from genuine need, not exploitation", "People respect your boundaries when you do set them", "The overload is temporary (a launch, a deadline, a transition)"],
+        towardToxic: ["Boundaries are punished explicitly or through subtle consequences", "The overload is permanent and treated as normal", "You are singled out for extra work while others are not", "Saying no results in retaliation, exclusion, or negative performance feedback"],
+      },
+      conversationPrep: {
+        title: "Preparing to Set Workplace Boundaries",
+        steps: [
+          { label: "Start with the smallest boundary that matters most", detail: "You do not need to overhaul everything at once. Pick the one limit that would give you the most relief. \"I need to stop checking email after 7pm\" or \"I need to push back on this additional project.\"" },
+          { label: "Use capacity language, not complaint language", detail: "\"I am at capacity and want to make sure I deliver quality on my current priorities\" works better than \"I have too much to do.\" Frame boundaries as professional, not personal." },
+          { label: "Offer a tradeoff, not a refusal", detail: "\"I can take on project B if we deprioritize project C\" or \"I can have this by Friday if the other deadline moves to next week.\" You are not saying no. You are saying \"here is what is realistic.\"" },
+          { label: "Watch the response closely", detail: "A reasonable manager will negotiate or adjust. A problematic one will guilt, pressure, or punish. The response to your boundary tells you more about the environment than the boundary itself ever could." },
+        ],
+      },
+      inYourControl: ["When and how you communicate your limits", "Which tasks you volunteer for and which you decline", "How you structure your workday and breaks", "Enforcing the boundaries you set (the hardest part)", "Choosing not to apologize for having limits", "Leaving work at work, mentally and digitally"],
+      notInYourControl: ["Whether others respect your boundaries the first time", "How your manager frames your boundaries to others", "Company culture around overwork and availability", "Whether \"always on\" is implicitly required for advancement", "Other people's reactions or judgments", "Systemic expectations that normalize burnout"],
+      boundaryStrategies: [
+        { boundary: "Time boundaries", how: "Set a hard stop time and protect it. Use auto-replies after hours. Block \"focus time\" on your calendar. Treat these blocks with the same respect you would give a meeting with your CEO." },
+        { boundary: "Scope boundaries", how: "Get assignments in writing. When scope creeps, name it: \"This has expanded beyond the original ask. Can we align on the updated scope and timeline?\" Paper trails protect you." },
+        { boundary: "People-pleasing boundaries", how: "\"Let me check my calendar and get back to you\" is a complete sentence. It breaks the pattern of instant yes. Use it every single time someone asks you for something, even if you plan to say yes." },
+      ],
+    },
+    general: {
+      signals: {
+        towardHard: ["The discomfort is connected to something new or unfamiliar", "You can identify a learning opportunity within the challenge", "Support is available if you ask for it", "The situation is uncomfortable but your overall wellbeing is intact"],
+        towardToxic: ["The discomfort is connected to how you are being treated, not the work itself", "You have tried to address it and nothing changed", "Your health, sleep, or relationships are being affected", "You feel the need to mask, hide, or suppress who you are"],
+      },
+      conversationPrep: {
+        title: "Preparing to Address the Situation",
+        steps: [
+          { label: "Clarify your goal before the conversation", detail: "Do you want understanding? A behavior change? Information? Knowing what you need helps you stay focused and measure whether the conversation was productive." },
+          { label: "Lead with impact, not accusation", detail: "\"When this happens, the impact on me is...\" opens a conversation. \"You always do this\" closes one. Even when you are frustrated, impact language keeps the door open." },
+          { label: "Prepare for three responses", detail: "Best case: they hear you and adjust. Middle case: they partially hear you and you need a follow-up. Worst case: they dismiss or deflect. Having a plan for each keeps you grounded in the moment." },
+          { label: "Debrief afterward", detail: "Talk to someone you trust. Not to vent, but to process. \"Here is what happened. Here is how I read it. What do you think?\" Outside perspective is crucial in grey zone situations." },
+        ],
+      },
+      inYourControl: ["How you interpret and respond to the situation", "Seeking clarity when expectations are unclear", "Building a support network inside and outside of work", "Documenting your experience in case patterns emerge", "Asking for what you need directly", "Deciding your own timeline for reassessing"],
+      notInYourControl: ["Other people's behavior and whether they change", "How your concerns are received", "Company politics and power dynamics", "Whether the environment is willing to evolve", "How others perceive or judge your needs", "The pace at which things improve"],
+      boundaryStrategies: [
+        { boundary: "Information boundaries", how: "You choose what to share and with whom. Not every colleague needs your full story. \"I am working through something\" is enough. Save the details for people who have earned your trust." },
+        { boundary: "Response-time boundaries", how: "You do not have to react in the moment. \"I need to think about that\" gives your brain processing time. Neurodivergent professionals often make better decisions with space, not speed." },
+        { boundary: "Self-advocacy boundaries", how: "Advocating for yourself is not being difficult. Practice separating feedback about you from feedback about the situation. \"I need X to do my best work\" is not a complaint. It is professional communication." },
+      ],
+    },
+  },
+  toxic: {
+    interpersonal: [
+      { step: "Document everything starting now", detail: "Dates, times, what was said, who was present. Use a personal device or email, not company systems. This is not about building a case yet. It is about having a clear record when stress clouds your memory." },
+      { step: "Report through the appropriate channel", detail: "If you have not already, bring this to HR or a leader outside of the toxic dynamic. Use factual, impact-based language: \"On [date], [behavior] happened. The impact was [result].\" Avoid labels. Describe behavior." },
+      { step: "Protect yourself while you navigate this", detail: "Minimize unnecessary contact. Keep interactions professional and documented. Bring a witness or follow up in writing: \"Per our conversation today, my understanding is...\"" },
+      { step: "Assess whether change is realistic", detail: "Has leadership demonstrated willingness to address this? Is there a track record of accountability? If the answer is no, your energy is better spent on your exit strategy than on changing a system that does not want to change." },
+    ],
+    systemic: [
+      { step: "Recognize that this is the environment, not you", detail: "When a system is toxic, it wants you to believe the problem is your inability to adapt. It is not. A system that punishes authenticity, ignores harm, or normalizes dysfunction is a broken system." },
+      { step: "Stop over-investing", detail: "Match your energy to what the system returns. Do your job well. Document your contributions. Stop volunteering for extra. Preserve your capacity for things that actually serve you." },
+      { step: "Build your exit strategy", detail: "Update your resume. Activate your network. Start exploring options. Having a plan reduces the power this environment holds over your decisions. You do not have to leave tomorrow. You need to know you can." },
+      { step: "Seek outside support", detail: "A therapist, a coach, or a mentor outside the organization can help you process without the bias of someone inside it. Neurodivergent professionals in toxic systems often need help untangling what is their stuff from what is the environment's damage." },
+    ],
+    boundary: [
+      { step: "Recognize the pattern", detail: "If your boundaries are consistently ignored, tested, or punished, that is not a communication problem. That is an environment problem. You have done your part by setting the boundary. The failure belongs to the system that will not honor it." },
+      { step: "Stop negotiating with people who will not negotiate", detail: "If you have clearly communicated your limits and the response is dismissal, guilt, or retaliation, further conversation is unlikely to help. Redirect your energy toward protecting yourself and planning your next move." },
+      { step: "Enforce with actions, not words", detail: "Close the laptop. Leave the meeting that ran over. Do not answer the weekend text. When words fail, behavior speaks. You may face consequences. Weigh those against the cost of continuing without limits." },
+      { step: "Make your decision with clear eyes", detail: "Can you sustain this? Is the role worth the toll? What is the real cost of staying versus the perceived risk of leaving? Write it down. Your brain will rationalize staying in harmful situations if you let it. Paper does not lie." },
+    ],
+    general: [
+      { step: "Validate your own experience", detail: "If your body, your sleep, your mood, and your health are all telling you something is wrong, listen. You do not need external confirmation to trust your own nervous system. The signals are real." },
+      { step: "Document and protect", detail: "Keep records of what is happening. Store them somewhere the company cannot access. Note dates, behaviors, and impacts. This is your insurance policy, not an act of aggression." },
+      { step: "Get professional support", detail: "A therapist who understands workplace dynamics and neurodivergence can help you stay grounded while you navigate this. This is not a weakness. It is strategic self-care." },
+      { step: "Build your exit plan on your timeline", detail: "You do not have to leave in crisis. Start making moves now so that when you are ready, the path is clear. Every connection you make, every skill you sharpen, and every option you explore is an act of self-respect." },
+    ],
+  },
+};
+
+function SignalCard({ label, items, color }) {
+  return (
+    <div style={{ background: WHITE, border: "1px solid #E5E7EB", borderLeft: `4px solid ${color}`, borderRadius: 8, padding: 16, marginBottom: 10, flex: 1, minWidth: 260 }}>
+      <p style={{ color, fontSize: 13, fontWeight: 700, margin: "0 0 10px 0", textTransform: "uppercase", letterSpacing: "0.5px" }}>{label}</p>
+      {items.map((item, i) => (
+        <div key={i} style={{ display: "flex", gap: 8, marginBottom: 6 }}>
+          <span style={{ color, fontSize: 12, marginTop: 2, flexShrink: 0 }}>●</span>
+          <p style={{ color: NAVY, fontSize: 13, lineHeight: 1.5, margin: 0 }}>{item}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function SituationAnalyzer() {
+  const [situation, setSituation] = useState("");
+  const [result, setResult] = useState(null);
+  const [activeSection, setActiveSection] = useState(null);
+
+  const handleAnalyze = () => {
+    if (situation.trim().length < 20) return;
+    setResult(analyzeSituation(situation));
+    setActiveSection(null);
+  };
+
+  const handleReset = () => { setSituation(""); setResult(null); setActiveSection(null); };
+
+  if (!result) {
+    return (
+      <div style={{ fontFamily: "'Segoe UI', system-ui, sans-serif", maxWidth: 700, margin: "0 auto", padding: "24px 16px" }}>
+        <div style={{ textAlign: "center", marginBottom: 28 }}>
+          <div style={{ fontSize: 36, marginBottom: 8 }}>🔍</div>
+          <h1 style={{ color: NAVY, fontSize: 22, fontWeight: 700, margin: "0 0 6px 0" }}>Hard or Toxic? Situation Analyzer</h1>
+          <p style={{ color: "#5A6B7B", fontSize: 14, margin: 0 }}>Module 9 · Cluster 3 · Navigating the Workplace</p>
+        </div>
+        <div style={{ background: WARMGRAY, borderRadius: 12, padding: 20, marginBottom: 24, borderLeft: `4px solid ${TEAL}` }}>
+          <p style={{ color: NAVY, fontSize: 15, lineHeight: 1.7, margin: "0 0 10px 0" }}>Describe a specific workplace situation that is weighing on you. The more detail you include, the more targeted your analysis will be.</p>
+          <p style={{ color: "#5A6B7B", fontSize: 13, lineHeight: 1.6, margin: 0 }}>This tool reads what you write and identifies patterns to help you understand whether the situation is hard (growth territory), toxic (harmful territory), or somewhere in the grey zone. Everything stays in this session. Nothing is stored or shared.</p>
+        </div>
+        <div style={{ marginBottom: 20 }}>
+          <label style={{ display: "block", color: NAVY, fontSize: 15, fontWeight: 600, marginBottom: 10 }}>What is happening at work?</label>
+          <textarea
+            value={situation}
+            onChange={(e) => setSituation(e.target.value)}
+            placeholder={"Describe the situation in your own words. Include what happened, who was involved, how it made you feel, and how long it has been going on.\n\nExample: My team lead regularly assigns me the most tedious tasks and gives the interesting projects to others. When I asked about it, she said I needed to \"prove myself\" first, even though I have been here longer than the people getting better assignments. I am starting to dread coming to work and I cannot tell if I am overreacting or if this is actually unfair."}
+            style={{ width: "100%", minHeight: 160, padding: 16, borderRadius: 10, border: "1px solid #D1D5DB", fontSize: 14, lineHeight: 1.7, color: NAVY, resize: "vertical", boxSizing: "border-box", fontFamily: "'Segoe UI', system-ui, sans-serif" }}
+          />
+          <p style={{ color: "#9CA3AF", fontSize: 12, margin: "6px 0 0 0" }}>
+            {situation.length < 20 ? `Write at least 20 characters to analyze (${situation.length}/20)` : `${situation.length} characters`}
+          </p>
+        </div>
+        <button onClick={handleAnalyze} disabled={situation.trim().length < 20} style={{ width: "100%", padding: "14px 24px", background: situation.trim().length >= 20 ? TEAL : "#B0BEC5", color: WHITE, border: "none", borderRadius: 8, fontSize: 15, fontWeight: 600, cursor: situation.trim().length >= 20 ? "pointer" : "default" }}>
+          Analyze My Situation
+        </button>
+      </div>
+    );
+  }
+
+  const cat = categoryContent[result.category];
+  const isGrey = result.category === "grey";
+  let solutions, greyData;
+  if (isGrey) { greyData = solutionPaths.grey[result.situationType] || solutionPaths.grey.general; }
+  else { const paths = solutionPaths[result.category]; solutions = paths[result.situationType] || paths.general; }
+
+  const tabs = isGrey ? [
+    { id: "signals", label: "Read the Signals", icon: "📡" },
+    { id: "conversation", label: "Prepare the Conversation", icon: "💬" },
+    { id: "control", label: "What You Can Control", icon: "🎯" },
+    { id: "boundaries", label: "Hold Your Boundaries", icon: "🛡️" },
+  ] : null;
+
+  return (
+    <div style={{ fontFamily: "'Segoe UI', system-ui, sans-serif", maxWidth: 700, margin: "0 auto", padding: "24px 16px" }}>
+      <div style={{ textAlign: "center", marginBottom: 20 }}>
+        <div style={{ fontSize: 40, marginBottom: 8 }}>{cat.icon}</div>
+        <h2 style={{ color: cat.color, fontSize: 22, fontWeight: 700, margin: "0 0 4px 0" }}>{cat.title}</h2>
+      </div>
+      <div style={{ background: LIGHTGRAY, borderRadius: 10, padding: 16, marginBottom: 20 }}>
+        <p style={{ color: "#5A6B7B", fontSize: 12, fontWeight: 600, margin: "0 0 6px 0", textTransform: "uppercase", letterSpacing: "0.5px" }}>Your situation</p>
+        <p style={{ color: NAVY, fontSize: 14, lineHeight: 1.6, margin: 0, fontStyle: "italic" }}>"{situation}"</p>
+      </div>
+      <div style={{ background: WHITE, border: `2px solid ${cat.color}`, borderRadius: 12, padding: 20, marginBottom: 24 }}>
+        <p style={{ color: NAVY, fontSize: 15, lineHeight: 1.7, margin: 0 }}>{cat.core}</p>
+      </div>
+
+      {isGrey && (
+        <>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 20 }}>
+            {tabs.map((tab) => (
+              <button key={tab.id} onClick={() => setActiveSection(activeSection === tab.id ? null : tab.id)} style={{ padding: "10px 16px", background: activeSection === tab.id ? ORANGE : WHITE, color: activeSection === tab.id ? WHITE : NAVY, border: `1px solid ${activeSection === tab.id ? ORANGE : "#D1D5DB"}`, borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer", flex: "1 1 auto", minWidth: 140, textAlign: "center" }}>
+                {tab.icon} {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {activeSection === "signals" && greyData.signals && (
+            <div style={{ marginBottom: 24 }}>
+              <h3 style={{ color: ORANGE, fontSize: 15, fontWeight: 700, margin: "0 0 12px 0", paddingBottom: 8, borderBottom: `2px solid ${ORANGE}` }}>What the Signals Are Telling You</h3>
+              <p style={{ color: NAVY, fontSize: 14, lineHeight: 1.6, margin: "0 0 16px 0" }}>Grey zone situations send mixed messages. Here is what to look for in your specific situation to determine which direction this is leaning.</p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+                <SignalCard label="Signals it may be hard" items={greyData.signals.towardHard} color={TEAL} />
+                <SignalCard label="Signals it may be toxic" items={greyData.signals.towardToxic} color={RED} />
+              </div>
+              <div style={{ background: WARMGRAY, borderRadius: 8, padding: 14, marginTop: 14, borderLeft: `3px solid ${ORANGE}` }}>
+                <p style={{ color: NAVY, fontSize: 13, lineHeight: 1.6, margin: 0 }}>Track these signals over the next two weeks. Write down one observation each day. Patterns on paper are clearer than patterns in your head. If the toxic column fills faster, trust that data.</p>
+              </div>
+            </div>
+          )}
+
+          {activeSection === "conversation" && greyData.conversationPrep && (
+            <div style={{ marginBottom: 24 }}>
+              <h3 style={{ color: ORANGE, fontSize: 15, fontWeight: 700, margin: "0 0 12px 0", paddingBottom: 8, borderBottom: `2px solid ${ORANGE}` }}>{greyData.conversationPrep.title}</h3>
+              <p style={{ color: NAVY, fontSize: 14, lineHeight: 1.6, margin: "0 0 16px 0" }}>Grey zone situations often require a conversation to get clarity. The way you approach that conversation matters.</p>
+              {greyData.conversationPrep.steps.map((step, i) => (
+                <div key={i} style={{ display: "flex", gap: 12, marginBottom: 12, background: WHITE, borderRadius: 10, padding: 14, border: "1px solid #E5E7EB" }}>
+                  <div style={{ minWidth: 28, height: 28, borderRadius: "50%", background: ORANGE, color: WHITE, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700, flexShrink: 0 }}>{i + 1}</div>
+                  <div>
+                    <p style={{ color: NAVY, fontSize: 14, fontWeight: 600, margin: "0 0 4px 0" }}>{step.label}</p>
+                    <p style={{ color: NAVY, fontSize: 13, lineHeight: 1.6, margin: 0 }}>{step.detail}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {activeSection === "control" && (
+            <div style={{ marginBottom: 24 }}>
+              <h3 style={{ color: ORANGE, fontSize: 15, fontWeight: 700, margin: "0 0 12px 0", paddingBottom: 8, borderBottom: `2px solid ${ORANGE}` }}>What Is in Your Control (and What Is Not)</h3>
+              <p style={{ color: NAVY, fontSize: 14, lineHeight: 1.6, margin: "0 0 16px 0" }}>One of the fastest ways to reduce anxiety in a grey zone situation is to clearly separate what you can influence from what you cannot.</p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+                <div style={{ flex: 1, minWidth: 260, background: "#F0FAF0", border: `1px solid ${TEAL}`, borderRadius: 10, padding: 16 }}>
+                  <p style={{ color: TEAL, fontSize: 13, fontWeight: 700, margin: "0 0 10px 0", textTransform: "uppercase" }}>🎯 In your control</p>
+                  {greyData.inYourControl.map((item, i) => (
+                    <div key={i} style={{ display: "flex", gap: 8, marginBottom: 6 }}>
+                      <span style={{ color: TEAL, fontSize: 14, flexShrink: 0 }}>✓</span>
+                      <p style={{ color: NAVY, fontSize: 13, lineHeight: 1.5, margin: 0 }}>{item}</p>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ flex: 1, minWidth: 260, background: "#FFF5F5", border: `1px solid ${RED}`, borderRadius: 10, padding: 16 }}>
+                  <p style={{ color: RED, fontSize: 13, fontWeight: 700, margin: "0 0 10px 0", textTransform: "uppercase" }}>✋ Not in your control</p>
+                  {greyData.notInYourControl.map((item, i) => (
+                    <div key={i} style={{ display: "flex", gap: 8, marginBottom: 6 }}>
+                      <span style={{ color: RED, fontSize: 14, flexShrink: 0 }}>✗</span>
+                      <p style={{ color: NAVY, fontSize: 13, lineHeight: 1.5, margin: 0 }}>{item}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div style={{ background: WARMGRAY, borderRadius: 8, padding: 14, marginTop: 14, borderLeft: `3px solid ${ORANGE}` }}>
+                <p style={{ color: NAVY, fontSize: 13, lineHeight: 1.6, margin: 0 }}>When your brain spirals on things in the right column, redirect it with this question: "What is one thing on the left side I can do in the next 24 hours?"</p>
+              </div>
+            </div>
+          )}
+
+          {activeSection === "boundaries" && greyData.boundaryStrategies && (
+            <div style={{ marginBottom: 24 }}>
+              <h3 style={{ color: ORANGE, fontSize: 15, fontWeight: 700, margin: "0 0 12px 0", paddingBottom: 8, borderBottom: `2px solid ${ORANGE}` }}>Boundaries to Hold Right Now</h3>
+              <p style={{ color: NAVY, fontSize: 14, lineHeight: 1.6, margin: "0 0 16px 0" }}>In grey zone situations, boundaries serve two purposes. They protect your energy while you figure things out. They also test the environment.</p>
+              {greyData.boundaryStrategies.map((b, i) => (
+                <div key={i} style={{ background: WHITE, border: "1px solid #E5E7EB", borderRadius: 10, padding: 16, marginBottom: 12 }}>
+                  <p style={{ color: ORANGE, fontSize: 14, fontWeight: 700, margin: "0 0 8px 0" }}>{b.boundary}</p>
+                  <p style={{ color: NAVY, fontSize: 13, lineHeight: 1.6, margin: 0 }}>{b.how}</p>
+                </div>
+              ))}
+              <div style={{ background: WARMGRAY, borderRadius: 8, padding: 14, marginTop: 14, borderLeft: `3px solid ${ORANGE}` }}>
+                <p style={{ color: NAVY, fontSize: 13, lineHeight: 1.6, margin: 0 }}>Setting a boundary and having it respected is a sign the situation leans hard. Setting a boundary and facing pushback, guilt, or consequences is a sign it leans toxic.</p>
+              </div>
+            </div>
+          )}
+        </>
+      )}
+
+      {!isGrey && solutions && (
+        <div style={{ marginBottom: 24 }}>
+          <h3 style={{ color: NAVY, fontSize: 16, fontWeight: 700, margin: "0 0 14px 0" }}>Your Solution Path</h3>
+          {solutions.map((s, i) => (
+            <div key={i} style={{ display: "flex", gap: 12, marginBottom: 12, background: WHITE, borderRadius: 10, padding: 16, border: "1px solid #E5E7EB" }}>
+              <div style={{ minWidth: 30, height: 30, borderRadius: "50%", background: cat.color, color: WHITE, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 700, flexShrink: 0 }}>{i + 1}</div>
+              <div>
+                <p style={{ color: NAVY, fontSize: 14, fontWeight: 600, margin: "0 0 4px 0" }}>{s.step}</p>
+                <p style={{ color: NAVY, fontSize: 13, lineHeight: 1.6, margin: 0 }}>{s.detail}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div style={{ background: WARMGRAY, borderRadius: 10, padding: 18, marginBottom: 20, borderLeft: `4px solid ${TEAL}` }}>
+        <p style={{ color: TEAL, fontSize: 13, fontWeight: 700, margin: "0 0 8px 0", textTransform: "uppercase", letterSpacing: "0.5px" }}>A note for the neurodivergent brain</p>
+        <p style={{ color: NAVY, fontSize: 14, lineHeight: 1.7, margin: 0 }}>
+          {result.category === "grey"
+            ? "Your brain is going to want to resolve this ambiguity immediately. That is how neurodivergent pattern recognition works. It scans for certainty in uncertain territory. Resist the urge to force a conclusion. Give yourself permission to sit with \"I do not know yet\" while you gather more data."
+            : result.category === "hard"
+            ? "Your nervous system may be sending alarm signals even though the situation is not dangerous. That is not a malfunction. Neurodivergent brains process novelty and discomfort with higher intensity. The key is learning to notice the alarm without obeying it automatically."
+            : "Toxic environments are disproportionately harmful to neurodivergent professionals because they weaponize the things you already work hardest to manage. If you are masking more, stimming less, losing sleep, or shutting down, those are not personal failures. They are your nervous system telling you the truth about where you are. Listen to it."}
+        </p>
+      </div>
+
+      <button onClick={handleReset} style={{ width: "100%", padding: "14px 24px", background: NAVY, color: WHITE, border: "none", borderRadius: 8, fontSize: 15, fontWeight: 600, cursor: "pointer" }}>
+        Analyze Another Situation
+      </button>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<SituationAnalyzer />);
+  </script>
+</body>
+</html>
