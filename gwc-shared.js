@@ -46,7 +46,7 @@
       var c = cl[i];
       if (!c) return;
       var tagName = el.tagName;
-      if (/^(SCRIPT|STYLE|NOSCRIPT|SVG|CANVAS|IFRAME|NAV|TEMPLATE)$/i.test(tagName) || (el.closest && el.closest(".gwc-save, .gwc-toast"))) { drop.push(c); return; }
+      if (/^(SCRIPT|STYLE|NOSCRIPT|SVG|CANVAS|IFRAME|NAV|TEMPLATE)$/i.test(tagName) || (el.closest && el.closest(".gwc-save, .gwc-toast, [data-gwc-skip]"))) { drop.push(c); return; }
       var cs = getComputedStyle(el);
       if (cs.display === "none" || cs.visibility === "hidden" || el.hidden || el.getAttribute("aria-hidden") === "true") { drop.push(c); return; }
       if (tagName === "INPUT") {
