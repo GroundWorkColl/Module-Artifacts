@@ -13,23 +13,23 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --cream: #F0FFFF;
+      --cream: var(--gwc-bg);
       --warm-white: #FFFFFF;
-      --terracotta: #03567A;
-      --terracotta-light: #108DAA;
-      --terracotta-pale: #B8D7D8;
-      --forest: #012A4E;
-      --forest-mid: #035F6A;
-      --forest-light: #D3EBEC;
-      --charcoal: #012A4E;
-      --stone: #03567A;
-      --stone-light: #97BFC3;
-      --gold: #1DA1A5;
-      --gold-pale: #F8EAEE;
-      --alert: #012A4E;
-      --alert-pale: #E7C7CF;
-      --sky: #035F6A;
-      --sky-pale: #D3EBEC;
+      --terracotta: var(--gwc-blue);
+      --terracotta-light: var(--gwc-cyan);
+      --terracotta-pale: var(--gwc-pale);
+      --forest: var(--gwc-navy);
+      --forest-mid: var(--gwc-teal-deep);
+      --forest-light: var(--gwc-panel-2);
+      --charcoal: var(--gwc-navy);
+      --stone: var(--gwc-blue);
+      --stone-light: var(--gwc-slate);
+      --gold: var(--gwc-teal);
+      --gold-pale: var(--gwc-blush-tint);
+      --alert: var(--gwc-navy);
+      --alert-pale: var(--gwc-blush);
+      --sky: var(--gwc-teal-deep);
+      --sky-pale: var(--gwc-panel-2);
     }
 
     body {
@@ -87,7 +87,7 @@
       color: var(--charcoal);
       line-height: 1.4;
     }
-    .option-btn:hover { border-color: var(--terracotta-light); background: #E3F2F3; }
+    .option-btn:hover { border-color: var(--terracotta-light); background: var(--gwc-panel); }
     .option-btn.selected { border-color: var(--terracotta); background: var(--terracotta-pale); }
     .option-btn.multi-selected { border-color: var(--forest-mid); background: var(--forest-light); }
 
@@ -152,7 +152,7 @@
       margin-bottom: 20px;
       background: var(--warm-white);
     }
-    .result-card.highlight { border-color: var(--terracotta); background: #E3F2F3; }
+    .result-card.highlight { border-color: var(--terracotta); background: var(--gwc-panel); }
     .result-card.insight { border-color: var(--gold); background: var(--gold-pale); }
     .result-card.caution { border-color: var(--alert); background: var(--alert-pale); }
     .result-card.confirm { border-color: var(--forest-mid); background: var(--forest-light); }
@@ -161,7 +161,7 @@
     .card-eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: .12em; font-weight: 600; margin-bottom: 6px; }
     .result-card .card-eyebrow { color: var(--stone); }
     .result-card.highlight .card-eyebrow { color: var(--terracotta); }
-    .result-card.insight .card-eyebrow { color: #035F6A; }
+    .result-card.insight .card-eyebrow { color: var(--gwc-teal-deep); }
     .result-card.caution .card-eyebrow { color: var(--alert); }
     .result-card.confirm .card-eyebrow { color: var(--forest-mid); }
     .result-card.sky .card-eyebrow { color: var(--sky); }
@@ -210,6 +210,7 @@
       .results-header h2 { font-size: 26px; }
     }
   </style>
+<link rel="stylesheet" href="../gwc-theme.css">
 </head>
 <body>
 <div id="root"></div>
@@ -1061,5 +1062,6 @@ function App() {
 
 ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 </script>
+<script src="../gwc-shared.js"></script>
 </body>
 </html>
