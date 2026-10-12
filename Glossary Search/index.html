@@ -6,16 +6,16 @@
 <title>GroundWork Collective | Workplace Glossary</title>
 <style>
   :root {
-    --ink: #012A4E;
-    --ink-soft: #03567A;
-    --paper: #F0FFFF;
+    --ink: var(--gwc-navy);
+    --ink-soft: var(--gwc-blue);
+    --paper: var(--gwc-bg);
     --card: #FFFFFF;
-    --line: #B8D7D8;
-    --brand: #03567A;
-    --brand-soft: #E3F2F3;
-    --accent: #035F6A;
-    --good: #035F6A;
-    --highlight: #E7C7CF;
+    --line: var(--gwc-pale);
+    --brand: var(--gwc-blue);
+    --brand-soft: var(--gwc-panel);
+    --accent: var(--gwc-teal-deep);
+    --good: var(--gwc-teal-deep);
+    --highlight: var(--gwc-blush);
   }
   * { box-sizing: border-box; }
   html, body {
@@ -94,9 +94,9 @@
   .chip.clear:hover { color: var(--accent); border-color: var(--accent); background: #FFF; }
   .results-meta { color: var(--ink-soft); font-size: 14px; margin-bottom: 16px; }
   .suggest {
-    background: #F8EAEE;
-    border: 1px solid #E7C7CF;
-    color: #012A4E;
+    background: var(--gwc-blush-tint);
+    border: 1px solid var(--gwc-blush);
+    color: var(--gwc-navy);
     padding: 10px 14px;
     border-radius: 8px;
     margin-bottom: 16px;
@@ -126,15 +126,15 @@
   }
   .card.fuzzy {
     border-style: dashed;
-    border-color: #97BFC3;
+    border-color: var(--gwc-slate);
   }
   .fuzzy-badge {
     position: absolute;
     top: 12px;
     right: 14px;
     font-size: 11px;
-    color: #03567A;
-    background: #F8EAEE;
+    color: var(--gwc-blue);
+    background: var(--gwc-blush-tint);
     padding: 2px 8px;
     border-radius: 4px;
     font-weight: 500;
@@ -156,13 +156,13 @@
     color: var(--brand);
     font-weight: 500;
   }
-  .tag.module { background: #E3F2F3; color: var(--accent); }
-  .tag.module-none { background: #E3F2F3; color: var(--ink-soft); }
+  .tag.module { background: var(--gwc-panel); color: var(--accent); }
+  .tag.module-none { background: var(--gwc-panel); color: var(--ink-soft); }
   .label { font-weight: 600; color: var(--ink); font-size: 14px; margin-bottom: 2px; }
   .body { color: var(--ink); font-size: 15.5px; margin-bottom: 12px; }
   .body:last-child { margin-bottom: 0; }
   .body.actually {
-    background: #F0FFFF;
+    background: var(--gwc-bg);
     border-left: 3px solid var(--accent);
     padding: 10px 14px;
     border-radius: 0 6px 6px 0;
@@ -185,22 +185,23 @@
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --ink: #E3F2F3;
-      --ink-soft: #B8D7D8;
-      --paper: #012A4E;
-      --card: #03567A;
-      --line: #108DAA;
-      --brand: #9CCECE;
-      --brand-soft: #035F6A;
-      --accent: #108DAA;
-      --highlight: #035F6A;
+      --ink: var(--gwc-panel);
+      --ink-soft: var(--gwc-pale);
+      --paper: var(--gwc-navy);
+      --card: var(--gwc-blue);
+      --line: var(--gwc-cyan);
+      --brand: var(--gwc-mist);
+      --brand-soft: var(--gwc-teal-deep);
+      --accent: var(--gwc-cyan);
+      --highlight: var(--gwc-teal-deep);
     }
-    .body.actually { background: #012A4E; }
-    .suggest { background: #035F6A; border-color: #108DAA; color: #9CCECE; }
-    .fuzzy-badge { background: #035F6A; color: #9CCECE; }
-    .card.fuzzy { border-color: #108DAA; }
+    .body.actually { background: var(--gwc-navy); }
+    .suggest { background: var(--gwc-teal-deep); border-color: var(--gwc-cyan); color: var(--gwc-mist); }
+    .fuzzy-badge { background: var(--gwc-teal-deep); color: var(--gwc-mist); }
+    .card.fuzzy { border-color: var(--gwc-cyan); }
   }
 </style>
+<link rel="stylesheet" href="../gwc-theme.css">
 </head>
 <body>
 <div class="wrap">
@@ -484,5 +485,6 @@ document.getElementById("search").addEventListener("input", e => {
 buildFilters();
 render();
 </script>
+<script src="../gwc-shared.js" data-gwc-export="off"></script>
 </body>
 </html>
