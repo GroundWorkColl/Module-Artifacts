@@ -6,16 +6,16 @@
 <title>GroundWork Collective | Workplace Glossary</title>
 <style>
   :root {
-    --ink: #1f2937;
-    --ink-soft: #4b5563;
-    --paper: #faf8f5;
-    --card: #ffffff;
-    --line: #e6e2db;
-    --brand: #1f4e79;
-    --brand-soft: #e9eef5;
-    --accent: #b85c38;
-    --good: #2e7d4f;
-    --highlight: #fff3c4;
+    --ink: #012A4E;
+    --ink-soft: #03567A;
+    --paper: #F0FFFF;
+    --card: #FFFFFF;
+    --line: #B8D7D8;
+    --brand: #03567A;
+    --brand-soft: #E3F2F3;
+    --accent: #035F6A;
+    --good: #035F6A;
+    --highlight: #E7C7CF;
   }
   * { box-sizing: border-box; }
   html, body {
@@ -61,7 +61,7 @@
   }
   .search-input:focus {
     border-color: var(--brand);
-    box-shadow: 0 0 0 3px rgba(31, 78, 121, 0.12);
+    box-shadow: 0 0 0 3px rgba(3,86,122,0.12);
   }
   .hint {
     font-size: 12px;
@@ -89,14 +89,14 @@
     transition: all 0.15s;
   }
   .chip:hover { border-color: var(--brand); color: var(--brand); }
-  .chip.active { background: var(--brand); border-color: var(--brand); color: #fff; }
+  .chip.active { background: var(--brand); border-color: var(--brand); color: #FFF; }
   .chip.clear { color: var(--accent); border-color: transparent; padding-left: 4px; }
-  .chip.clear:hover { color: var(--accent); border-color: var(--accent); background: #fff; }
+  .chip.clear:hover { color: var(--accent); border-color: var(--accent); background: #FFF; }
   .results-meta { color: var(--ink-soft); font-size: 14px; margin-bottom: 16px; }
   .suggest {
-    background: #fcf6e7;
-    border: 1px solid #ead7a3;
-    color: #6b4f0f;
+    background: #F8EAEE;
+    border: 1px solid #E7C7CF;
+    color: #012A4E;
     padding: 10px 14px;
     border-radius: 8px;
     margin-bottom: 16px;
@@ -126,15 +126,15 @@
   }
   .card.fuzzy {
     border-style: dashed;
-    border-color: #cdb88a;
+    border-color: #97BFC3;
   }
   .fuzzy-badge {
     position: absolute;
     top: 12px;
     right: 14px;
     font-size: 11px;
-    color: #9c7a3d;
-    background: #fcf6e7;
+    color: #03567A;
+    background: #F8EAEE;
     padding: 2px 8px;
     border-radius: 4px;
     font-weight: 500;
@@ -156,13 +156,13 @@
     color: var(--brand);
     font-weight: 500;
   }
-  .tag.module { background: #f3eee7; color: var(--accent); }
-  .tag.module-none { background: #f0f0eb; color: var(--ink-soft); }
+  .tag.module { background: #E3F2F3; color: var(--accent); }
+  .tag.module-none { background: #E3F2F3; color: var(--ink-soft); }
   .label { font-weight: 600; color: var(--ink); font-size: 14px; margin-bottom: 2px; }
   .body { color: var(--ink); font-size: 15.5px; margin-bottom: 12px; }
   .body:last-child { margin-bottom: 0; }
   .body.actually {
-    background: #fcfaf5;
+    background: #F0FFFF;
     border-left: 3px solid var(--accent);
     padding: 10px 14px;
     border-radius: 0 6px 6px 0;
@@ -185,20 +185,20 @@
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --ink: #e8e6e0;
-      --ink-soft: #b0aca3;
-      --paper: #1a1816;
-      --card: #25221f;
-      --line: #3a3633;
-      --brand: #7fb3e5;
-      --brand-soft: #2a3a4a;
-      --accent: #e89368;
-      --highlight: #5a4a1c;
+      --ink: #E3F2F3;
+      --ink-soft: #B8D7D8;
+      --paper: #012A4E;
+      --card: #03567A;
+      --line: #108DAA;
+      --brand: #9CCECE;
+      --brand-soft: #035F6A;
+      --accent: #108DAA;
+      --highlight: #035F6A;
     }
-    .body.actually { background: #2a2620; }
-    .suggest { background: #2a2418; border-color: #4a3f24; color: #d4b876; }
-    .fuzzy-badge { background: #3a2f1a; color: #d4b876; }
-    .card.fuzzy { border-color: #5a4a2c; }
+    .body.actually { background: #012A4E; }
+    .suggest { background: #035F6A; border-color: #108DAA; color: #9CCECE; }
+    .fuzzy-badge { background: #035F6A; color: #9CCECE; }
+    .card.fuzzy { border-color: #108DAA; }
   }
 </style>
 </head>
