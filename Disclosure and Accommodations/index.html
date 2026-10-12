@@ -6,22 +6,22 @@
 <title>Module 7: Disclosure & Accommodations Tool | GroundWork Collective</title>
 <style>
   :root {
-    --navy: #012A4E;
-    --teal: #035F6A;
-    --mid-blue: #03567A;
-    --orange: #012A4E;
-    --light-teal: #E3F2F3;
-    --light-navy: #E3F2F3;
-    --light-orange: #F8EAEE;
-    --text: #012A4E;
-    --subtle: #03567A;
-    --border: #B8D7D8;
+    --navy: var(--gwc-navy);
+    --teal: var(--gwc-teal-deep);
+    --mid-blue: var(--gwc-blue);
+    --orange: var(--gwc-navy);
+    --light-teal: var(--gwc-panel);
+    --light-navy: var(--gwc-panel);
+    --light-orange: var(--gwc-blush-tint);
+    --text: var(--gwc-navy);
+    --subtle: var(--gwc-blue);
+    --border: var(--gwc-pale);
     --white: #FFFFFF;
-    --bg: #F0FFFF;
-    --green: #035F6A;
-    --light-green: #E3F2F3;
-    --red: #012A4E;
-    --light-red: #E7C7CF;
+    --bg: var(--gwc-bg);
+    --green: var(--gwc-teal-deep);
+    --light-green: var(--gwc-panel);
+    --red: var(--gwc-navy);
+    --light-red: var(--gwc-blush);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -41,7 +41,7 @@
     justify-content: space-between;
   }
   header .brand { color: white; font-size: 14px; font-weight: 600; opacity: 0.9; }
-  header .module-label { color: #9CCECE; font-size: 20px; font-weight: 700; }
+  header .module-label { color: var(--gwc-mist); font-size: 20px; font-weight: 700; }
 
   .nav-tabs {
     background: white;
@@ -160,7 +160,7 @@
   .dq-opt:hover { border-color: var(--teal); color: var(--teal); }
   .dq-opt.selected-yes { border-color: var(--teal); background: var(--light-teal); color: var(--teal); }
   .dq-opt.selected-no { border-color: var(--orange); background: var(--light-orange); color: var(--orange); }
-  .dq-opt.selected-unsure { border-color: var(--mid-blue); background: #E3F2F3; color: var(--mid-blue); }
+  .dq-opt.selected-unsure { border-color: var(--mid-blue); background: var(--gwc-panel); color: var(--mid-blue); }
 
   .decision-result {
     border-radius: 10px;
@@ -201,13 +201,13 @@
     align-items: flex-start;
     gap: 12px;
     padding: 12px 16px;
-    border-bottom: 1px solid #E3F2F3;
+    border-bottom: 1px solid var(--gwc-panel);
     cursor: pointer;
     user-select: none;
     border-radius: 6px;
     transition: background 0.15s;
   }
-  .accom-item:hover { background: #F0FFFF; }
+  .accom-item:hover { background: var(--gwc-bg); }
   .accom-item:last-child { border-bottom: none; }
   .accom-check {
     width: 22px; height: 22px;
@@ -271,7 +271,7 @@
   .req-textarea { resize: vertical; min-height: 80px; }
 
   .generated-email {
-    background: #F0FFFF;
+    background: var(--gwc-bg);
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 20px;
@@ -293,13 +293,13 @@
     cursor: pointer; font-family: inherit;
     margin-top: 12px;
   }
-  .copy-btn:hover { background: #03567A; }
+  .copy-btn:hover { background: var(--gwc-blue); }
   .copy-btn.copied { background: var(--teal); }
 
   /* Burnout self-check */
   .burnout-q {
     padding: 14px 0;
-    border-bottom: 1px solid #E3F2F3;
+    border-bottom: 1px solid var(--gwc-panel);
   }
   .burnout-q:last-child { border-bottom: none; }
   .burnout-q-text { font-size: 14px; font-weight: 600; color: var(--navy); margin-bottom: 10px; line-height: 1.4; }
@@ -320,7 +320,7 @@
   }
   .scale-btn:hover { border-color: var(--teal); }
   .scale-btn.sel-rarely { border-color: var(--green); background: var(--light-green); color: var(--green); }
-  .scale-btn.sel-sometimes { border-color: var(--mid-blue); background: #E3F2F3; color: var(--mid-blue); }
+  .scale-btn.sel-sometimes { border-color: var(--mid-blue); background: var(--gwc-panel); color: var(--mid-blue); }
   .scale-btn.sel-often { border-color: var(--orange); background: var(--light-orange); color: var(--orange); }
   .scale-btn.sel-always { border-color: var(--red); background: var(--light-red); color: var(--red); }
 
@@ -332,7 +332,7 @@
   }
   .burnout-result.visible { display: block; }
   .burnout-result.low { background: var(--light-green); border: 2px solid var(--green); }
-  .burnout-result.moderate { background: #F8EAEE; border: 2px solid #012A4E; }
+  .burnout-result.moderate { background: var(--gwc-blush-tint); border: 2px solid var(--gwc-navy); }
   .burnout-result.high { background: var(--light-orange); border: 2px solid var(--orange); }
   .burnout-result.critical { background: var(--light-red); border: 2px solid var(--red); }
 
@@ -355,6 +355,7 @@
     .nav-tabs { padding: 0 16px; }
   }
 </style>
+<link rel="stylesheet" href="../gwc-theme.css">
 </head>
 <body>
 
@@ -897,7 +898,7 @@ function evaluateBurnout() {
     result.innerHTML = `<strong style="color:var(--green);">Your scores suggest: manageable right now.</strong><br><br>The patterns you're experiencing appear relatively infrequent. That's a good position to be in. Keep an eye on it — and use this check periodically, especially during transitions or particularly demanding stretches.`;
   } else if (total <= 9) {
     result.classList.add('moderate');
-    result.innerHTML = `<strong style="color:#012A4E;">Your scores suggest: worth paying attention to.</strong><br><br>You're noticing several patterns with some regularity. This isn't a crisis — but it's a signal worth taking seriously. One or two accommodations, implemented now, may significantly reduce the load before it compounds.`;
+    result.innerHTML = `<strong style="color:var(--gwc-navy);">Your scores suggest: worth paying attention to.</strong><br><br>You're noticing several patterns with some regularity. This isn't a crisis — but it's a signal worth taking seriously. One or two accommodations, implemented now, may significantly reduce the load before it compounds.`;
   } else if (total <= 14) {
     result.classList.add('high');
     result.innerHTML = `<strong style="color:var(--orange);">Your scores suggest: this is costing you more than it should.</strong><br><br>Multiple patterns are showing up often. This is the level where sustained masking, cognitive fatigue, or environmental mismatch starts to have a real cumulative impact. The time to act is now — not after a performance conversation, not after something breaks. Use the Accommodations and Request Builder tabs to identify and initiate what you need.`;
@@ -911,5 +912,6 @@ function evaluateBurnout() {
 document.getElementById('req-law').value = 'the Americans with Disabilities Act (ADA)';
 </script>
 
+<script src="../gwc-shared.js"></script>
 </body>
 </html>
