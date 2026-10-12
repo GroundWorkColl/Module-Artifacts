@@ -7,20 +7,20 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
-  <style>body { margin: 0; padding: 0; background: #F9F7F4; }</style>
+  <style>body { margin: 0; padding: 0; background: #F0FFFF; }</style>
 </head>
 <body>
   <div id="root"></div>
   <script type="text/babel">
     const { useState } = React;
 
-const TEAL = "#1B6B72";
-const NAVY = "#1B2A4A";
-const ORANGE = "#D97B2B";
-const RED = "#C0392B";
-const LIGHTGRAY = "#F5F7F8";
+const TEAL = "#03567A";
+const NAVY = "#012A4E";
+const ORANGE = "#035F6A";
+const RED = "#012A4E";
+const LIGHTGRAY = "#E3F2F3";
 const WHITE = "#FFFFFF";
-const WARMGRAY = "#F9F7F4";
+const WARMGRAY = "#E3F2F3";
 
 const toxicSignals = [
   "retaliat", "gaslight", "bully", "hostile", "threaten", "humiliat",
@@ -282,7 +282,7 @@ const solutionPaths = {
 
 function SignalCard({ label, items, color }) {
   return (
-    <div style={{ background: WHITE, border: "1px solid #E5E7EB", borderLeft: `4px solid ${color}`, borderRadius: 8, padding: 16, marginBottom: 10, flex: 1, minWidth: 260 }}>
+    <div style={{ background: WHITE, border: "1px solid #B8D7D8", borderLeft: `4px solid ${color}`, borderRadius: 8, padding: 16, marginBottom: 10, flex: 1, minWidth: 260 }}>
       <p style={{ color, fontSize: 13, fontWeight: 700, margin: "0 0 10px 0", textTransform: "uppercase", letterSpacing: "0.5px" }}>{label}</p>
       {items.map((item, i) => (
         <div key={i} style={{ display: "flex", gap: 8, marginBottom: 6 }}>
@@ -313,11 +313,11 @@ function SituationAnalyzer() {
         <div style={{ textAlign: "center", marginBottom: 28 }}>
           <div style={{ fontSize: 36, marginBottom: 8 }}>🔍</div>
           <h1 style={{ color: NAVY, fontSize: 22, fontWeight: 700, margin: "0 0 6px 0" }}>Hard or Toxic? Situation Analyzer</h1>
-          <p style={{ color: "#5A6B7B", fontSize: 14, margin: 0 }}>Module 9 · Cluster 3 · Navigating the Workplace</p>
+          <p style={{ color: "#03567A", fontSize: 14, margin: 0 }}>Module 9 · Cluster 3 · Navigating the Workplace</p>
         </div>
         <div style={{ background: WARMGRAY, borderRadius: 12, padding: 20, marginBottom: 24, borderLeft: `4px solid ${TEAL}` }}>
           <p style={{ color: NAVY, fontSize: 15, lineHeight: 1.7, margin: "0 0 10px 0" }}>Describe a specific workplace situation that is weighing on you. The more detail you include, the more targeted your analysis will be.</p>
-          <p style={{ color: "#5A6B7B", fontSize: 13, lineHeight: 1.6, margin: 0 }}>This tool reads what you write and identifies patterns to help you understand whether the situation is hard (growth territory), toxic (harmful territory), or somewhere in the grey zone. Everything stays in this session. Nothing is stored or shared.</p>
+          <p style={{ color: "#03567A", fontSize: 13, lineHeight: 1.6, margin: 0 }}>This tool reads what you write and identifies patterns to help you understand whether the situation is hard (growth territory), toxic (harmful territory), or somewhere in the grey zone. Everything stays in this session. Nothing is stored or shared.</p>
         </div>
         <div style={{ marginBottom: 20 }}>
           <label style={{ display: "block", color: NAVY, fontSize: 15, fontWeight: 600, marginBottom: 10 }}>What is happening at work?</label>
@@ -325,13 +325,13 @@ function SituationAnalyzer() {
             value={situation}
             onChange={(e) => setSituation(e.target.value)}
             placeholder={"Describe the situation in your own words. Include what happened, who was involved, how it made you feel, and how long it has been going on.\n\nExample: My team lead regularly assigns me the most tedious tasks and gives the interesting projects to others. When I asked about it, she said I needed to \"prove myself\" first, even though I have been here longer than the people getting better assignments. I am starting to dread coming to work and I cannot tell if I am overreacting or if this is actually unfair."}
-            style={{ width: "100%", minHeight: 160, padding: 16, borderRadius: 10, border: "1px solid #D1D5DB", fontSize: 14, lineHeight: 1.7, color: NAVY, resize: "vertical", boxSizing: "border-box", fontFamily: "'Segoe UI', system-ui, sans-serif" }}
+            style={{ width: "100%", minHeight: 160, padding: 16, borderRadius: 10, border: "1px solid #97BFC3", fontSize: 14, lineHeight: 1.7, color: NAVY, resize: "vertical", boxSizing: "border-box", fontFamily: "'Segoe UI', system-ui, sans-serif" }}
           />
-          <p style={{ color: "#9CA3AF", fontSize: 12, margin: "6px 0 0 0" }}>
+          <p style={{ color: "#03567A", fontSize: 12, margin: "6px 0 0 0" }}>
             {situation.length < 20 ? `Write at least 20 characters to analyze (${situation.length}/20)` : `${situation.length} characters`}
           </p>
         </div>
-        <button onClick={handleAnalyze} disabled={situation.trim().length < 20} style={{ width: "100%", padding: "14px 24px", background: situation.trim().length >= 20 ? TEAL : "#B0BEC5", color: WHITE, border: "none", borderRadius: 8, fontSize: 15, fontWeight: 600, cursor: situation.trim().length >= 20 ? "pointer" : "default" }}>
+        <button onClick={handleAnalyze} disabled={situation.trim().length < 20} style={{ width: "100%", padding: "14px 24px", background: situation.trim().length >= 20 ? TEAL : "#97BFC3", color: WHITE, border: "none", borderRadius: 8, fontSize: 15, fontWeight: 600, cursor: situation.trim().length >= 20 ? "pointer" : "default" }}>
           Analyze My Situation
         </button>
       </div>
@@ -358,7 +358,7 @@ function SituationAnalyzer() {
         <h2 style={{ color: cat.color, fontSize: 22, fontWeight: 700, margin: "0 0 4px 0" }}>{cat.title}</h2>
       </div>
       <div style={{ background: LIGHTGRAY, borderRadius: 10, padding: 16, marginBottom: 20 }}>
-        <p style={{ color: "#5A6B7B", fontSize: 12, fontWeight: 600, margin: "0 0 6px 0", textTransform: "uppercase", letterSpacing: "0.5px" }}>Your situation</p>
+        <p style={{ color: "#03567A", fontSize: 12, fontWeight: 600, margin: "0 0 6px 0", textTransform: "uppercase", letterSpacing: "0.5px" }}>Your situation</p>
         <p style={{ color: NAVY, fontSize: 14, lineHeight: 1.6, margin: 0, fontStyle: "italic" }}>"{situation}"</p>
       </div>
       <div style={{ background: WHITE, border: `2px solid ${cat.color}`, borderRadius: 12, padding: 20, marginBottom: 24 }}>
@@ -369,7 +369,7 @@ function SituationAnalyzer() {
         <>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 20 }}>
             {tabs.map((tab) => (
-              <button key={tab.id} onClick={() => setActiveSection(activeSection === tab.id ? null : tab.id)} style={{ padding: "10px 16px", background: activeSection === tab.id ? ORANGE : WHITE, color: activeSection === tab.id ? WHITE : NAVY, border: `1px solid ${activeSection === tab.id ? ORANGE : "#D1D5DB"}`, borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer", flex: "1 1 auto", minWidth: 140, textAlign: "center" }}>
+              <button key={tab.id} onClick={() => setActiveSection(activeSection === tab.id ? null : tab.id)} style={{ padding: "10px 16px", background: activeSection === tab.id ? ORANGE : WHITE, color: activeSection === tab.id ? WHITE : NAVY, border: `1px solid ${activeSection === tab.id ? ORANGE : "#97BFC3"}`, borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer", flex: "1 1 auto", minWidth: 140, textAlign: "center" }}>
                 {tab.icon} {tab.label}
               </button>
             ))}
@@ -394,7 +394,7 @@ function SituationAnalyzer() {
               <h3 style={{ color: ORANGE, fontSize: 15, fontWeight: 700, margin: "0 0 12px 0", paddingBottom: 8, borderBottom: `2px solid ${ORANGE}` }}>{greyData.conversationPrep.title}</h3>
               <p style={{ color: NAVY, fontSize: 14, lineHeight: 1.6, margin: "0 0 16px 0" }}>Grey zone situations often require a conversation to get clarity. The way you approach that conversation matters.</p>
               {greyData.conversationPrep.steps.map((step, i) => (
-                <div key={i} style={{ display: "flex", gap: 12, marginBottom: 12, background: WHITE, borderRadius: 10, padding: 14, border: "1px solid #E5E7EB" }}>
+                <div key={i} style={{ display: "flex", gap: 12, marginBottom: 12, background: WHITE, borderRadius: 10, padding: 14, border: "1px solid #B8D7D8" }}>
                   <div style={{ minWidth: 28, height: 28, borderRadius: "50%", background: ORANGE, color: WHITE, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700, flexShrink: 0 }}>{i + 1}</div>
                   <div>
                     <p style={{ color: NAVY, fontSize: 14, fontWeight: 600, margin: "0 0 4px 0" }}>{step.label}</p>
@@ -410,7 +410,7 @@ function SituationAnalyzer() {
               <h3 style={{ color: ORANGE, fontSize: 15, fontWeight: 700, margin: "0 0 12px 0", paddingBottom: 8, borderBottom: `2px solid ${ORANGE}` }}>What Is in Your Control (and What Is Not)</h3>
               <p style={{ color: NAVY, fontSize: 14, lineHeight: 1.6, margin: "0 0 16px 0" }}>One of the fastest ways to reduce anxiety in a grey zone situation is to clearly separate what you can influence from what you cannot.</p>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
-                <div style={{ flex: 1, minWidth: 260, background: "#F0FAF0", border: `1px solid ${TEAL}`, borderRadius: 10, padding: 16 }}>
+                <div style={{ flex: 1, minWidth: 260, background: "#E3F2F3", border: `1px solid ${TEAL}`, borderRadius: 10, padding: 16 }}>
                   <p style={{ color: TEAL, fontSize: 13, fontWeight: 700, margin: "0 0 10px 0", textTransform: "uppercase" }}>🎯 In your control</p>
                   {greyData.inYourControl.map((item, i) => (
                     <div key={i} style={{ display: "flex", gap: 8, marginBottom: 6 }}>
@@ -419,7 +419,7 @@ function SituationAnalyzer() {
                     </div>
                   ))}
                 </div>
-                <div style={{ flex: 1, minWidth: 260, background: "#FFF5F5", border: `1px solid ${RED}`, borderRadius: 10, padding: 16 }}>
+                <div style={{ flex: 1, minWidth: 260, background: "#F8EAEE", border: `1px solid #E7C7CF`, borderRadius: 10, padding: 16 }}>
                   <p style={{ color: RED, fontSize: 13, fontWeight: 700, margin: "0 0 10px 0", textTransform: "uppercase" }}>✋ Not in your control</p>
                   {greyData.notInYourControl.map((item, i) => (
                     <div key={i} style={{ display: "flex", gap: 8, marginBottom: 6 }}>
@@ -440,7 +440,7 @@ function SituationAnalyzer() {
               <h3 style={{ color: ORANGE, fontSize: 15, fontWeight: 700, margin: "0 0 12px 0", paddingBottom: 8, borderBottom: `2px solid ${ORANGE}` }}>Boundaries to Hold Right Now</h3>
               <p style={{ color: NAVY, fontSize: 14, lineHeight: 1.6, margin: "0 0 16px 0" }}>In grey zone situations, boundaries serve two purposes. They protect your energy while you figure things out. They also test the environment.</p>
               {greyData.boundaryStrategies.map((b, i) => (
-                <div key={i} style={{ background: WHITE, border: "1px solid #E5E7EB", borderRadius: 10, padding: 16, marginBottom: 12 }}>
+                <div key={i} style={{ background: WHITE, border: "1px solid #B8D7D8", borderRadius: 10, padding: 16, marginBottom: 12 }}>
                   <p style={{ color: ORANGE, fontSize: 14, fontWeight: 700, margin: "0 0 8px 0" }}>{b.boundary}</p>
                   <p style={{ color: NAVY, fontSize: 13, lineHeight: 1.6, margin: 0 }}>{b.how}</p>
                 </div>
@@ -457,7 +457,7 @@ function SituationAnalyzer() {
         <div style={{ marginBottom: 24 }}>
           <h3 style={{ color: NAVY, fontSize: 16, fontWeight: 700, margin: "0 0 14px 0" }}>Your Solution Path</h3>
           {solutions.map((s, i) => (
-            <div key={i} style={{ display: "flex", gap: 12, marginBottom: 12, background: WHITE, borderRadius: 10, padding: 16, border: "1px solid #E5E7EB" }}>
+            <div key={i} style={{ display: "flex", gap: 12, marginBottom: 12, background: WHITE, borderRadius: 10, padding: 16, border: "1px solid #B8D7D8" }}>
               <div style={{ minWidth: 30, height: 30, borderRadius: "50%", background: cat.color, color: WHITE, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 700, flexShrink: 0 }}>{i + 1}</div>
               <div>
                 <p style={{ color: NAVY, fontSize: 14, fontWeight: 600, margin: "0 0 4px 0" }}>{s.step}</p>
