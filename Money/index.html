@@ -1,4 +1,4 @@
-<\!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -14,9 +14,9 @@
   <script type="text/babel">
     const { useState } = React;
 
-const TEAL = "#1B6B72";
-const LIGHTGRAY = "#F5F7F8";
-const GOLD = "#B5860A";
+const TEAL = "#03567A";
+const LIGHTGRAY = "#E3F2F3";
+const GOLD = "#E7C7CF";
 const WHITE = "#FFFFFF";
 
 const modules = [
@@ -88,7 +88,7 @@ const modules = [
     title: "Video 5.2",
     subtitle: "How to Negotiate",
     icon: "🤝",
-    color: "#2E86AB",
+    color: "#108DAA",
     intro: "Negotiating a job offer is expected. It is not rude. It is not risky. And 85% of people who negotiate receive at least something of what they asked for.",
     content: [
       {
@@ -162,7 +162,7 @@ const modules = [
     title: "Video 5.3",
     subtitle: "Total Compensation — The Full Picture",
     icon: "💰",
-    color: "#5C7A6E",
+    color: "#1DA1A5",
     intro: "When a company says the salary is $60,000, that is not what you are being paid. Total compensation is the full picture — and it changes everything.",
     content: [
       {
@@ -225,7 +225,7 @@ const modules = [
     title: "Video 5.4",
     subtitle: "How You Get Paid",
     icon: "📅",
-    color: "#6B4E71",
+    color: "#035F6A",
     intro: "Not every job pays the same way. Know the structure before you accept — it matters for budgeting, planning, and avoiding an avoidable surprise on payday.",
     content: [
       {
@@ -311,7 +311,7 @@ const modules = [
     title: "Video 5.5",
     subtitle: "Your First Paycheck Decoded",
     icon: "🧾",
-    color: "#8B5E3C",
+    color: "#012A4E",
     intro: "You got your first paycheck. The number is lower than you expected. You are not being cheated. Here is where it went.",
     content: [
       {
@@ -390,7 +390,7 @@ const modules = [
     title: "Video 5.6",
     subtitle: "The Real Cost of the Job",
     icon: "🏙️",
-    color: "#2E86AB",
+    color: "#108DAA",
     intro: "A job offer is a salary in a place, with a commute, in a context. Two offers with the same number can have very different financial realities.",
     content: [
       {
@@ -542,7 +542,7 @@ const modules = [
 function ContentBlock({ block }) {
   if (block.type === "body") {
     return (
-      <p style={{ fontSize: 15, lineHeight: 1.7, color: "#333", margin: "0 0 14px 0" }}>
+      <p style={{ fontSize: 15, lineHeight: 1.7, color: "#012A4E", margin: "0 0 14px 0" }}>
         {block.text}
       </p>
     );
@@ -556,9 +556,9 @@ function ContentBlock({ block }) {
   }
   if (block.type === "callout") {
     return (
-      <div style={{ background: "#EEF7F7", borderLeft: `4px solid ${TEAL}`, padding: "14px 16px", borderRadius: "0 8px 8px 0", margin: "16px 0" }}>
+      <div style={{ background: "#E3F2F3", borderLeft: `4px solid ${TEAL}`, padding: "14px 16px", borderRadius: "0 8px 8px 0", margin: "16px 0" }}>
         <p style={{ fontSize: 13, fontWeight: 700, color: TEAL, margin: "0 0 4px 0" }}>{block.label}</p>
-        <p style={{ fontSize: 15, lineHeight: 1.65, color: "#333", margin: 0 }}>{block.text}</p>
+        <p style={{ fontSize: 15, lineHeight: 1.65, color: "#012A4E", margin: 0 }}>{block.text}</p>
       </div>
     );
   }
@@ -567,9 +567,9 @@ function ContentBlock({ block }) {
     return (
       <div style={{ display: "grid", gridTemplateColumns: cols, gap: 10, margin: "12px 0 16px 0" }}>
         {block.items.map((item, i) => (
-          <div key={i} style={{ background: LIGHTGRAY, borderRadius: 8, padding: "12px 14px", border: "1px solid #DDE3E6" }}>
-            <p style={{ fontSize: 13, fontWeight: 700, color: "#333", margin: "0 0 4px 0" }}>{item.title}</p>
-            <p style={{ fontSize: 13, lineHeight: 1.55, color: "#555", margin: 0 }}>{item.desc}</p>
+          <div key={i} style={{ background: LIGHTGRAY, borderRadius: 8, padding: "12px 14px", border: "1px solid #B8D7D8" }}>
+            <p style={{ fontSize: 13, fontWeight: 700, color: "#012A4E", margin: "0 0 4px 0" }}>{item.title}</p>
+            <p style={{ fontSize: 13, lineHeight: 1.55, color: "#03567A", margin: 0 }}>{item.desc}</p>
           </div>
         ))}
       </div>
@@ -581,7 +581,7 @@ function ContentBlock({ block }) {
         {block.items.map((tip, i) => (
           <div key={i} style={{ display: "flex", gap: 10, marginBottom: 8, alignItems: "flex-start" }}>
             <span style={{ color: TEAL, fontWeight: 700, fontSize: 15, flexShrink: 0, marginTop: 2 }}>→</span>
-            <p style={{ fontSize: 15, lineHeight: 1.6, color: "#333", margin: 0 }}>{tip}</p>
+            <p style={{ fontSize: 15, lineHeight: 1.6, color: "#012A4E", margin: 0 }}>{tip}</p>
           </div>
         ))}
       </div>
@@ -593,10 +593,10 @@ function ContentBlock({ block }) {
 function ChecklistSection({ items, checked, onToggle }) {
   const done = items.filter((_, i) => checked[i]).length;
   return (
-    <div style={{ marginTop: 20, background: LIGHTGRAY, borderRadius: 10, padding: "16px 18px", border: "1px solid #DDE3E6" }}>
+    <div style={{ marginTop: 20, background: LIGHTGRAY, borderRadius: 10, padding: "16px 18px", border: "1px solid #B8D7D8" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
         <p style={{ fontSize: 13, fontWeight: 700, color: TEAL, textTransform: "uppercase", letterSpacing: 1, margin: 0 }}>Action Steps</p>
-        <span style={{ fontSize: 12, color: done === items.length ? TEAL : "#999", fontWeight: 600 }}>
+        <span style={{ fontSize: 12, color: done === items.length ? TEAL : "#03567A", fontWeight: 600 }}>
           {done}/{items.length} done
         </span>
       </div>
@@ -608,12 +608,12 @@ function ChecklistSection({ items, checked, onToggle }) {
             display: "flex", gap: 10, marginBottom: 8, alignItems: "flex-start",
             cursor: "pointer", padding: "6px 8px", borderRadius: 6,
             transition: "background 0.15s",
-            background: checked[i] ? "#E6F2F2" : "transparent",
+            background: checked[i] ? "#B8D7D8" : "transparent",
           }}
         >
           <div style={{
             width: 18, height: 18, borderRadius: 4,
-            border: `2px solid ${checked[i] ? TEAL : "#CCCCCC"}`,
+            border: `2px solid ${checked[i] ? TEAL : "#97BFC3"}`,
             background: checked[i] ? TEAL : WHITE,
             flexShrink: 0, marginTop: 2,
             display: "flex", alignItems: "center", justifyContent: "center",
@@ -622,7 +622,7 @@ function ChecklistSection({ items, checked, onToggle }) {
             {checked[i] && <span style={{ color: WHITE, fontSize: 11, fontWeight: 700 }}>✓</span>}
           </div>
           <p style={{
-            fontSize: 14, lineHeight: 1.55, color: checked[i] ? "#777" : "#333",
+            fontSize: 14, lineHeight: 1.55, color: checked[i] ? "#03567A" : "#012A4E",
             margin: 0, textDecoration: checked[i] ? "line-through" : "none",
             transition: "all 0.15s",
           }}>
@@ -654,7 +654,7 @@ function Module5Money() {
   const totalItems = checkState.flat().length;
 
   return (
-    <div style={{ fontFamily: "'Arial', sans-serif", minHeight: "100vh", background: "#F0F4F5", display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "24px 16px" }}>
+    <div style={{ fontFamily: "'Arial', sans-serif", minHeight: "100vh", background: "#F0FFFF", display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "24px 16px" }}>
       <div style={{ width: "100%", maxWidth: 700 }}>
 
         <div style={{ background: TEAL, borderRadius: 14, padding: "22px 26px", marginBottom: 16, color: WHITE }}>
@@ -691,7 +691,7 @@ function Module5Money() {
 
         <div style={{ display: "flex", gap: 5, marginBottom: 16 }}>
           {modules.map((_, i) => (
-            <div key={i} style={{ flex: 1, height: 4, borderRadius: 2, backgroundColor: i <= current ? TEAL : "#DDE3E6", transition: "background-color 0.3s" }} />
+            <div key={i} style={{ flex: 1, height: 4, borderRadius: 2, backgroundColor: i <= current ? TEAL : "#B8D7D8", transition: "background-color 0.3s" }} />
           ))}
         </div>
 
@@ -700,12 +700,12 @@ function Module5Money() {
             <span style={{ fontSize: 30 }}>{mod.icon}</span>
             <div>
               <p style={{ fontSize: 12, fontWeight: 700, color: TEAL, textTransform: "uppercase", letterSpacing: 1, margin: "0 0 2px 0" }}>{mod.title}</p>
-              <h2 style={{ fontSize: 19, fontWeight: 800, color: "#1A2A2D", margin: 0 }}>{mod.subtitle}</h2>
+              <h2 style={{ fontSize: 19, fontWeight: 800, color: "#012A4E", margin: 0 }}>{mod.subtitle}</h2>
             </div>
           </div>
 
-          <div style={{ background: LIGHTGRAY, borderRadius: 8, padding: "12px 14px", marginBottom: 20, borderLeft: "4px solid #DDE3E6" }}>
-            <p style={{ fontSize: 15, lineHeight: 1.6, color: "#444", fontStyle: "italic", margin: 0 }}>{mod.intro}</p>
+          <div style={{ background: LIGHTGRAY, borderRadius: 8, padding: "12px 14px", marginBottom: 20, borderLeft: "4px solid #B8D7D8" }}>
+            <p style={{ fontSize: 15, lineHeight: 1.6, color: "#012A4E", fontStyle: "italic", margin: 0 }}>{mod.intro}</p>
           </div>
 
           <div>
@@ -729,9 +729,9 @@ function Module5Money() {
             disabled={current === 0}
             style={{
               flex: 1, padding: "13px 0", borderRadius: 10,
-              border: "2px solid #DDE3E6",
+              border: "2px solid #B8D7D8",
               background: current === 0 ? LIGHTGRAY : WHITE,
-              color: current === 0 ? "#BBBBBB" : "#333",
+              color: current === 0 ? "#97BFC3" : "#012A4E",
               fontWeight: 700, fontSize: 14,
               cursor: current === 0 ? "default" : "pointer",
               transition: "all 0.2s",
@@ -752,7 +752,7 @@ function Module5Money() {
               Next: {modules[current + 1].subtitle} →
             </button>
           ) : (
-            <div style={{ flex: 2, padding: "13px 16px", borderRadius: 10, background: "#E6F2F2", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div style={{ flex: 2, padding: "13px 16px", borderRadius: 10, background: "#B8D7D8", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <p style={{ color: TEAL, fontWeight: 800, fontSize: 14, margin: 0 }}>
                 {totalChecked === totalItems
                   ? "✓ Module complete. Sign with confidence."
@@ -762,7 +762,7 @@ function Module5Money() {
           )}
         </div>
 
-        <p style={{ textAlign: "center", fontSize: 12, color: "#AAAAAA", marginTop: 20 }}>
+        <p style={{ textAlign: "center", fontSize: 12, color: "#03567A", marginTop: 20 }}>
           The GroundWork Collective · Module 5 of 11 · Built for the way you think
         </p>
       </div>
