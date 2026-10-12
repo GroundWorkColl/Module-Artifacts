@@ -6,18 +6,18 @@
 <title>Module 3: Interview Prep Tool | GroundWork Collective</title>
 <style>
   :root {
-    --navy: #1C3557;
-    --teal: #00838F;
-    --mid-blue: #2E75B6;
-    --orange: #E87722;
-    --light-teal: #E0F4F5;
-    --light-navy: #E8EDF3;
-    --light-orange: #FDF2E9;
-    --text: #2D2D2D;
-    --subtle: #6B7280;
-    --border: #D1D5DB;
+    --navy: #012A4E;
+    --teal: #035F6A;
+    --mid-blue: #03567A;
+    --orange: #012A4E;
+    --light-teal: #E3F2F3;
+    --light-navy: #E3F2F3;
+    --light-orange: #F8EAEE;
+    --text: #012A4E;
+    --subtle: #03567A;
+    --border: #B8D7D8;
     --white: #FFFFFF;
-    --bg: #F8FAFC;
+    --bg: #F0FFFF;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -38,7 +38,7 @@
   }
 
   header .brand { color: white; font-size: 14px; font-weight: 600; letter-spacing: 0.05em; opacity: 0.9; }
-  header .module-label { color: var(--teal); font-size: 20px; font-weight: 700; }
+  header .module-label { color: #9CCECE; font-size: 20px; font-weight: 700; }
 
   .progress-bar-wrap {
     background: var(--navy);
@@ -57,7 +57,7 @@
     transition: background 0.3s;
   }
   .prog-step.active { background: var(--teal); }
-  .prog-step.done { background: rgba(0,131,143,0.5); }
+  .prog-step.done { background: rgba(3,95,106,0.5); }
   .prog-label {
     color: rgba(255,255,255,0.6);
     font-size: 11px;
@@ -134,12 +134,12 @@
     align-items: flex-start;
     gap: 12px;
     padding: 10px 0;
-    border-bottom: 1px solid #F3F4F6;
+    border-bottom: 1px solid #E3F2F3;
     cursor: pointer;
     user-select: none;
   }
   .check-item:last-child { border-bottom: none; }
-  .check-item:hover { background: #FAFAFA; margin: 0 -24px; padding: 10px 24px; }
+  .check-item:hover { background: #F0FFFF; margin: 0 -24px; padding: 10px 24px; }
 
   .check-box {
     width: 22px; height: 22px;
@@ -223,13 +223,13 @@
     align-items: center;
     gap: 10px;
     padding: 12px 16px;
-    background: #F9FAFB;
+    background: #F0FFFF;
     border: 1px solid var(--border);
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s;
   }
-  .q-item:hover { border-color: var(--mid-blue); background: #EEF4FB; }
+  .q-item:hover { border-color: var(--mid-blue); background: #E3F2F3; }
   .q-item.added { border-color: var(--teal); background: var(--light-teal); }
   .q-item .q-text { font-size: 14px; flex: 1; line-height: 1.4; }
   .q-add-btn {
@@ -260,12 +260,12 @@
     align-items: center;
     gap: 8px;
     padding: 6px 0;
-    border-bottom: 1px solid rgba(28,53,87,0.1);
+    border-bottom: 1px solid rgba(1,42,78,0.1);
     font-size: 13px;
   }
   .my-q-item:last-child { border-bottom: none; }
   .my-q-item .remove { color: var(--subtle); cursor: pointer; font-size: 16px; line-height: 1; flex-shrink: 0; }
-  .my-q-item .remove:hover { color: #DC2626; }
+  .my-q-item .remove:hover { color: #012A4E; }
   .my-q-num { font-weight: 700; color: var(--teal); min-width: 20px; }
 
   /* Custom question input */
@@ -293,7 +293,7 @@
     font-family: inherit;
     white-space: nowrap;
   }
-  .custom-q-btn:hover { background: #152d4a; }
+  .custom-q-btn:hover { background: #03567A; }
 
   /* STAR practice */
   .star-card {
@@ -357,7 +357,7 @@
 
   /* Pre-interview email builder */
   .email-preview {
-    background: #F9FAFB;
+    background: #F0FFFF;
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 20px;
@@ -370,7 +370,7 @@
   }
   .email-toggle-item {
     display: flex; align-items: center; gap: 10px;
-    padding: 10px 0; border-bottom: 1px solid #F3F4F6;
+    padding: 10px 0; border-bottom: 1px solid #E3F2F3;
     cursor: pointer; user-select: none;
   }
   .email-toggle-item:last-child { border-bottom: none; }
@@ -406,7 +406,7 @@
     cursor: pointer; font-family: inherit;
     margin-top: 12px;
   }
-  .copy-btn:hover { background: #152d4a; }
+  .copy-btn:hover { background: #03567A; }
   .copy-btn.copied { background: var(--teal); }
 
   /* Callout */
@@ -442,7 +442,7 @@
     display: inline-flex; align-items: center; gap: 6px;
   }
   .btn-primary { background: var(--navy); color: white; }
-  .btn-primary:hover { background: #152d4a; }
+  .btn-primary:hover { background: #03567A; }
   .btn-secondary { background: white; color: var(--navy); border: 2px solid var(--border); }
   .btn-secondary:hover { border-color: var(--navy); }
   .btn:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -475,14 +475,14 @@
     align-items: center;
     justify-content: space-between;
     padding: 14px 0;
-    border-bottom: 1px solid #F3F4F6;
+    border-bottom: 1px solid #E3F2F3;
     font-size: 14px;
   }
   .summary-row:last-child { border-bottom: none; }
   .summary-row .label { color: var(--subtle); font-size: 13px; }
   .summary-row .value { font-weight: 600; color: var(--navy); }
-  .badge-complete { background: #D1FAE5; color: #065F46; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; }
-  .badge-partial { background: #FEF3C7; color: #92400E; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; }
+  .badge-complete { background: #E3F2F3; color: #035F6A; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; }
+  .badge-partial { background: #F8EAEE; color: #012A4E; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; }
 
   /* Responsive */
   @media (max-width: 600px) {
@@ -1090,7 +1090,7 @@ function markStarDone(btn) {
   const question = card.querySelector('.star-q span').textContent;
   if (!state.starDone.includes(question)) state.starDone.push(question);
   btn.textContent = '✓ Practiced';
-  btn.style.background = '#065F46';
+  btn.style.background = '#035F6A';
   btn.disabled = true;
 }
 
