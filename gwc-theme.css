@@ -1,0 +1,104 @@
+/* GroundWork Collaborative shared theme.
+   Change a color here and every tool updates.
+   Palette source: GWC Color Palette slide. */
+:root {
+  /* Core palette */
+  --gwc-navy: #012A4E;
+  --gwc-blue: #03567A;
+  --gwc-teal-deep: #035F6A;
+  --gwc-cyan: #108DAA;
+  --gwc-teal: #1DA1A5;
+  --gwc-mist: #9CCECE;
+  --gwc-slate: #97BFC3;
+  --gwc-pale: #B8D7D8;
+  --gwc-blush: #E7C7CF;   /* accent, use sparingly */
+  /* Surfaces derived from the palette */
+  --gwc-bg: #F0FFFF;
+  --gwc-white: #FFFFFF;
+  --gwc-panel: #E3F2F3;
+  --gwc-panel-2: #D3EBEC;
+  --gwc-blush-tint: #F8EAEE;
+}
+
+/* Respect the reader's motion setting on every tool */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Visible keyboard focus on every tool */
+:focus-visible {
+  outline: 3px solid var(--gwc-cyan);
+  outline-offset: 2px;
+}
+
+/* Save my work button and menu (added by gwc-shared.js) */
+.gwc-save {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 2147483000;
+  font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+}
+.gwc-save-btn {
+  background: var(--gwc-blue);
+  color: var(--gwc-white);
+  border: 2px solid var(--gwc-white);
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(1, 42, 78, 0.3);
+}
+.gwc-save-btn:hover { background: var(--gwc-navy); }
+.gwc-save-menu {
+  position: absolute;
+  right: 0;
+  bottom: 52px;
+  min-width: 230px;
+  background: var(--gwc-white);
+  border: 1px solid var(--gwc-slate);
+  border-radius: 12px;
+  padding: 6px;
+  box-shadow: 0 8px 24px rgba(1, 42, 78, 0.25);
+}
+.gwc-save-menu[hidden] { display: none; }
+.gwc-save-menu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  color: var(--gwc-navy);
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.gwc-save-menu button:hover { background: var(--gwc-panel); }
+.gwc-save-note {
+  padding: 6px 12px 8px;
+  font-size: 12px;
+  color: var(--gwc-blue);
+}
+.gwc-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 76px;
+  transform: translateX(-50%);
+  background: var(--gwc-navy);
+  color: var(--gwc-white);
+  padding: 10px 16px;
+  border-radius: 8px;
+  font: 14px system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  z-index: 2147483001;
+}
+
+@media print {
+  .gwc-save, .gwc-toast { display: none !important; }
+}
