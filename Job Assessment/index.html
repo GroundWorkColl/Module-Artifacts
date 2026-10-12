@@ -13,23 +13,23 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --cream: #F7F3EE;
-      --warm-white: #FDFAF6;
-      --terracotta: #C4612A;
-      --terracotta-light: #E8845A;
-      --terracotta-pale: #F5DDD0;
-      --forest: #2D4A35;
-      --forest-mid: #3D6147;
-      --forest-light: #D4E6D8;
-      --charcoal: #2A2825;
-      --stone: #7A7068;
-      --stone-light: #C8BFB5;
-      --gold: #C89A3A;
-      --gold-pale: #F5EBCF;
-      --alert: #9B3A2A;
-      --alert-pale: #F5DDD9;
-      --sky: #3A6B8A;
-      --sky-pale: #D4E8F0;
+      --cream: #F0FFFF;
+      --warm-white: #FFFFFF;
+      --terracotta: #03567A;
+      --terracotta-light: #108DAA;
+      --terracotta-pale: #B8D7D8;
+      --forest: #012A4E;
+      --forest-mid: #035F6A;
+      --forest-light: #D3EBEC;
+      --charcoal: #012A4E;
+      --stone: #03567A;
+      --stone-light: #97BFC3;
+      --gold: #1DA1A5;
+      --gold-pale: #F8EAEE;
+      --alert: #012A4E;
+      --alert-pale: #E7C7CF;
+      --sky: #035F6A;
+      --sky-pale: #D3EBEC;
     }
 
     body {
@@ -87,7 +87,7 @@
       color: var(--charcoal);
       line-height: 1.4;
     }
-    .option-btn:hover { border-color: var(--terracotta-light); background: #FDF8F5; }
+    .option-btn:hover { border-color: var(--terracotta-light); background: #E3F2F3; }
     .option-btn.selected { border-color: var(--terracotta); background: var(--terracotta-pale); }
     .option-btn.multi-selected { border-color: var(--forest-mid); background: var(--forest-light); }
 
@@ -152,7 +152,7 @@
       margin-bottom: 20px;
       background: var(--warm-white);
     }
-    .result-card.highlight { border-color: var(--terracotta); background: #FDF8F5; }
+    .result-card.highlight { border-color: var(--terracotta); background: #E3F2F3; }
     .result-card.insight { border-color: var(--gold); background: var(--gold-pale); }
     .result-card.caution { border-color: var(--alert); background: var(--alert-pale); }
     .result-card.confirm { border-color: var(--forest-mid); background: var(--forest-light); }
@@ -161,7 +161,7 @@
     .card-eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: .12em; font-weight: 600; margin-bottom: 6px; }
     .result-card .card-eyebrow { color: var(--stone); }
     .result-card.highlight .card-eyebrow { color: var(--terracotta); }
-    .result-card.insight .card-eyebrow { color: #7A5A10; }
+    .result-card.insight .card-eyebrow { color: #035F6A; }
     .result-card.caution .card-eyebrow { color: var(--alert); }
     .result-card.confirm .card-eyebrow { color: var(--forest-mid); }
     .result-card.sky .card-eyebrow { color: var(--sky); }
@@ -186,7 +186,7 @@
     .intro-screen { text-align: left; padding-top: 16px; }
     .intro-screen .big-title { font-size: 38px; line-height: 1.1; margin-bottom: 20px; }
     .intro-screen .intro-body { font-size: 16px; color: var(--stone); line-height: 1.7; margin-bottom: 12px; }
-    .intro-screen .intro-time { font-size: 13px; color: var(--stone-light); margin-bottom: 36px; display: flex; align-items: center; gap: 6px; }
+    .intro-screen .intro-time { font-size: 13px; color: var(--stone); margin-bottom: 36px; display: flex; align-items: center; gap: 6px; }
     .btn-start {
       padding: 16px 44px; background: var(--terracotta); border: none; border-radius: 6px;
       color: white; cursor: pointer; font-size: 17px; font-weight: 600;
