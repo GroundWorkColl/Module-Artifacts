@@ -9,36 +9,37 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
   <style>
     * { box-sizing: border-box; }
-    body { margin: 0; padding: 0; background: #F0FFFF; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { margin: 0; padding: 0; background: var(--gwc-bg); font-family: 'Segoe UI', system-ui, sans-serif; }
     input[type=number]::-webkit-inner-spin-button,
     input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
     input[type=number] { -moz-appearance: textfield; }
     input, select { outline: none; }
-    input:focus, select:focus { border-color: #03567A !important; box-shadow: 0 0 0 3px rgba(3,86,122,0.15); }
+    input:focus, select:focus { border-color: var(--gwc-blue) !important; box-shadow: 0 0 0 3px rgba(3,86,122,0.15); }
     .tooltip-wrap { position: relative; display: inline-block; }
     .tooltip-wrap .tooltip-box {
       visibility: hidden; opacity: 0; transition: opacity 0.2s;
-      background: #012A4E; color: #FFF; font-size: 12px; line-height: 1.5;
+      background: var(--gwc-navy); color: #FFF; font-size: 12px; line-height: 1.5;
       border-radius: 8px; padding: 10px 12px; width: 260px;
       position: absolute; bottom: calc(100% + 6px); left: 0; z-index: 100;
       box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
     .tooltip-wrap:hover .tooltip-box { visibility: visible; opacity: 1; }
   </style>
+<link rel="stylesheet" href="../gwc-theme.css">
 </head>
 <body>
   <div id="root"></div>
   <script type="text/babel">
     const { useState, useMemo } = React;
 
-    const TEAL = "#03567A";
-    const NAVY = "#012A4E";
-    const GOLD = "#012A4E";
-    const RED = "#012A4E";
-    const GREEN = "#035F6A";
-    const LIGHTGRAY = "#E3F2F3";
+    const TEAL = "var(--gwc-blue)";
+    const NAVY = "var(--gwc-navy)";
+    const GOLD = "var(--gwc-navy)";
+    const RED = "var(--gwc-navy)";
+    const GREEN = "var(--gwc-teal-deep)";
+    const LIGHTGRAY = "var(--gwc-panel)";
     const WHITE = "#FFFFFF";
-    const BORDER = "#B8D7D8";
+    const BORDER = "var(--gwc-pale)";
 
     // State tax rates (approximate flat/blended for simplicity)
     const STATE_TAXES = {
@@ -55,30 +56,33 @@
 
     const STATES = Object.keys(STATE_TAXES).sort();
 
-    // Federal income tax brackets 2024 (single filer)
-    function calcFederalTax(income) {
-      const brackets = [
-        [11600, 0.10],
-        [47150, 0.12],
-        [100525, 0.22],
-        [191950, 0.24],
-        [243725, 0.32],
-        [609350, 0.35],
-        [Infinity, 0.37],
-      ];
+    // 2026 federal tax data (IRS Rev. Proc. 2025-32). Standard deduction only. Update each January.
+    const TAX_YEAR = 2026;
+    const SS_WAGE_BASE = 184500;
+    const IRS_MILEAGE_RATE = 0.725;
+    const TAX_DATA = {
+      single: { label: "Single", std: 16100, addlMedicare: 200000, brackets: [[12400,0.10],[50400,0.12],[105700,0.22],[201775,0.24],[256225,0.32],[640600,0.35],[Infinity,0.37]] },
+      mfj: { label: "Married filing jointly", std: 32200, addlMedicare: 250000, brackets: [[24800,0.10],[100800,0.12],[211400,0.22],[403550,0.24],[512450,0.32],[768700,0.35],[Infinity,0.37]] },
+      hoh: { label: "Head of household", std: 24150, addlMedicare: 200000, brackets: [[17700,0.10],[67450,0.12],[105700,0.22],[201750,0.24],[256200,0.32],[640600,0.35],[Infinity,0.37]] },
+    };
+
+    function calcFederalTax(income, status) {
+      const t = TAX_DATA[status] || TAX_DATA.single;
+      const taxable = Math.max(0, income - t.std);
       let tax = 0;
       let prev = 0;
-      for (const [limit, rate] of brackets) {
-        if (income <= prev) break;
-        tax += Math.min(income, limit) * rate - prev * rate;
+      for (const [limit, rate] of t.brackets) {
+        if (taxable <= prev) break;
+        tax += (Math.min(taxable, limit) - prev) * rate;
         prev = limit;
       }
       return tax;
     }
 
-    function calcFICA(income) {
-      const ss = Math.min(income, 168600) * 0.062;
-      const medicare = income * 0.0145;
+    function calcFICA(income, status) {
+      const t = TAX_DATA[status] || TAX_DATA.single;
+      const ss = Math.min(income, SS_WAGE_BASE) * 0.062;
+      const medicare = income * 0.0145 + Math.max(0, income - t.addlMedicare) * 0.009;
       return ss + medicare;
     }
 
@@ -118,6 +122,7 @@
       monthlyTransitCost: "",
       parkingMonthly: "",
       // Taxes
+      filingStatus: "single",
       state: "TX",
       cityTaxPct: "",
       // Pay
@@ -129,7 +134,7 @@
       return (
         <div style={{ marginBottom: 16 }}>
           <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: NAVY, marginBottom: 4 }}>{label}</label>
-          {hint && <p style={{ fontSize: 12, color: "#03567A", margin: "0 0 6px 0", lineHeight: 1.4 }}>{hint}</p>}
+          {hint && <p style={{ fontSize: 12, color: "var(--gwc-blue)", margin: "0 0 6px 0", lineHeight: 1.4 }}>{hint}</p>}
           {children}
         </div>
       );
@@ -138,7 +143,7 @@
     function NumberInput({ value, onChange, prefix = "$", placeholder = "0" }) {
       return (
         <div style={{ position: "relative" }}>
-          {prefix && <span style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", color: "#03567A", fontSize: 14, fontWeight: 600 }}>{prefix}</span>}
+          {prefix && <span style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", color: "var(--gwc-blue)", fontSize: 14, fontWeight: 600 }}>{prefix}</span>}
           <input
             type="number"
             value={value}
@@ -201,7 +206,7 @@
       let annualCommuteCost = 0;
       if (o.commuteMode === "drive") {
         const miles = parseFloat(o.commuteRoundTripMiles) || 0;
-        annualCommuteCost = miles * 0.67 * commuteDays * commuteWeeksPerYear;
+        annualCommuteCost = miles * IRS_MILEAGE_RATE * commuteDays * commuteWeeksPerYear;
         const parking = (parseFloat(o.parkingMonthly) || 0) * 12;
         annualCommuteCost += parking;
       } else {
@@ -223,10 +228,10 @@
       const my401k = base * (parseFloat(o.my401kPct) / 100 || 0);
       const taxableIncome = Math.max(0, base - my401k);
 
-      const federalTax = calcFederalTax(taxableIncome);
+      const federalTax = calcFederalTax(taxableIncome, o.filingStatus);
       const stateTax = taxableIncome * (stateTaxRate / 100);
       const cityTaxAmt = taxableIncome * cityTax;
-      const fica = calcFICA(base);
+      const fica = calcFICA(base, o.filingStatus);
       const totalTax = federalTax + stateTax + cityTaxAmt + fica;
 
       const netPay = base - totalTax - my401k - (healthPremium);
@@ -262,7 +267,7 @@
           </div>
 
           {/* Instructions */}
-          <div style={{ background: "#E3F2F3", borderLeft: `4px solid ${TEAL}`, borderRadius: "0 8px 8px 0", padding: "12px 14px", marginBottom: 20 }}>
+          <div style={{ background: "var(--gwc-panel)", borderLeft: `4px solid ${TEAL}`, borderRadius: "0 8px 8px 0", padding: "12px 14px", marginBottom: 20 }}>
             <p style={{ fontSize: 13, color: TEAL, fontWeight: 700, margin: "0 0 4px 0" }}>How to use this tool</p>
             <p style={{ fontSize: 12, color: NAVY, margin: 0, lineHeight: 1.6 }}>Not every field applies to every job. If you do not have the information or it does not apply, leave it blank. The calculator will work with whatever you have.</p>
           </div>
@@ -285,7 +290,7 @@
                   <button key={val} onClick={() => onChange({ ...offer, annualBonusType: val })} style={{
                     padding: "0 14px", fontSize: 14, fontWeight: 700, border: "none", cursor: "pointer",
                     background: offer.annualBonusType === val ? TEAL : WHITE,
-                    color: offer.annualBonusType === val ? WHITE : "#03567A",
+                    color: offer.annualBonusType === val ? WHITE : "var(--gwc-blue)",
                   }}>{lbl}</button>
                 ))}
               </div>
@@ -308,7 +313,7 @@
 
           {/* BENEFITS */}
           <div style={{ marginTop: 24 }}>
-            <SectionHeader icon="🏥" title="Benefits" color="#03567A" />
+            <SectionHeader icon="🏥" title="Benefits" color="var(--gwc-blue)" />
             <InputRow label="Your monthly health insurance premium" hint="What comes out of your paycheck each month.">
               <NumberInput value={offer.healthPremiumMonthly} onChange={set("healthPremiumMonthly")} />
             </InputRow>
@@ -335,7 +340,7 @@
 
           {/* COMMUTE */}
           <div style={{ marginTop: 24 }}>
-            <SectionHeader icon="🏙️" title="Work Setup & Commute" color="#035F6A" />
+            <SectionHeader icon="🏙️" title="Work Setup & Commute" color="var(--gwc-teal-deep)" />
             <InputRow label="Work arrangement">
               <SelectInput value={offer.workStyle} onChange={set("workStyle")} options={[["remote","Fully remote"],["hybrid","Hybrid (some days in office)"],["inoffice","Fully in-office"]]} />
             </InputRow>
@@ -367,7 +372,7 @@
 
           {/* TAXES */}
           <div style={{ marginTop: 24 }}>
-            <SectionHeader icon="🧾" title="Taxes & Paycheck" color="#035F6A" />
+            <SectionHeader icon="🧾" title="Taxes & Paycheck" color="var(--gwc-teal-deep)" />
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
               <InputRow label="State">
                 <select
@@ -382,7 +387,7 @@
                 <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
                   City / local tax %
                   <span className="tooltip-wrap" style={{ cursor: "help" }}>
-                    <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 16, height: 16, borderRadius: "50%", background: "#B8D7D8", fontSize: 10, fontWeight: 700, color: NAVY }}>?</span>
+                    <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 16, height: 16, borderRadius: "50%", background: "var(--gwc-pale)", fontSize: 10, fontWeight: 700, color: NAVY }}>?</span>
                     <span className="tooltip-box">
                       Some cities charge a local income tax on top of state. Check yours at <strong>smartasset.com/taxes/income-taxes</strong> or search "[your city] local income tax rate." Common examples: NYC adds ~3.9%, Philadelphia ~3.75%. Leave blank if none.
                     </span>
@@ -390,6 +395,11 @@
                 </span>
               } hint="NYC, Philadelphia, and some other cities add local tax. Leave blank if none.">
                 <NumberInput value={offer.cityTaxPct} onChange={set("cityTaxPct")} prefix="%" />
+              </InputRow>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <InputRow label="Filing status" hint={"Uses the " + TAX_YEAR + " standard deduction."}>
+                <SelectInput value={offer.filingStatus} onChange={set("filingStatus")} options={Object.entries(TAX_DATA).map(([k,v]) => [k, v.label])} />
               </InputRow>
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
@@ -416,7 +426,7 @@
           <div style={{ background: LIGHTGRAY, borderRadius: 4, height: 8, overflow: "hidden" }}>
             <div style={{ width: pct + "%", background: color || TEAL, height: "100%", borderRadius: 4, transition: "width 0.4s" }} />
           </div>
-          {sublabel && <p style={{ fontSize: 11, color: "#03567A", margin: "3px 0 0 0" }}>{sublabel}</p>}
+          {sublabel && <p style={{ fontSize: 11, color: "var(--gwc-blue)", margin: "3px 0 0 0" }}>{sublabel}</p>}
         </div>
       );
     }
@@ -428,85 +438,85 @@
 
           {/* Total comp breakdown */}
           <div style={{ marginBottom: 20 }}>
-            <p style={{ fontSize: 12, fontWeight: 700, color: "#03567A", textTransform: "uppercase", letterSpacing: 0.5, margin: "0 0 10px 0" }}>Total Compensation</p>
+            <p style={{ fontSize: 12, fontWeight: 700, color: "var(--gwc-blue)", textTransform: "uppercase", letterSpacing: 0.5, margin: "0 0 10px 0" }}>Total Compensation</p>
             <ResultBar label="Base Salary" value={calc.base} max={calc.totalComp} color={color} />
-            {calc.totalBenefitsValue > 0 && <ResultBar label="Benefits Value" value={calc.totalBenefitsValue} max={calc.totalComp} color="#108DAA" sublabel={`${calc.employerHealth > 0 ? "Employer health " + fmt(calc.employerHealth/12) + "/mo · " : ""}401k match ${fmt(calc.retirementMatch)} · PTO ${fmt(calc.ptoValue)}`} />}
+            {calc.totalBenefitsValue > 0 && <ResultBar label="Benefits Value" value={calc.totalBenefitsValue} max={calc.totalComp} color="var(--gwc-cyan)" sublabel={`${calc.employerHealth > 0 ? "Employer health " + fmt(calc.employerHealth/12) + "/mo · " : ""}401k match ${fmt(calc.retirementMatch)} · PTO ${fmt(calc.ptoValue)}`} />}
             {calc.expectedBonus > 0 && <ResultBar label={`Expected Bonus (${Math.round(calc.bonusPct*100)}% likelihood)`} value={calc.expectedBonus} max={calc.totalComp} color={GOLD} sublabel={`Target: ${fmt(calc.bonusTarget)}`} />}
-            {calc.annualEquity > 0 && <ResultBar label={`Equity (${calc.vestingYears}-yr vest)`} value={calc.annualEquity} max={calc.totalComp} color="#035F6A" sublabel={`Total grant ${fmt(calc.rsus)} · Annual ${fmt(calc.annualEquity)}`} />}
+            {calc.annualEquity > 0 && <ResultBar label={`Equity (${calc.vestingYears}-yr vest)`} value={calc.annualEquity} max={calc.totalComp} color="var(--gwc-teal-deep)" sublabel={`Total grant ${fmt(calc.rsus)} · Annual ${fmt(calc.annualEquity)}`} />}
           </div>
 
           {/* Big numbers */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 20 }}>
             <div style={{ background: LIGHTGRAY, borderRadius: 10, padding: 14, textAlign: "center" }}>
-              <p style={{ fontSize: 11, color: "#03567A", margin: "0 0 4px 0", textTransform: "uppercase", fontWeight: 700 }}>Total Comp</p>
+              <p style={{ fontSize: 11, color: "var(--gwc-blue)", margin: "0 0 4px 0", textTransform: "uppercase", fontWeight: 700 }}>Total Comp</p>
               <p style={{ fontSize: 22, fontWeight: 800, color, margin: 0 }}>{fmtK(calc.totalComp)}</p>
-              <p style={{ fontSize: 11, color: "#03567A", margin: "4px 0 0 0" }}>incl. expected variable</p>
+              <p style={{ fontSize: 11, color: "var(--gwc-blue)", margin: "4px 0 0 0" }}>incl. expected variable</p>
             </div>
             <div style={{ background: LIGHTGRAY, borderRadius: 10, padding: 14, textAlign: "center" }}>
-              <p style={{ fontSize: 11, color: "#03567A", margin: "0 0 4px 0", textTransform: "uppercase", fontWeight: 700 }}>Real Value</p>
+              <p style={{ fontSize: 11, color: "var(--gwc-blue)", margin: "0 0 4px 0", textTransform: "uppercase", fontWeight: 700 }}>Real Value</p>
               <p style={{ fontSize: 22, fontWeight: 800, color: calc.realValue >= calc.base ? GREEN : RED, margin: 0 }}>{fmtK(calc.realValue)}</p>
-              <p style={{ fontSize: 11, color: "#03567A", margin: "4px 0 0 0" }}>after commute costs</p>
+              <p style={{ fontSize: 11, color: "var(--gwc-blue)", margin: "4px 0 0 0" }}>after commute costs</p>
             </div>
           </div>
 
           {/* Paycheck */}
           {calc.base > 0 && (
-            <div style={{ background: "#E3F2F3", border: `1px solid #97BFC3`, borderRadius: 10, padding: 16, marginBottom: 16 }}>
+            <div style={{ background: "var(--gwc-panel)", border: `1px solid var(--gwc-slate)`, borderRadius: 10, padding: 16, marginBottom: 16 }}>
               <p style={{ fontSize: 12, fontWeight: 700, color: GREEN, textTransform: "uppercase", letterSpacing: 0.5, margin: "0 0 12px 0" }}>Estimated Paycheck</p>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                 <div>
-                  <p style={{ fontSize: 11, color: "#03567A", margin: "0 0 2px 0" }}>Gross per paycheck</p>
+                  <p style={{ fontSize: 11, color: "var(--gwc-blue)", margin: "0 0 2px 0" }}>Gross per paycheck</p>
                   <p style={{ fontSize: 16, fontWeight: 700, color: NAVY, margin: 0 }}>{fmt(calc.grossPerPaycheck)}</p>
                 </div>
                 <div>
-                  <p style={{ fontSize: 11, color: "#03567A", margin: "0 0 2px 0" }}>Est. net per paycheck</p>
+                  <p style={{ fontSize: 11, color: "var(--gwc-blue)", margin: "0 0 2px 0" }}>Est. net per paycheck</p>
                   <p style={{ fontSize: 16, fontWeight: 700, color: GREEN, margin: 0 }}>{fmt(calc.netPerPaycheck)}</p>
                 </div>
               </div>
-              <div style={{ borderTop: `1px solid #97BFC3`, marginTop: 10, paddingTop: 10 }}>
-                <p style={{ fontSize: 11, color: "#03567A", margin: "0 0 6px 0" }}>Annual tax breakdown (estimated)</p>
+              <div style={{ borderTop: `1px solid var(--gwc-slate)`, marginTop: 10, paddingTop: 10 }}>
+                <p style={{ fontSize: 11, color: "var(--gwc-blue)", margin: "0 0 6px 0" }}>Annual tax breakdown (estimated)</p>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 4 }}>
-                  <p style={{ fontSize: 12, color: "#03567A", margin: 0 }}>Federal: {fmt(calc.federalTax)}</p>
-                  <p style={{ fontSize: 12, color: "#03567A", margin: 0 }}>State ({calc.stateTaxRate}%): {fmt(calc.stateTax)}</p>
-                  <p style={{ fontSize: 12, color: "#03567A", margin: 0 }}>FICA: {fmt(calc.fica)}</p>
-                  {calc.cityTaxAmt > 0 && <p style={{ fontSize: 12, color: "#03567A", margin: 0 }}>City: {fmt(calc.cityTaxAmt)}</p>}
-                  <p style={{ fontSize: 12, color: "#03567A", margin: 0 }}>Total tax: {fmt(calc.totalTax)}</p>
-                  {calc.my401k > 0 && <p style={{ fontSize: 12, color: "#03567A", margin: 0 }}>401k: {fmt(calc.my401k)}</p>}
+                  <p style={{ fontSize: 12, color: "var(--gwc-blue)", margin: 0 }}>Federal: {fmt(calc.federalTax)}</p>
+                  <p style={{ fontSize: 12, color: "var(--gwc-blue)", margin: 0 }}>State ({calc.stateTaxRate}%): {fmt(calc.stateTax)}</p>
+                  <p style={{ fontSize: 12, color: "var(--gwc-blue)", margin: 0 }}>FICA: {fmt(calc.fica)}</p>
+                  {calc.cityTaxAmt > 0 && <p style={{ fontSize: 12, color: "var(--gwc-blue)", margin: 0 }}>City: {fmt(calc.cityTaxAmt)}</p>}
+                  <p style={{ fontSize: 12, color: "var(--gwc-blue)", margin: 0 }}>Total tax: {fmt(calc.totalTax)}</p>
+                  {calc.my401k > 0 && <p style={{ fontSize: 12, color: "var(--gwc-blue)", margin: 0 }}>401k: {fmt(calc.my401k)}</p>}
                 </div>
               </div>
-              <p style={{ fontSize: 11, color: "#03567A", margin: "8px 0 0 0" }}>Estimate only. Uses 2024 federal brackets, single filer. Your actual paycheck will vary. See disclaimer below.</p>
+              <p style={{ fontSize: 11, color: "var(--gwc-blue)", margin: "8px 0 0 0" }}>{"Estimate only. Uses " + TAX_YEAR + " federal brackets, the standard deduction and your filing status. Your actual paycheck will vary. See disclaimer below."}</p>
             </div>
           )}
 
           {/* Commute */}
           {calc.annualCommuteCost > 0 && (
-            <div style={{ background: "#F8EAEE", border: `1px solid #E7C7CF`, borderRadius: 10, padding: 14, marginBottom: 16 }}>
+            <div style={{ background: "var(--gwc-blush-tint)", border: `1px solid var(--gwc-blush)`, borderRadius: 10, padding: 14, marginBottom: 16 }}>
               <p style={{ fontSize: 12, fontWeight: 700, color: GOLD, textTransform: "uppercase", letterSpacing: 0.5, margin: "0 0 8px 0" }}>The Real Cost of This Commute</p>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                 <div>
-                  <p style={{ fontSize: 11, color: "#03567A", margin: "0 0 2px 0" }}>Annual commute cost</p>
+                  <p style={{ fontSize: 11, color: "var(--gwc-blue)", margin: "0 0 2px 0" }}>Annual commute cost</p>
                   <p style={{ fontSize: 15, fontWeight: 700, color: GOLD, margin: 0 }}>{fmt(calc.annualCommuteCost)}</p>
                 </div>
                 <div>
-                  <p style={{ fontSize: 11, color: "#03567A", margin: "0 0 2px 0" }}>Hours per year in transit</p>
+                  <p style={{ fontSize: 11, color: "var(--gwc-blue)", margin: "0 0 2px 0" }}>Hours per year in transit</p>
                   <p style={{ fontSize: 15, fontWeight: 700, color: GOLD, margin: 0 }}>{Math.round(calc.commuteHoursPerYear)} hrs</p>
                 </div>
               </div>
-              <p style={{ fontSize: 11, color: "#03567A", margin: "8px 0 0 0" }}>Driving cost at $0.67/mile (2024 IRS rate) + parking. Time valued at $15/hr.</p>
+              <p style={{ fontSize: 11, color: "var(--gwc-blue)", margin: "8px 0 0 0" }}>Driving cost at $0.725/mile (2026 IRS rate, used as a cost estimate) + parking. Time valued at $15/hr.</p>
             </div>
           )}
 
           {/* Remote note */}
           {offer.workStyle === "remote" && (
-            <div style={{ background: "#E3F2F3", borderLeft: `4px solid ${TEAL}`, borderRadius: "0 8px 8px 0", padding: 12 }}>
+            <div style={{ background: "var(--gwc-panel)", borderLeft: `4px solid ${TEAL}`, borderRadius: "0 8px 8px 0", padding: 12 }}>
               <p style={{ fontSize: 12, color: TEAL, fontWeight: 700, margin: "0 0 4px 0" }}>Remote Work Note</p>
               <p style={{ fontSize: 12, color: NAVY, margin: 0, lineHeight: 1.5 }}>Full environmental control and no sensory load in transit — real value for many neurodivergent workers. But structure is entirely self-generated. Make sure you have what you need to build it before accepting.</p>
             </div>
           )}
           {/* Disclaimer */}
-          <div style={{ background: "#F8EAEE", border: `1px solid #E7C7CF`, borderRadius: 8, padding: 12, marginTop: 14 }}>
+          <div style={{ background: "var(--gwc-blush-tint)", border: `1px solid var(--gwc-blush)`, borderRadius: 8, padding: 12, marginTop: 14 }}>
             <p style={{ fontSize: 11, color: GOLD, fontWeight: 700, margin: "0 0 4px 0", textTransform: "uppercase", letterSpacing: 0.5 }}>For informational and guidance purposes only</p>
-            <p style={{ fontSize: 11, color: "#012A4E", margin: 0, lineHeight: 1.6 }}>This calculator provides estimates based on the information you enter and publicly available tax rates. It does not guarantee an accurate depiction of your future paychecks. Actual deductions will vary based on your filing status, benefits elections, pre-tax deductions, employer-specific policies, and other factors not captured here. Use this as a starting point — not a financial plan. Consult your HR team or a tax professional for exact figures.</p>
+            <p style={{ fontSize: 11, color: "var(--gwc-navy)", margin: 0, lineHeight: 1.6 }}>This calculator provides estimates based on the information you enter and publicly available tax rates. It does not guarantee an accurate depiction of your future paychecks. Actual deductions will vary based on your filing status, benefits elections, pre-tax deductions, employer-specific policies, and other factors not captured here. Use this as a starting point — not a financial plan. Consult your HR team or a tax professional for exact figures.</p>
           </div>
         </div>
       );
@@ -521,10 +531,10 @@
       return (
         <tr>
           <td style={{ padding: "10px 12px", fontSize: 13, color: NAVY, fontWeight: 500, borderBottom: `1px solid ${BORDER}` }}>{label}</td>
-          <td style={{ padding: "10px 12px", fontSize: 13, fontWeight: 700, color: !tie && aWins ? GREEN : NAVY, textAlign: "right", borderBottom: `1px solid ${BORDER}`, background: !tie && aWins ? "#E3F2F3" : "transparent" }}>
+          <td style={{ padding: "10px 12px", fontSize: 13, fontWeight: 700, color: !tie && aWins ? GREEN : NAVY, textAlign: "right", borderBottom: `1px solid ${BORDER}`, background: !tie && aWins ? "var(--gwc-panel)" : "transparent" }}>
             {fmt(aNum)} {!tie && aWins && "✓"}
           </td>
-          <td style={{ padding: "10px 12px", fontSize: 13, fontWeight: 700, color: !tie && bWins ? GREEN : NAVY, textAlign: "right", borderBottom: `1px solid ${BORDER}`, background: !tie && bWins ? "#E3F2F3" : "transparent" }}>
+          <td style={{ padding: "10px 12px", fontSize: 13, fontWeight: 700, color: !tie && bWins ? GREEN : NAVY, textAlign: "right", borderBottom: `1px solid ${BORDER}`, background: !tie && bWins ? "var(--gwc-panel)" : "transparent" }}>
             {fmt(bNum)} {!tie && bWins && "✓"}
           </td>
         </tr>
@@ -532,8 +542,11 @@
     }
 
     function App() {
-      const [offerA, setOfferA] = useState({ ...defaultOffer, label: "Offer A" });
-      const [offerB, setOfferB] = useState({ ...defaultOffer, label: "Offer B", state: "CA" });
+      const STORE_KEY = "gwc-offer-calculator-v2";
+      const saved = (() => { try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch (e) { return {}; } })();
+      const [offerA, setOfferA] = useState({ ...defaultOffer, label: "Offer A", ...(saved.offerA || {}) });
+      const [offerB, setOfferB] = useState({ ...defaultOffer, label: "Offer B", state: "CA", ...(saved.offerB || {}) });
+      React.useEffect(() => { try { localStorage.setItem(STORE_KEY, JSON.stringify({ offerA, offerB })); } catch (e) {} }, [offerA, offerB]);
       const [activeTab, setActiveTab] = useState("inputs");
       const [comparing, setComparing] = useState(false);
 
@@ -547,7 +560,7 @@
       ];
 
       return (
-        <div style={{ minHeight: "100vh", background: "#F0FFFF" }}>
+        <div style={{ minHeight: "100vh", background: "var(--gwc-bg)" }}>
           {/* Header */}
           <div style={{ background: TEAL, padding: "20px 24px 0" }}>
             <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", opacity: 0.75, color: WHITE, margin: "0 0 4px 0" }}>The GroundWork Collective</p>
@@ -589,7 +602,7 @@
               <div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 24 }}>
                   <OfferSummary offer={offerA} calc={calcA} color={TEAL} />
-                  <OfferSummary offer={offerB} calc={calcB} color="#035F6A" />
+                  <OfferSummary offer={offerB} calc={calcB} color="var(--gwc-teal-deep)" />
                 </div>
 
                 {/* Negotiate callout */}
@@ -604,11 +617,11 @@
                     ].map(([title, tip]) => (
                       <div key={title} style={{ background: LIGHTGRAY, borderRadius: 8, padding: 12 }}>
                         <p style={{ fontSize: 13, fontWeight: 700, color: TEAL, margin: "0 0 4px 0" }}>{title}</p>
-                        <p style={{ fontSize: 13, color: "#012A4E", margin: 0, lineHeight: 1.5 }}>{tip}</p>
+                        <p style={{ fontSize: 13, color: "var(--gwc-navy)", margin: 0, lineHeight: 1.5 }}>{tip}</p>
                       </div>
                     ))}
                   </div>
-                  <div style={{ background: "#E3F2F3", borderLeft: `4px solid ${TEAL}`, borderRadius: "0 8px 8px 0", padding: 12, marginTop: 14 }}>
+                  <div style={{ background: "var(--gwc-panel)", borderLeft: `4px solid ${TEAL}`, borderRadius: "0 8px 8px 0", padding: 12, marginTop: 14 }}>
                     <p style={{ fontSize: 13, color: NAVY, margin: 0, lineHeight: 1.5 }}><strong>Script:</strong> "I am very excited about this role. Based on my research and the market for this position, I was hoping we could get to [specific number]. Is there flexibility there?" Then be quiet. Let them respond.</p>
                   </div>
                 </div>
@@ -628,27 +641,27 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr style={{ background: "#F0FFFF" }}>
+                      <tr style={{ background: "var(--gwc-bg)" }}>
                         <td colSpan={3} style={{ padding: "10px 12px", fontSize: 12, fontWeight: 700, color: TEAL, textTransform: "uppercase", letterSpacing: 0.5 }}>Compensation</td>
                       </tr>
                       <CompareRow label="Base Salary" a={calcA.base} b={calcB.base} />
                       <CompareRow label="Expected Bonus" a={calcA.expectedBonus} b={calcB.expectedBonus} />
                       <CompareRow label="Annual Equity Value" a={calcA.annualEquity} b={calcB.annualEquity} />
                       <CompareRow label="Total Comp (w/ variable)" a={calcA.totalComp} b={calcB.totalComp} />
-                      <tr style={{ background: "#F0FFFF" }}>
-                        <td colSpan={3} style={{ padding: "10px 12px", fontSize: 12, fontWeight: 700, color: "#03567A", textTransform: "uppercase", letterSpacing: 0.5 }}>Benefits</td>
+                      <tr style={{ background: "var(--gwc-bg)" }}>
+                        <td colSpan={3} style={{ padding: "10px 12px", fontSize: 12, fontWeight: 700, color: "var(--gwc-blue)", textTransform: "uppercase", letterSpacing: 0.5 }}>Benefits</td>
                       </tr>
                       <CompareRow label="Benefits Value (annual)" a={calcA.totalBenefitsValue} b={calcB.totalBenefitsValue} />
                       <CompareRow label="Health Premium (annual)" a={calcA.healthPremium} b={calcB.healthPremium} higherIsBetter={false} />
                       <CompareRow label="401(k) Match" a={calcA.retirementMatch} b={calcB.retirementMatch} />
                       <CompareRow label="PTO Value" a={calcA.ptoValue} b={calcB.ptoValue} />
-                      <tr style={{ background: "#F0FFFF" }}>
+                      <tr style={{ background: "var(--gwc-bg)" }}>
                         <td colSpan={3} style={{ padding: "10px 12px", fontSize: 12, fontWeight: 700, color: GOLD, textTransform: "uppercase", letterSpacing: 0.5 }}>Real Cost After Commute</td>
                       </tr>
                       <CompareRow label="Annual Commute Cost" a={calcA.annualCommuteCost} b={calcB.annualCommuteCost} higherIsBetter={false} />
                       <CompareRow label="Real Value (after commute)" a={calcA.realValue} b={calcB.realValue} />
-                      <tr style={{ background: "#F0FFFF" }}>
-                        <td colSpan={3} style={{ padding: "10px 12px", fontSize: 12, fontWeight: 700, color: "#035F6A", textTransform: "uppercase", letterSpacing: 0.5 }}>Take-Home Pay</td>
+                      <tr style={{ background: "var(--gwc-bg)" }}>
+                        <td colSpan={3} style={{ padding: "10px 12px", fontSize: 12, fontWeight: 700, color: "var(--gwc-teal-deep)", textTransform: "uppercase", letterSpacing: 0.5 }}>Take-Home Pay</td>
                       </tr>
                       <CompareRow label="Total Tax Burden" a={calcA.totalTax} b={calcB.totalTax} higherIsBetter={false} />
                       <CompareRow label="Est. Annual Net Pay" a={calcA.netPay} b={calcB.netPay} />
@@ -668,7 +681,7 @@
                     ].map(([title, tip]) => (
                       <div key={title} style={{ background: LIGHTGRAY, borderRadius: 8, padding: 12 }}>
                         <p style={{ fontSize: 13, fontWeight: 700, color: NAVY, margin: "0 0 4px 0" }}>{title}</p>
-                        <p style={{ fontSize: 12, color: "#03567A", margin: 0, lineHeight: 1.5 }}>{tip}</p>
+                        <p style={{ fontSize: 12, color: "var(--gwc-blue)", margin: 0, lineHeight: 1.5 }}>{tip}</p>
                       </div>
                     ))}
                   </div>
@@ -676,7 +689,7 @@
               </div>
             )}
 
-            <p style={{ textAlign: "center", fontSize: 12, color: "#03567A", marginTop: 24 }}>
+            <p style={{ textAlign: "center", fontSize: 12, color: "var(--gwc-blue)", marginTop: 24 }}>
               The GroundWork Collective · Module 5 · Built for the way you think
             </p>
           </div>
@@ -686,5 +699,6 @@
 
     ReactDOM.createRoot(document.getElementById('root')).render(<App />);
   </script>
+<script src="../gwc-shared.js" data-storage-keys="gwc-offer-calculator-v2"></script>
 </body>
 </html>
