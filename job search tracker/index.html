@@ -12,51 +12,51 @@
     margin: 0;
     padding: 20px;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-    background: #FAF7F2;
-    color: #2A2A2A;
+    background: #F0FFFF;
+    color: #012A4E;
     line-height: 1.55;
   }
   .wrap { max-width: 1100px; margin: 0 auto; }
   header { margin-bottom: 24px; }
-  h1 { font-size: 24px; margin: 0 0 4px 0; color: #1F3A5F; font-weight: 700; }
-  .sub { color: #5B6675; font-size: 14px; margin: 0; }
+  h1 { font-size: 24px; margin: 0 0 4px 0; color: #03567A; font-weight: 700; }
+  .sub { color: #03567A; font-size: 14px; margin: 0; }
   .card {
     background: #FFFFFF;
-    border: 1px solid #E6DFD3;
+    border: 1px solid #B8D7D8;
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 20px;
-    box-shadow: 0 1px 2px rgba(31, 58, 95, 0.04);
+    box-shadow: 0 1px 2px rgba(3,86,122,0.04);
   }
-  .card h2 { font-size: 17px; margin: 0 0 14px 0; color: #1F3A5F; font-weight: 600; }
+  .card h2 { font-size: 17px; margin: 0 0 14px 0; color: #03567A; font-weight: 600; }
   .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
   @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
   label {
     display: block;
     font-size: 13px;
     font-weight: 600;
-    color: #3A4452;
+    color: #012A4E;
     margin-bottom: 6px;
   }
   input[type="text"], input[type="date"], select, textarea {
     width: 100%;
     padding: 10px 12px;
-    border: 1px solid #D8CFBE;
+    border: 1px solid #97BFC3;
     border-radius: 8px;
     background: #FFFFFF;
     font-family: inherit;
     font-size: 14px;
-    color: #2A2A2A;
+    color: #012A4E;
   }
   input:focus, select:focus, textarea:focus {
-    outline: 2px solid #C2B69A;
+    outline: 2px solid #97BFC3;
     outline-offset: 1px;
-    border-color: #B5A582;
+    border-color: #108DAA;
   }
   textarea { resize: vertical; min-height: 80px; }
-  .hint { font-size: 12px; color: #7B8696; margin-top: 4px; font-style: italic; }
+  .hint { font-size: 12px; color: #03567A; margin-top: 4px; font-style: italic; }
   button {
-    background: #1F3A5F;
+    background: #03567A;
     color: #FFFFFF;
     border: none;
     padding: 10px 18px;
@@ -66,72 +66,72 @@
     cursor: pointer;
     font-family: inherit;
   }
-  button:hover { background: #2A4D7A; }
+  button:hover { background: #012A4E; }
   button.secondary {
-    background: #F1ECE0;
-    color: #3A4452;
-    border: 1px solid #D8CFBE;
+    background: #E3F2F3;
+    color: #012A4E;
+    border: 1px solid #97BFC3;
   }
-  button.secondary:hover { background: #E6DFD3; }
+  button.secondary:hover { background: #B8D7D8; }
   button.danger {
     background: transparent;
-    color: #A4453A;
-    border: 1px solid #DDB8B0;
+    color: #012A4E;
+    border: 1px solid #E7C7CF;
     padding: 6px 10px;
     font-size: 12px;
   }
-  button.danger:hover { background: #FCEEEA; }
+  button.danger:hover { background: #F8EAEE; }
   .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
   @media (max-width: 720px) { .stats { grid-template-columns: repeat(2, 1fr); } }
   .stat {
-    background: #F4EFE3;
+    background: #E3F2F3;
     border-radius: 10px;
     padding: 14px;
     text-align: center;
   }
-  .stat .n { font-size: 26px; font-weight: 700; color: #1F3A5F; }
-  .stat .l { font-size: 12px; color: #5B6675; margin-top: 2px; }
+  .stat .n { font-size: 26px; font-weight: 700; color: #03567A; }
+  .stat .l { font-size: 12px; color: #03567A; margin-top: 2px; }
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th { text-align: left; padding: 10px 8px; background: #F4EFE3; color: #1F3A5F; font-weight: 600; border-bottom: 1px solid #E6DFD3; }
-  td { padding: 10px 8px; border-bottom: 1px solid #F0EADC; vertical-align: top; }
+  th { text-align: left; padding: 10px 8px; background: #E3F2F3; color: #03567A; font-weight: 600; border-bottom: 1px solid #B8D7D8; }
+  td { padding: 10px 8px; border-bottom: 1px solid #E3F2F3; vertical-align: top; }
   tr:last-child td { border-bottom: none; }
   .pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; }
-  .pill.applied { background: #E3EDF8; color: #1F3A5F; }
-  .pill.interview { background: #FFF1D6; color: #8A6A1F; }
-  .pill.offer { background: #DCEFE1; color: #2A5F3A; }
-  .pill.rejected { background: #F4DCD7; color: #8A3A30; }
-  .pill.withdrawn { background: #ECE5DA; color: #5B6675; }
-  .pill.theme { background: #E8E1D0; color: #3A4452; margin-right: 6px; margin-bottom: 6px; }
-  .empty { padding: 24px; text-align: center; color: #7B8696; font-size: 14px; }
+  .pill.applied { background: #E3F2F3; color: #03567A; }
+  .pill.interview { background: #F8EAEE; color: #012A4E; }
+  .pill.offer { background: #D3EBEC; color: #03567A; }
+  .pill.rejected { background: #E7C7CF; color: #012A4E; }
+  .pill.withdrawn { background: #E3F2F3; color: #03567A; }
+  .pill.theme { background: #D3EBEC; color: #012A4E; margin-right: 6px; margin-bottom: 6px; }
+  .empty { padding: 24px; text-align: center; color: #03567A; font-size: 14px; }
   .row-actions { white-space: nowrap; }
-  .why-cell { max-width: 280px; color: #3A4452; }
+  .why-cell { max-width: 280px; color: #012A4E; }
   .chart-wrap { position: relative; height: 240px; }
   .insight {
-    background: #F4EFE3;
-    border-left: 3px solid #C2B69A;
+    background: #E3F2F3;
+    border-left: 3px solid #97BFC3;
     padding: 12px 14px;
     border-radius: 6px;
     margin-top: 10px;
     font-size: 13px;
-    color: #3A4452;
+    color: #012A4E;
   }
-  .insight strong { color: #1F3A5F; }
+  .insight strong { color: #03567A; }
   .row { display: flex; gap: 8px; align-items: center; }
   .row > * { flex: 1; }
   .row button { flex: 0 0 auto; }
-  details summary { cursor: pointer; font-weight: 600; color: #1F3A5F; padding: 6px 0; }
+  details summary { cursor: pointer; font-weight: 600; color: #03567A; padding: 6px 0; }
   .why-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
   .tag-chip {
     background: #FFFFFF;
-    border: 1px solid #D8CFBE;
+    border: 1px solid #97BFC3;
     border-radius: 999px;
     padding: 4px 10px;
     font-size: 12px;
-    color: #3A4452;
+    color: #012A4E;
     cursor: pointer;
   }
-  .tag-chip.active { background: #1F3A5F; color: #FFFFFF; border-color: #1F3A5F; }
-  .footer { text-align: center; font-size: 12px; color: #7B8696; margin-top: 20px; }
+  .tag-chip.active { background: #03567A; color: #FFFFFF; border-color: #03567A; }
+  .footer { text-align: center; font-size: 12px; color: #03567A; margin-top: 20px; }
 </style>
 </head>
 <body>
@@ -358,7 +358,7 @@ function renderCharts() {
       datasets: [{
         label: "Applications",
         data: themeData.length ? themeData : [0],
-        backgroundColor: "#7B96BD",
+        backgroundColor: "#108DAA",
         borderRadius: 6,
       }]
     },
@@ -380,8 +380,8 @@ function renderCharts() {
       labels: ["Applied", "Interview", "Offer", "Rejected", "Withdrawn"],
       datasets: [{
         data: [sc.applied, sc.interview, sc.offer, sc.rejected, sc.withdrawn],
-        backgroundColor: ["#7B96BD", "#E8C26B", "#7BB098", "#C97F73", "#B0A990"],
-        borderColor: "#FAF7F2",
+        backgroundColor: ["#108DAA", "#E7C7CF", "#1DA1A5", "#012A4E", "#97BFC3"],
+        borderColor: "#F0FFFF",
         borderWidth: 2,
       }]
     },
