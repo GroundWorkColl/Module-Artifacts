@@ -6,18 +6,18 @@
 <title>Module 3: Interview Prep Tool | GroundWork Collective</title>
 <style>
   :root {
-    --navy: #012A4E;
-    --teal: #035F6A;
-    --mid-blue: #03567A;
-    --orange: #012A4E;
-    --light-teal: #E3F2F3;
-    --light-navy: #E3F2F3;
-    --light-orange: #F8EAEE;
-    --text: #012A4E;
-    --subtle: #03567A;
-    --border: #B8D7D8;
+    --navy: var(--gwc-navy);
+    --teal: var(--gwc-teal-deep);
+    --mid-blue: var(--gwc-blue);
+    --orange: var(--gwc-navy);
+    --light-teal: var(--gwc-panel);
+    --light-navy: var(--gwc-panel);
+    --light-orange: var(--gwc-blush-tint);
+    --text: var(--gwc-navy);
+    --subtle: var(--gwc-blue);
+    --border: var(--gwc-pale);
     --white: #FFFFFF;
-    --bg: #F0FFFF;
+    --bg: var(--gwc-bg);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -38,7 +38,7 @@
   }
 
   header .brand { color: white; font-size: 14px; font-weight: 600; letter-spacing: 0.05em; opacity: 0.9; }
-  header .module-label { color: #9CCECE; font-size: 20px; font-weight: 700; }
+  header .module-label { color: var(--gwc-mist); font-size: 20px; font-weight: 700; }
 
   .progress-bar-wrap {
     background: var(--navy);
@@ -134,12 +134,12 @@
     align-items: flex-start;
     gap: 12px;
     padding: 10px 0;
-    border-bottom: 1px solid #E3F2F3;
+    border-bottom: 1px solid var(--gwc-panel);
     cursor: pointer;
     user-select: none;
   }
   .check-item:last-child { border-bottom: none; }
-  .check-item:hover { background: #F0FFFF; margin: 0 -24px; padding: 10px 24px; }
+  .check-item:hover { background: var(--gwc-bg); margin: 0 -24px; padding: 10px 24px; }
 
   .check-box {
     width: 22px; height: 22px;
@@ -223,13 +223,13 @@
     align-items: center;
     gap: 10px;
     padding: 12px 16px;
-    background: #F0FFFF;
+    background: var(--gwc-bg);
     border: 1px solid var(--border);
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s;
   }
-  .q-item:hover { border-color: var(--mid-blue); background: #E3F2F3; }
+  .q-item:hover { border-color: var(--mid-blue); background: var(--gwc-panel); }
   .q-item.added { border-color: var(--teal); background: var(--light-teal); }
   .q-item .q-text { font-size: 14px; flex: 1; line-height: 1.4; }
   .q-add-btn {
@@ -265,7 +265,7 @@
   }
   .my-q-item:last-child { border-bottom: none; }
   .my-q-item .remove { color: var(--subtle); cursor: pointer; font-size: 16px; line-height: 1; flex-shrink: 0; }
-  .my-q-item .remove:hover { color: #012A4E; }
+  .my-q-item .remove:hover { color: var(--gwc-navy); }
   .my-q-num { font-weight: 700; color: var(--teal); min-width: 20px; }
 
   /* Custom question input */
@@ -293,7 +293,7 @@
     font-family: inherit;
     white-space: nowrap;
   }
-  .custom-q-btn:hover { background: #03567A; }
+  .custom-q-btn:hover { background: var(--gwc-blue); }
 
   /* STAR practice */
   .star-card {
@@ -357,7 +357,7 @@
 
   /* Pre-interview email builder */
   .email-preview {
-    background: #F0FFFF;
+    background: var(--gwc-bg);
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 20px;
@@ -370,7 +370,7 @@
   }
   .email-toggle-item {
     display: flex; align-items: center; gap: 10px;
-    padding: 10px 0; border-bottom: 1px solid #E3F2F3;
+    padding: 10px 0; border-bottom: 1px solid var(--gwc-panel);
     cursor: pointer; user-select: none;
   }
   .email-toggle-item:last-child { border-bottom: none; }
@@ -406,7 +406,7 @@
     cursor: pointer; font-family: inherit;
     margin-top: 12px;
   }
-  .copy-btn:hover { background: #03567A; }
+  .copy-btn:hover { background: var(--gwc-blue); }
   .copy-btn.copied { background: var(--teal); }
 
   /* Callout */
@@ -442,7 +442,7 @@
     display: inline-flex; align-items: center; gap: 6px;
   }
   .btn-primary { background: var(--navy); color: white; }
-  .btn-primary:hover { background: #03567A; }
+  .btn-primary:hover { background: var(--gwc-blue); }
   .btn-secondary { background: white; color: var(--navy); border: 2px solid var(--border); }
   .btn-secondary:hover { border-color: var(--navy); }
   .btn:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -475,14 +475,14 @@
     align-items: center;
     justify-content: space-between;
     padding: 14px 0;
-    border-bottom: 1px solid #E3F2F3;
+    border-bottom: 1px solid var(--gwc-panel);
     font-size: 14px;
   }
   .summary-row:last-child { border-bottom: none; }
   .summary-row .label { color: var(--subtle); font-size: 13px; }
   .summary-row .value { font-weight: 600; color: var(--navy); }
-  .badge-complete { background: #E3F2F3; color: #035F6A; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; }
-  .badge-partial { background: #F8EAEE; color: #012A4E; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; }
+  .badge-complete { background: var(--gwc-panel); color: var(--gwc-teal-deep); padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; }
+  .badge-partial { background: var(--gwc-blush-tint); color: var(--gwc-navy); padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; }
 
   /* Responsive */
   @media (max-width: 600px) {
@@ -491,6 +491,7 @@
     .container { padding: 20px 16px 60px; }
   }
 </style>
+<link rel="stylesheet" href="../gwc-theme.css">
 </head>
 <body>
 
@@ -1090,7 +1091,7 @@ function markStarDone(btn) {
   const question = card.querySelector('.star-q span').textContent;
   if (!state.starDone.includes(question)) state.starDone.push(question);
   btn.textContent = '✓ Practiced';
-  btn.style.background = '#035F6A';
+  btn.style.background = 'var(--gwc-teal-deep)';
   btn.disabled = true;
 }
 
@@ -1156,5 +1157,6 @@ function buildSummary() {
 buildEmailPreview();
 </script>
 
+<script src="../gwc-shared.js"></script>
 </body>
 </html>
