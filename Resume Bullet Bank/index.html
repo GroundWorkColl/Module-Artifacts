@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resume Bullet Bank Builder | GroundWork Collaborative</title>
+<link rel="stylesheet" href="../gwc-theme.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--gwc-bg); color: var(--gwc-navy); line-height: 1.5; }
+  header { background: var(--gwc-navy); padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  header .brand { color: var(--gwc-white); font-size: 14px; font-weight: 600; }
+  header .title { color: var(--gwc-mist); font-size: 20px; font-weight: 700; }
+  nav.steps { background: var(--gwc-white); border-bottom: 2px solid var(--gwc-pale); display: flex; overflow-x: auto; position: sticky; top: 0; z-index: 50; padding: 0 16px; }
+  nav.steps button { background: none; border: 0; border-bottom: 4px solid transparent; padding: 14px 18px; font-size: 15px; font-weight: 600; color: var(--gwc-blue); cursor: pointer; white-space: nowrap; font-family: inherit; }
+  nav.steps button[aria-selected="true"] { color: var(--gwc-navy); border-bottom-color: var(--gwc-teal-deep); font-weight: 700; }
+  nav.steps .num { display: inline-block; min-width: 24px; height: 24px; line-height: 24px; border-radius: 12px; background: var(--gwc-panel-2); color: var(--gwc-navy); font-size: 13px; text-align: center; margin-right: 8px; }
+  nav.steps button[aria-selected="true"] .num { background: var(--gwc-teal-deep); color: var(--gwc-white); }
+  main { max-width: 1040px; margin: 0 auto; padding: 24px 16px 96px; }
+  h1 { font-size: 26px; margin: 0 0 6px; }
+  h2 { font-size: 19px; margin: 0 0 4px; }
+  h3 { font-size: 16px; margin: 0 0 6px; }
+  p { margin: 0 0 10px; }
+  .lead { font-size: 16px; color: var(--gwc-blue); max-width: 720px; }
+  .card { background: var(--gwc-white); border: 1px solid var(--gwc-pale); border-radius: 12px; padding: 18px; margin-bottom: 16px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .split { display: grid; grid-template-columns: 340px 1fr; gap: 16px; align-items: start; }
+  @media (max-width: 820px) { .grid, .split { grid-template-columns: 1fr; } }
+  label { display: block; font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+  .hint { font-size: 13px; color: var(--gwc-blue); margin: 0 0 6px; }
+  input[type=text], textarea, select { width: 100%; font: inherit; font-size: 15px; padding: 10px 12px; border: 2px solid var(--gwc-slate); border-radius: 8px; background: var(--gwc-white); color: var(--gwc-navy); }
+  textarea { resize: vertical; min-height: 64px; }
+  input[type=checkbox] { width: 20px; height: 20px; margin: 2px 8px 0 0; flex: none; accent-color: var(--gwc-teal-deep); }
+  .row { display: flex; gap: 8px; align-items: stretch; }
+  .row > input { flex: 1; }
+  button.btn { font: inherit; font-size: 15px; font-weight: 700; padding: 10px 16px; border-radius: 8px; border: 2px solid var(--gwc-blue); background: var(--gwc-blue); color: var(--gwc-white); cursor: pointer; }
+  button.btn:hover { background: var(--gwc-navy); border-color: var(--gwc-navy); }
+  button.btn.ghost { background: var(--gwc-white); color: var(--gwc-blue); }
+  button.btn.ghost:hover { background: var(--gwc-panel); color: var(--gwc-navy); }
+  button.btn:disabled { opacity: .5; cursor: not-allowed; }
+  button.small { font-size: 13px; padding: 5px 10px; }
+  ul.plain { list-style: none; margin: 10px 0 0; padding: 0; }
+  ul.plain li { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; padding: 7px 0; border-top: 1px solid var(--gwc-panel-2); }
+  ul.plain li:first-child { border-top: 0; }
+  .x { background: none; border: 0; color: var(--gwc-blue); font-size: 14px; cursor: pointer; text-decoration: underline; font-family: inherit; flex: none; }
+  .formula { background: var(--gwc-navy); color: var(--gwc-white); border-radius: 12px; padding: 16px 18px; margin-bottom: 16px; }
+  .formula p { margin: 0 0 6px; }
+  .formula .eq { font-size: 18px; font-weight: 700; color: var(--gwc-mist); }
+  .formula .eg { font-size: 14px; color: var(--gwc-pale); }
+  .tag { display: inline-block; background: var(--gwc-panel-2); color: var(--gwc-navy); border-radius: 999px; padding: 2px 10px; font-size: 12px; font-weight: 600; margin: 2px 4px 2px 0; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 8px; }
+  .chip { font: inherit; font-size: 13px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--gwc-teal-deep); background: var(--gwc-white); color: var(--gwc-teal-deep); cursor: pointer; }
+  .chip[aria-pressed="true"] { background: var(--gwc-teal-deep); color: var(--gwc-white); }
+  .ask { background: var(--gwc-panel); border-left: 4px solid var(--gwc-teal-deep); padding: 8px 12px; border-radius: 0 8px 8px 0; font-size: 14px; margin-bottom: 10px; }
+  .checks { list-style: none; padding: 0; margin: 8px 0 12px; font-size: 14px; }
+  .checks li { padding: 2px 0; }
+  .checks .ok { font-weight: 700; }
+  .raw label { display: flex; font-weight: 400; font-size: 14px; padding: 5px 0; cursor: pointer; margin: 0; }
+  .raw h3 { margin-top: 12px; font-size: 14px; color: var(--gwc-blue); }
+  .combine { background: var(--gwc-blush-tint); border: 1px solid var(--gwc-blush); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; font-size: 14px; }
+  .bullet { font-size: 16px; margin: 0 0 6px; }
+  .bullet::before { content: "\2022\00a0"; }
+  .match { font-size: 12px; color: var(--gwc-blue); }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .empty { text-align: center; padding: 28px 12px; color: var(--gwc-blue); }
+  .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+  .bar > * { flex: none; }
+  .bar select, .bar input { width: auto; min-width: 180px; }
+  @media print { nav.steps, .no-print, header .brand { display: none !important; } .card { border: 0; padding: 0; } }
+</style>
+</head>
+<body>
+<header>
+  <span class="brand">GroundWork Collaborative</span>
+  <span class="title">Resume Bullet Bank Builder</span>
+</header>
+<nav class="steps" role="tablist" aria-label="Steps" id="steps"></nav>
+<main id="app"></main>
+
+<script>
+(function () {
+  "use strict";
+  var KEY = "gwc_bullet_bank_v1";
+
+  var CATS = [
+    { id: "jobs", title: "Jobs and internships", prompt: "What did you do at work? Think tasks, tools, and people you helped.", ph: "Answered phones at the front desk" },
+    { id: "school", title: "School and training", prompt: "Projects, presentations, labs, clubs, group work, and classes you were proud of.", ph: "Built a slide deck for a team project" },
+    { id: "volunteer", title: "Volunteering and community", prompt: "Anything you did for a group, a cause, a place of worship, a team, or a neighbor.", ph: "Set up tables for a food drive" },
+    { id: "built", title: "Things you built, fixed, or organized", prompt: "At home, online, or for friends and family. Paid or unpaid counts.", ph: "Reorganized the family photo files" },
+    { id: "help", title: "Where people come to you for help", prompt: "What do friends, classmates, or coworkers ask you to do? Those are skills.", ph: "Fix computer problems for my relatives" },
+    { id: "tools", title: "Tools, software, and languages", prompt: "Programs, equipment, and languages you can use without much help.", ph: "Excel, Canva, a cash register, Spanish" }
+  ];
+
+  var MEASURES = [
+    { id: "count", label: "How many", q: "How many people, items, tasks, or events? Even a rough number works. Example: about 40 customers a day." },
+    { id: "freq", label: "How often", q: "How often did you do it? Daily, weekly, every shift? Example: every Friday for 6 months." },
+    { id: "speed", label: "How fast", q: "Was it faster than before, or faster than the usual way? Example: from 10 minutes to 6 minutes." },
+    { id: "money", label: "Money or time saved", q: "Did it save money, hours, or supplies? Example: saved about 3 hours a week." },
+    { id: "ba", label: "Before and after", q: "What was it like before you did it? What was it like after? Example: from 12 errors a month to 2." },
+    { id: "avoid", label: "Problems avoided", q: "What did not go wrong because of you? Example: zero missed deadlines in a semester." },
+    { id: "praise", label: "Feedback or results", q: "Did someone thank you, rate you, or choose your work? Example: rated 5 out of 5 by the manager." }
+  ];
+
+  var IRREG = "led built ran made taught wrote grew cut set won drove sold began chose kept held met paid sent spoke took brought found got gave kept saw shot sang taught thought told understood wove wrote drew fed fixed".split(" ");
+  var BAD_START = /^(i|my|we|responsible|helped with|worked on|duties|assisted with|did)\b/i;
+  var STOP = "the and for with that this from your you are was were have has had will into than then them they their our its but not all any can out about over also been more most such only other some what when which who how why while would could should there here very just like each per via".split(" ");
+
+  var state = load();
+  var ui = { sel: {}, editing: null, measure: null, filter: "", query: "", posting: "", confirm: null };
+
+  function load() {
+    try {
+      var s = JSON.parse(localStorage.getItem(KEY));
+      if (s && Array.isArray(s.statements) && Array.isArray(s.bullets)) { s.step = s.step || 1; return s; }
+    } catch (e) {}
+    return { statements: [], bullets: [], step: 1 };
+  }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+  function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+
+  function h(tag, attrs) {
+    var el = document.createElement(tag);
+    attrs = attrs || {};
+    Object.keys(attrs).forEach(function (k) {
+      var v = attrs[k];
+      if (v === null || v === undefined || v === false) return;
+      if (k === "text") el.textContent = v;
+      else if (k.indexOf("on") === 0) el.addEventListener(k.slice(2), v);
+      else if (k === "value") el.value = v;
+      else if (v === true) el.setAttribute(k, "");
+      else el.setAttribute(k, v);
+    });
+    for (var i = 2; i < arguments.length; i++) {
+      var c = arguments[i];
+      if (c === null || c === undefined || c === false) continue;
+      if (Array.isArray(c)) c.forEach(function (d) { if (d) el.appendChild(d); });
+      else el.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+    }
+    return el;
+  }
+
+  function toast(msg) {
+    var t = h("div", { "class": "gwc-toast no-print", role: "status", text: msg });
+    document.body.appendChild(t);
+    setTimeout(function () { t.remove(); }, 2600);
+  }
+
+  function copy(text, ok) {
+    function fallback() {
+      var ta = h("textarea", { value: text, "aria-hidden": "true" });
+      ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); toast(ok); } catch (e) { toast("Copy did not work. Select the text and copy it by hand."); }
+      ta.remove();
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function () { toast(ok); }, fallback);
+    else fallback();
+  }
+
+  /* ---------- navigation ---------- */
+  function renderSteps() {
+    var nav = document.getElementById("steps");
+    nav.innerHTML = "";
+    [["Brainstorm", state.statements.length], ["Build bullets", null], ["Your bank", state.bullets.length]].forEach(function (s, i) {
+      var n = i + 1;
+      var b = h("button", { type: "button", role: "tab", "aria-selected": state.step === n ? "true" : "false", onclick: function () { go(n); } },
+        h("span", { "class": "num", text: String(n) }), s[0] + (s[1] !== null ? " (" + s[1] + ")" : ""));
+      nav.appendChild(b);
+    });
+  }
+  function go(n) {
+    state.step = n; save();
+    if (n !== 2) { ui.editing = n === 3 ? null : ui.editing; }
+    render();
+    window.scrollTo(0, 0);
+  }
+  function render() {
+    renderSteps();
+    var app = document.getElementById("app");
+    app.innerHTML = "";
+    if (state.step === 1) app.appendChild(viewBrainstorm());
+    else if (state.step === 2) app.appendChild(viewBuild());
+    else app.appendChild(viewBank());
+  }
+
+  /* ---------- step 1 ---------- */
+  function viewBrainstorm() {
+    var wrap = h("div");
+    var count = h("p", { "class": "lead", "aria-live": "polite" });
+    function updateCount() {
+      var n = state.statements.length;
+      count.textContent = n === 0 ? "Nothing yet. Start with any box below." :
+        n < 10 ? "You have " + n + ". Most people need 10 or more to build a good bank." :
+        "You have " + n + ". That is plenty to start building bullets.";
+      renderSteps();
+      next.disabled = n === 0;
+    }
+    var next = h("button", { "class": "btn", type: "button", onclick: function () { go(2); }, text: "Next: build bullets" });
+
+    wrap.appendChild(h("h1", { text: "Step 1. Get it all on paper" }));
+    wrap.appendChild(h("p", { "class": "lead", text: "List everything you have done. Nothing fancy. Short is fine. Skip the polish and skip the numbers for now. You will sharpen these in step 2." }));
+    wrap.appendChild(count);
+
+    var grid = h("div", { "class": "grid" });
+    CATS.forEach(function (cat) {
+      var list = h("ul", { "class": "plain", "aria-label": cat.title + " list" });
+      var input = h("input", { type: "text", id: "in_" + cat.id, placeholder: "Example: " + cat.ph, "aria-label": "Add to " + cat.title });
+      function draw() {
+        list.innerHTML = "";
+        state.statements.filter(function (s) { return s.cat === cat.id; }).forEach(function (s) {
+          list.appendChild(h("li", null, h("span", { text: s.text }),
+            h("button", { "class": "x", type: "button", "aria-label": "Remove " + s.text, onclick: function () {
+              state.statements = state.statements.filter(function (t) { return t.id !== s.id; });
+              delete ui.sel[s.id]; save(); draw(); updateCount();
+            }, text: "Remove" })));
+        });
+      }
+      function add() {
+        var v = input.value.trim();
+        if (!v) return;
+        state.statements.push({ id: uid(), cat: cat.id, text: v });
+        input.value = ""; save(); draw(); updateCount(); input.focus();
+      }
+      input.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); add(); } });
+      draw();
+      grid.appendChild(h("section", { "class": "card" },
+        h("h2", { text: cat.title }), h("p", { "class": "hint", text: cat.prompt }),
+        h("div", { "class": "row" }, input, h("button", { "class": "btn small", type: "button", onclick: add, text: "Add" })),
+        list));
+    });
+    wrap.appendChild(grid);
+    wrap.appendChild(h("div", { "class": "actions no-print", "data-gwc-skip": "1" }, next));
+    updateCount();
+    return wrap;
+  }
+
+  /* ---------- step 2 ---------- */
+  function wordCount(t) { var m = t.trim().match(/\S+/g); return m ? m.length : 0; }
+  function isPastVerb(w) {
+    w = w.toLowerCase().replace(/[^a-z]/g, "");
+    return /^[a-z]{3,}ed$/.test(w) || IRREG.indexOf(w) !== -1;
+  }
+  function checksFor(t) {
+    t = t.trim();
+    var first = (t.split(/\s+/)[0] || "");
+    var n = wordCount(t);
+    return [
+      { ok: t && isPastVerb(first) && !BAD_START.test(t), text: "Starts with a past tense action verb, like Led, Built, or Cut" },
+      { ok: /\d|\b(one|two|three|four|five|six|seven|eight|nine|ten|dozen|hundred|thousand|percent|every|daily|weekly|monthly|zero)\b/i.test(t), text: "Has a number or a clear measure" },
+      { ok: /\b(by|through|using|via)\b/i.test(t), text: "Shows how you did it" },
+      { ok: n >= 8 && n <= 30, text: "Fits on one or two lines (8 to 30 words). Yours: " + n },
+      { ok: t && !/\b(i|my|me|responsible for|duties included|helped with|worked on)\b/i.test(t), text: "Leaves out I, my, and filler like responsible for" }
+    ];
+  }
+
+  function viewBuild() {
+    var wrap = h("div");
+    var edit = ui.editing ? state.bullets.filter(function (b) { return b.id === ui.editing; })[0] : null;
+    if (ui.editing && !edit) ui.editing = null;
+
+    wrap.appendChild(h("h1", { text: "Step 2. Turn your list into strong bullets" }));
+    wrap.appendChild(h("p", { "class": "lead", text: "Pick one or more statements from your list. Combine them if they tell one story. Then fill in the three parts of the Google XYZ formula." }));
+    wrap.appendChild(h("div", { "class": "formula" },
+      h("p", { "class": "eq", text: "Accomplished [X], as measured by [Y], by doing [Z]." }),
+      h("p", { "class": "eg", text: "Example: Cut front desk wait times (X) from 10 minutes to 6 (Y) by building a check-in script (Z)." })));
+
+    var split = h("div", { "class": "split" });
+
+    /* left: raw material */
+    var raw = h("section", { "class": "card raw" }, h("h2", { text: "Your raw material" }), h("p", { "class": "hint", text: "Check the ones that belong in this bullet." }));
+    var combine = h("div", { "class": "combine", "aria-live": "polite" });
+    function drawCombine() {
+      var picked = state.statements.filter(function (s) { return ui.sel[s.id]; });
+      combine.innerHTML = "";
+      if (!picked.length) { combine.style.display = "none"; return; }
+      combine.style.display = "";
+      combine.appendChild(h("strong", { text: "Combining " + picked.length + ":" }));
+      combine.appendChild(h("ul", { "class": "plain" }, picked.map(function (p) { return h("li", { text: p.text }); })));
+      combine.appendChild(h("button", { "class": "btn ghost small", type: "button", text: "Copy into 'What you did'", onclick: function () {
+        var f = document.getElementById("f_do");
+        var add = picked.map(function (p) { return p.text.toLowerCase(); }).join(", ");
+        f.value = f.value ? f.value + "; " + add : add; f.focus(); updatePreview();
+      } }));
+    }
+    if (!state.statements.length) {
+      raw.appendChild(h("div", { "class": "empty" }, h("p", { text: "Your list is empty." }), h("button", { "class": "btn", type: "button", text: "Go to step 1", onclick: function () { go(1); } })));
+    } else {
+      CATS.forEach(function (cat) {
+        var items = state.statements.filter(function (s) { return s.cat === cat.id; });
+        if (!items.length) return;
+        raw.appendChild(h("h3", { text: cat.title }));
+        items.forEach(function (s) {
+          var cb = h("input", { type: "checkbox", onchange: function () { ui.sel[s.id] = cb.checked; drawCombine(); } });
+          cb.checked = !!ui.sel[s.id];
+          raw.appendChild(h("label", null, cb, h("span", { text: s.text })));
+        });
+      });
+    }
+    split.appendChild(raw);
+
+    /* right: builder */
+    var right = h("div");
+    right.appendChild(combine);
+    drawCombine();
+
+    var card = h("section", { "class": "card" }, h("h2", { text: edit ? "Edit this bullet" : "Build a bullet" }));
+    function field(id, label, hint, rows, val) {
+      var ta = h("textarea", { id: id, rows: String(rows), oninput: updatePreview });
+      ta.value = val || "";
+      return h("div", { style: "margin-bottom:12px" }, h("label", { "for": id, text: label }), h("p", { "class": "hint", text: hint }), ta);
+    }
+    card.appendChild(field("f_acc", "What you accomplished (X)", "Start with a past tense verb. Example: Cut front desk wait times", 1, edit && edit.x));
+    card.appendChild(field("f_meas", "How you measured it (Y)", "Finish with a number. Example: from 10 minutes to 6 minutes", 1, edit && edit.y));
+
+    var ask = h("div", { "class": "ask", style: "display:none", "aria-live": "polite" });
+    var chips = h("div", { "class": "chips", role: "group", "aria-label": "Ways to measure" });
+    function drawChips() {
+      chips.innerHTML = "";
+      MEASURES.forEach(function (m) {
+        chips.appendChild(h("button", { "class": "chip", type: "button", "aria-pressed": ui.measure === m.id ? "true" : "false", text: m.label, onclick: function () {
+          ui.measure = ui.measure === m.id ? null : m.id; drawChips();
+          var cur = MEASURES.filter(function (x) { return x.id === ui.measure; })[0];
+          ask.style.display = cur ? "" : "none"; ask.textContent = cur ? cur.q : "";
+        } }));
+      });
+    }
+    drawChips();
+    card.appendChild(h("p", { "class": "hint", text: "No number? Tap a way to measure and answer the question. A rough number beats none. Use words like about or over if you are not sure." }));
+    card.appendChild(chips); card.appendChild(ask);
+
+    card.appendChild(field("f_do", "What you did (Z)", "Start with an ing word. Example: building a check-in script", 2, edit && edit.z));
+
+    card.appendChild(h("div", { "class": "actions" },
+      h("button", { "class": "btn ghost small", type: "button", text: "Draft my bullet from these three", onclick: function () {
+        var x = v("f_acc").replace(/[.,;\s]+$/, ""), y = v("f_meas").replace(/[.,;\s]+$/, ""), z = v("f_do").replace(/[.,;\s]+$/, "");
+        if (!x && !y && !z) { toast("Fill in at least one part first."); return; }
+        var t = [x, y].filter(Boolean).join(" ") + (z ? " by " + z.replace(/^by\s+/i, "") : "");
+        t = t.charAt(0).toUpperCase() + t.slice(1);
+        var f = document.getElementById("f_final"); f.value = t; updatePreview(); f.focus();
+      } }),
+      h("button", { "class": "x", type: "button", text: "See an example", onclick: function () {
+        set("f_acc", "Cut front desk wait times"); set("f_meas", "from 10 minutes to 6 minutes"); set("f_do", "building a check-in script for the team");
+        set("f_final", "Cut front desk wait times from 10 minutes to 6 minutes by building a check-in script for the team"); set("f_tags", "customer service, process improvement"); updatePreview();
+      } })));
+
+    var fin = h("div", { style: "margin:14px 0 8px" }, h("label", { "for": "f_final", text: "Your bullet" }),
+      h("p", { "class": "hint", text: "Edit until it sounds like you and is true. Read it out loud." }));
+    var finTa = h("textarea", { id: "f_final", rows: "3", oninput: updatePreview }); finTa.value = (edit && edit.text) || "";
+    fin.appendChild(finTa);
+    card.appendChild(fin);
+
+    var checks = h("ul", { "class": "checks", "aria-live": "polite", "aria-label": "Bullet checks" });
+    card.appendChild(checks);
+
+    var tagsDiv = h("div", { style: "margin-bottom:12px" }, h("label", { "for": "f_tags", text: "Keywords (optional)" }),
+      h("p", { "class": "hint", text: "Skills or job posting words this bullet proves. Separate with commas. Example: scheduling, customer service" }));
+    var tagIn = h("input", { type: "text", id: "f_tags" }); tagIn.value = edit ? edit.tags.join(", ") : "";
+    tagsDiv.appendChild(tagIn); card.appendChild(tagsDiv);
+
+    card.appendChild(h("div", { "class": "actions" },
+      h("button", { "class": "btn", type: "button", text: edit ? "Update bullet" : "Save to my bank", onclick: saveBullet }),
+      edit ? h("button", { "class": "btn ghost", type: "button", text: "Cancel", onclick: function () { ui.editing = null; go(3); } }) : h("button", { "class": "btn ghost", type: "button", text: "Clear", onclick: function () { ["f_acc", "f_meas", "f_do", "f_final", "f_tags"].forEach(function (i) { set(i, ""); }); updatePreview(); } }),
+      h("button", { "class": "btn ghost", type: "button", text: "View my bank (" + state.bullets.length + ")", onclick: function () { go(3); } })));
+    right.appendChild(card);
+    split.appendChild(right);
+    wrap.appendChild(split);
+
+    function v(id) { return document.getElementById(id).value.trim(); }
+    function set(id, val) { document.getElementById(id).value = val; }
+    function updatePreview() {
+      var t = document.getElementById("f_final").value;
+      checks.innerHTML = "";
+      checksFor(t).forEach(function (c) {
+        checks.appendChild(h("li", { "class": c.ok ? "ok" : "" }, (c.ok ? "✔ " : "○ ") , c.text));
+      });
+    }
+    function saveBullet() {
+      var text = v("f_final");
+      if (!text) { toast("Write or draft your bullet first."); return; }
+      var tags = v("f_tags").split(",").map(function (s) { return s.trim().toLowerCase(); }).filter(Boolean);
+      var rec = { text: text, tags: tags, x: v("f_acc"), y: v("f_meas"), z: v("f_do") };
+      if (edit) { Object.keys(rec).forEach(function (k) { edit[k] = rec[k]; }); ui.editing = null; save(); toast("Bullet updated."); go(3); return; }
+      rec.id = uid(); state.bullets.push(rec); save();
+      ["f_acc", "f_meas", "f_do", "f_final", "f_tags"].forEach(function (i) { set(i, ""); });
+      ui.sel = {}; toast("Saved. You have " + state.bullets.length + " in your bank.");
+      render(); document.getElementById("f_acc").focus();
+    }
+    setTimeout(updatePreview, 0);
+    return wrap;
+  }
+
+  /* ---------- step 3 ---------- */
+  function tokens(s) {
+    return (s.toLowerCase().match(/[a-z][a-z+#.\-]{2,}/g) || []).map(function (w) { return w.replace(/[.\-]+$/, ""); })
+      .filter(function (w) { return w.length > 3 && STOP.indexOf(w) === -1; });
+  }
+  function viewBank() {
+    var wrap = h("div");
+    wrap.appendChild(h("h1", { text: "Step 3. Your bullet bank" }));
+    wrap.appendChild(h("p", { "class": "lead", text: "Pull from this bank for every application. Pick the few bullets that fit the posting. Fewer, stronger bullets beat a full page of everything." }));
+
+    var tagSet = {};
+    state.bullets.forEach(function (b) { b.tags.forEach(function (t) { tagSet[t] = 1; }); });
+
+    var results = h("div", { "aria-live": "polite" });
+    var postTokens = null;
+
+    function visible() {
+      var q = ui.query.toLowerCase();
+      var list = state.bullets.filter(function (b) {
+        return (!ui.filter || b.tags.indexOf(ui.filter) !== -1) && (!q || (b.text + " " + b.tags.join(" ")).toLowerCase().indexOf(q) !== -1);
+      }).map(function (b) {
+        var hits = [];
+        if (postTokens) {
+          var seen = {};
+          tokens(b.text + " " + b.tags.join(" ")).forEach(function (w) { if (postTokens[w] && !seen[w]) { seen[w] = 1; hits.push(w); } });
+        }
+        return { b: b, hits: hits };
+      });
+      if (postTokens) list.sort(function (a, c) { return c.hits.length - a.hits.length; });
+      return list;
+    }
+    function draw() {
+      results.innerHTML = "";
+      var list = visible();
+      if (!state.bullets.length) {
+        results.appendChild(h("div", { "class": "card empty" }, h("p", { text: "No bullets yet." }), h("button", { "class": "btn", type: "button", text: "Build your first bullet", onclick: function () { go(2); } })));
+        return;
+      }
+      if (!list.length) { results.appendChild(h("div", { "class": "card empty", text: "No bullets match that filter." })); return; }
+      list.forEach(function (it) {
+        var b = it.b, weak = checksFor(b.text).filter(function (c) { return !c.ok; }).length;
+        var delBtn = h("button", { "class": "btn ghost small", type: "button", text: ui.confirm === b.id ? "Confirm delete" : "Delete", onclick: function () {
+          if (ui.confirm === b.id) { state.bullets = state.bullets.filter(function (x) { return x.id !== b.id; }); ui.confirm = null; save(); renderSteps(); draw(); }
+          else { ui.confirm = b.id; draw(); }
+        } });
+        results.appendChild(h("article", { "class": "card" },
+          h("p", { "class": "bullet", text: b.text }),
+          h("div", null, b.tags.map(function (t) { return h("span", { "class": "tag", text: t }); })),
+          postTokens ? h("p", { "class": "match", text: it.hits.length ? "Matches " + it.hits.length + " posting words: " + it.hits.slice(0, 8).join(", ") : "No posting words matched." }) : null,
+          weak ? h("p", { "class": "match no-print", "data-gwc-skip": "1", text: weak + " of 5 checks still open. Edit to strengthen it." }) : null,
+          h("div", { "class": "actions no-print", "data-gwc-skip": "1" },
+            h("button", { "class": "btn ghost small", type: "button", text: "Copy", onclick: function () { copy(b.text, "Bullet copied."); } }),
+            h("button", { "class": "btn ghost small", type: "button", text: "Edit", onclick: function () { ui.editing = b.id; go(2); } }),
+            delBtn)));
+      });
+    }
+
+    var tagSel = h("select", { "aria-label": "Filter by keyword", onchange: function () { ui.filter = tagSel.value; draw(); } }, h("option", { value: "", text: "All keywords" }),
+      Object.keys(tagSet).sort().map(function (t) { return h("option", { value: t, text: t }); }));
+    tagSel.value = ui.filter;
+    var search = h("input", { type: "text", placeholder: "Search bullets", "aria-label": "Search bullets", oninput: function () { ui.query = search.value; draw(); } });
+    search.value = ui.query;
+
+    wrap.appendChild(h("div", { "class": "bar no-print", "data-gwc-skip": "1" }, tagSel, search,
+      h("button", { "class": "btn small", type: "button", text: "Copy all shown", onclick: function () {
+        var t = visible().map(function (i) { return "• " + i.b.text; }).join("\n");
+        if (!t) { toast("Nothing to copy."); return; } copy(t, "Copied " + visible().length + " bullets.");
+      } }),
+      h("button", { "class": "btn ghost small", type: "button", text: "Add more bullets", onclick: function () { ui.editing = null; go(2); } })));
+
+    var post = h("textarea", { rows: "4", placeholder: "Paste the job posting here", "aria-label": "Job posting text" }); post.value = ui.posting;
+    wrap.appendChild(h("section", { "class": "card no-print", "data-gwc-skip": "1" }, h("h2", { text: "Tailor to a posting" }),
+      h("p", { "class": "hint", text: "Paste a job posting. Your bullets sort by how many of its words they use. Mirror the posting's language, and keep only the best matches." }),
+      post, h("div", { "class": "actions" },
+        h("button", { "class": "btn small", type: "button", text: "Rank my bullets", onclick: function () {
+          ui.posting = post.value; var m = {}; tokens(post.value).forEach(function (w) { m[w] = 1; });
+          postTokens = Object.keys(m).length ? m : null; draw(); if (!postTokens) toast("Paste a posting first.");
+        } }),
+        h("button", { "class": "btn ghost small", type: "button", text: "Clear ranking", onclick: function () { ui.posting = ""; post.value = ""; postTokens = null; draw(); } }))));
+
+    wrap.appendChild(results);
+    draw();
+    return wrap;
+  }
+
+  render();
+})();
+</script>
+<script src="../gwc-shared.js" data-storage-keys="gwc_bullet_bank_v1"></script>
+</body>
+</html>
