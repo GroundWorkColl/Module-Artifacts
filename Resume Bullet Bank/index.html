@@ -55,6 +55,10 @@
   .checks { list-style: none; padding: 0; margin: 8px 0 12px; font-size: 14px; }
   .checks li { padding: 2px 0; }
   .checks .ok { font-weight: 700; }
+  details.verbs { background: var(--gwc-panel); border: 1px solid var(--gwc-pale); border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; }
+  details.verbs summary { cursor: pointer; font-weight: 700; font-size: 15px; }
+  details.verbs h4 { margin: 10px 0 2px; font-size: 13px; color: var(--gwc-blue); }
+  .weak { background: var(--gwc-blush-tint); border-left: 4px solid var(--gwc-blush); padding: 8px 12px; border-radius: 0 8px 8px 0; font-size: 14px; margin: 0 0 10px; }
   .raw label { display: flex; font-weight: 400; font-size: 14px; padding: 5px 0; cursor: pointer; margin: 0; }
   .raw h3 { margin-top: 12px; font-size: 14px; color: var(--gwc-blue); }
   .combine { background: var(--gwc-blush-tint); border: 1px solid var(--gwc-blush); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; font-size: 14px; }
@@ -101,8 +105,20 @@
     { id: "praise", label: "Feedback or results", q: "Did someone thank you, rate you, or choose your work? Example: rated 5 out of 5 by the manager." }
   ];
 
+  var VERBS = [
+    ["Lead and manage", "Led Directed Coordinated Managed Supervised Organized Delegated Guided Oversaw Mentored"],
+    ["Build and create", "Built Created Designed Developed Launched Established Produced Drafted Assembled Wrote"],
+    ["Improve and fix", "Improved Streamlined Reduced Increased Resolved Repaired Simplified Upgraded Revised Restored"],
+    ["Help and serve", "Served Supported Advised Welcomed Delivered Accommodated Provided Resolved Responded Greeted"],
+    ["Teach and communicate", "Taught Trained Presented Explained Facilitated Persuaded Translated Informed Negotiated Demonstrated"],
+    ["Analyze and organize", "Analyzed Tracked Researched Audited Compared Sorted Scheduled Catalogued Measured Inspected"],
+    ["Do and operate", "Operated Processed Maintained Prepared Installed Inventoried Stocked Packaged Cooked Cleaned"]
+  ];
+  var WEAK = { "helped": "Supported, Guided, Contributed to", "worked": "Built, Developed, Improved", "did": "Completed, Delivered, Performed", "assisted": "Supported, Coordinated, Aided", "tried": "Tested, Piloted, Attempted", "participated": "Contributed, Joined, Collaborated", "utilized": "Used, Applied, Operated", "handled": "Managed, Resolved, Processed", "responsible": "Led, Managed, Owned", "involved": "Contributed, Joined, Drove" };
+  function weakFor(w) { return Object.prototype.hasOwnProperty.call(WEAK, w) ? WEAK[w] : null; }
+  var ALLVERBS = []; VERBS.forEach(function (g) { g[1].split(" ").forEach(function (w) { if (ALLVERBS.indexOf(w) === -1) ALLVERBS.push(w); }); });
   var IRREG = "led built ran made taught wrote grew cut set won drove sold began chose kept held met paid sent spoke took brought found got gave kept saw shot sang taught thought told understood wove wrote drew fed fixed".split(" ");
-  var BAD_START = /^(i|my|we|responsible|helped with|worked on|duties|assisted with|did)\b/i;
+  var BAD_START = /^(i|my|we|responsible|helped|worked|duties|assisted|did|tried|participated|involved|utilized)\b/i;
   var STOP = "the and for with that this from your you are was were have has had will into than then them they their our its but not all any can out about over also been more most such only other some what when which who how why while would could should there here very just like each per via".split(" ");
 
   var state = load();
@@ -230,6 +246,7 @@
     });
     wrap.appendChild(grid);
     wrap.appendChild(h("div", { "class": "actions no-print", "data-gwc-skip": "1" }, next));
+    wrap.appendChild(saveCard());
     updateCount();
     return wrap;
   }
@@ -245,7 +262,7 @@
     var first = (t.split(/\s+/)[0] || "");
     var n = wordCount(t);
     return [
-      { ok: t && isPastVerb(first) && !BAD_START.test(t), text: "Starts with a past tense action verb, like Led, Built, or Cut" },
+      { ok: t && isPastVerb(first) && !BAD_START.test(t), text: BAD_START.test(t) && t ? "Opens with a weak word (" + first + "). Swap in a stronger verb" : "Starts with a strong past tense verb, like Led, Built, or Cut" },
       { ok: /\d|\b(one|two|three|four|five|six|seven|eight|nine|ten|dozen|hundred|thousand|percent|every|daily|weekly|monthly|zero)\b/i.test(t), text: "Has a number or a clear measure" },
       { ok: /\b(by|through|using|via)\b/i.test(t), text: "Shows how you did it" },
       { ok: n >= 8 && n <= 30, text: "Fits on one or two lines (8 to 30 words). Yours: " + n },
@@ -309,7 +326,19 @@
       ta.value = val || "";
       return h("div", { style: "margin-bottom:12px" }, h("label", { "for": id, text: label }), h("p", { "class": "hint", text: hint }), ta);
     }
+    var det = h("details", { "class": "verbs" }, h("summary", { text: "Pick a powerful verb to start your bullet" }),
+      h("p", { "class": "hint", style: "margin-top:8px", text: "Tap a verb to put it at the start of X. Choose one that is true. Use Led only if you led." }));
+    VERBS.forEach(function (g) {
+      det.appendChild(h("h4", { text: g[0] }));
+      det.appendChild(h("div", { "class": "chips" }, g[1].split(" ").map(function (w) {
+        return h("button", { "class": "chip", type: "button", text: w, onclick: function () { pickVerb(w); } });
+      })));
+    });
+    det.open = true;
+    card.appendChild(det);
+    var weakBox = h("p", { "class": "weak", id: "weakbox", style: "display:none", "aria-live": "polite" });
     card.appendChild(field("f_acc", "What you accomplished (X)", "Start with a past tense verb. Example: Cut front desk wait times", 1, edit && edit.x));
+    card.appendChild(weakBox);
     card.appendChild(field("f_meas", "How you measured it (Y)", "Finish with a number. Example: from 10 minutes to 6 minutes", 1, edit && edit.y));
 
     var ask = h("div", { "class": "ask", style: "display:none", "aria-live": "polite" });
@@ -365,9 +394,31 @@
     split.appendChild(right);
     wrap.appendChild(split);
 
+    function pickVerb(w) {
+      var f = document.getElementById("f_acc");
+      var rest = f.value.trim();
+      var first = (rest.split(/\s+/)[0] || "").replace(/[^A-Za-z]/g, "");
+      var known = ALLVERBS.indexOf(first.charAt(0).toUpperCase() + first.slice(1).toLowerCase()) !== -1 || weakFor(first.toLowerCase());
+      var two = rest.toLowerCase().split(/\s+/).slice(0, 2).join(" ");
+      var drop = /^(helped with|worked on|responsible for|assisted with|participated in|involved in|tried to)$/.test(two) ? 2 : 1;
+      if (known) rest = rest.split(/\s+/).slice(drop).join(" ");
+      if (!known && rest) rest = rest.charAt(0).toLowerCase() + rest.slice(1);
+      f.value = w + (rest ? " " + rest : " ");
+      f.focus(); updatePreview();
+    }
+    function weakHint() {
+      var t = document.getElementById("f_acc").value.trim();
+      var first = (t.split(/\s+/)[0] || "").toLowerCase().replace(/[^a-z]/g, "");
+      var two = t.toLowerCase().split(/\s+/).slice(0, 2).join(" ");
+      var sug = weakFor(first);
+      if (/^(i|my|we)$/.test(first)) sug = "Led, Built, Organized";
+      weakBox.style.display = sug ? "" : "none";
+      weakBox.textContent = sug ? "\u201C" + t.split(/\s+/).slice(0, two === "helped with" || two === "worked on" || two === "responsible for" ? 2 : 1).join(" ") + "\u201D is a weak opener. Try: " + sug + ". Only use one that is true." : "";
+    }
     function v(id) { return document.getElementById(id).value.trim(); }
     function set(id, val) { document.getElementById(id).value = val; }
     function updatePreview() {
+      weakHint();
       var t = document.getElementById("f_final").value;
       checks.innerHTML = "";
       checksFor(t).forEach(function (c) {
@@ -387,6 +438,21 @@
     }
     setTimeout(updatePreview, 0);
     return wrap;
+  }
+
+  /* ---------- save panel ---------- */
+  function saveCard() {
+    function G() { return window.GWC || {}; }
+    var fi = h("input", { type: "file", accept: ".json,application/json", hidden: true, onchange: function () { if (fi.files[0] && G().restore) G().restore(fi.files[0]); fi.value = ""; } });
+    return h("section", { "class": "card no-print", "data-gwc-skip": "1", id: "savepanel" },
+      h("h2", { text: "Save your work" }),
+      h("p", { "class": "hint", text: "Your list and bullets save on this device in this browser as you type. Download a copy so you never lose them or can move to another computer." }),
+      h("div", { "class": "actions" },
+        h("button", { "class": "btn", type: "button", text: "Download as Word", onclick: function () { if (G().wordExport) G().wordExport(); else window.print(); } }),
+        h("button", { "class": "btn", type: "button", text: "Download backup file", onclick: function () { if (G().backup) G().backup(); else toast("Save tools are still loading. Try again."); } }),
+        h("button", { "class": "btn ghost", type: "button", text: "Restore from backup", onclick: function () { fi.click(); } }),
+        h("button", { "class": "btn ghost", type: "button", text: "Print or save as PDF", onclick: function () { window.print(); } })),
+      fi);
   }
 
   /* ---------- step 3 ---------- */
@@ -438,7 +504,7 @@
           h("p", { "class": "bullet", text: b.text }),
           h("div", null, b.tags.map(function (t) { return h("span", { "class": "tag", text: t }); })),
           postTokens ? h("p", { "class": "match", text: it.hits.length ? "Matches " + it.hits.length + " posting words: " + it.hits.slice(0, 8).join(", ") : "No posting words matched." }) : null,
-          weak ? h("p", { "class": "match no-print", "data-gwc-skip": "1", text: weak + " of 5 checks still open. Edit to strengthen it." }) : null,
+          weak ? h("p", { "class": "match no-print", "data-gwc-skip": "1", text: weak + " of " + checksFor(b.text).length + " checks still open. Edit to strengthen it." }) : null,
           h("div", { "class": "actions no-print", "data-gwc-skip": "1" },
             h("button", { "class": "btn ghost small", type: "button", text: "Copy", onclick: function () { copy(b.text, "Bullet copied."); } }),
             h("button", { "class": "btn ghost small", type: "button", text: "Edit", onclick: function () { ui.editing = b.id; go(2); } }),
@@ -471,6 +537,7 @@
 
     wrap.appendChild(results);
     draw();
+    wrap.appendChild(saveCard());
     return wrap;
   }
 
