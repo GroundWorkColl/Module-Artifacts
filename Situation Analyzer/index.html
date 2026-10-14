@@ -14,6 +14,11 @@
   <div id="root"></div>
   <script type="text/babel">
     const { useState } = React;
+const useStored = (key, init) => {
+  const [v, setV] = React.useState(() => { try { const r = localStorage.getItem(key); if (r !== null) return JSON.parse(r); } catch (e) {} return init; });
+  React.useEffect(() => { try { localStorage.setItem(key, JSON.stringify(v)); } catch (e) {} }, [v]);
+  return [v, setV];
+};
 
 const TEAL = "var(--gwc-blue)";
 const NAVY = "var(--gwc-navy)";
@@ -296,9 +301,9 @@ function SignalCard({ label, items, color }) {
 }
 
 function SituationAnalyzer() {
-  const [situation, setSituation] = useState("");
-  const [result, setResult] = useState(null);
-  const [activeSection, setActiveSection] = useState(null);
+  const [situation, setSituation] = useStored("gwc-situation-v1-text", "");
+  const [result, setResult] = useStored("gwc-situation-v1-result", null);
+  const [activeSection, setActiveSection] = useStored("gwc-situation-v1-tab", null);
 
   const handleAnalyze = () => {
     if (situation.trim().length < 20) return;
@@ -318,7 +323,7 @@ function SituationAnalyzer() {
         </div>
         <div style={{ background: WARMGRAY, borderRadius: 12, padding: 20, marginBottom: 24, borderLeft: `4px solid ${TEAL}` }}>
           <p style={{ color: NAVY, fontSize: 15, lineHeight: 1.7, margin: "0 0 10px 0" }}>Describe a specific workplace situation that is weighing on you. The more detail you include, the more targeted your analysis will be.</p>
-          <p style={{ color: "var(--gwc-blue)", fontSize: 13, lineHeight: 1.6, margin: 0 }}>This tool reads what you write and identifies patterns to help you understand whether the situation is hard (growth territory), toxic (harmful territory), or somewhere in the grey zone. Everything stays in this session. Nothing is stored or shared.</p>
+          <p style={{ color: "var(--gwc-blue)", fontSize: 13, lineHeight: 1.6, margin: 0 }}>This tool reads what you write and identifies patterns to help you understand whether the situation is hard (growth territory), toxic (harmful territory), or somewhere in the grey zone. Nothing is sent anywhere. What you write saves on this device only so you can return to it. The Analyze Another Situation button clears it.</p>
         </div>
         <div style={{ marginBottom: 20 }}>
           <label style={{ display: "block", color: NAVY, fontSize: 15, fontWeight: 600, marginBottom: 10 }}>What is happening at work?</label>
@@ -489,6 +494,6 @@ function SituationAnalyzer() {
 
 ReactDOM.createRoot(document.getElementById('root')).render(<SituationAnalyzer />);
   </script>
-<script src="../gwc-shared.js"></script>
+<script src="../gwc-shared.js" data-storage-keys="gwc-situation-v1-text,gwc-situation-v1-result,gwc-situation-v1-tab"></script>
 </body>
 </html>
