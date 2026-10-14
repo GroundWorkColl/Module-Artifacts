@@ -217,6 +217,11 @@
 <script type="text/babel">
 
 const { useState, useMemo } = React;
+const useStored = (key, init) => {
+  const [v, setV] = React.useState(() => { try { const r = localStorage.getItem(key); if (r !== null) return JSON.parse(r); } catch (e) {} return init; });
+  React.useEffect(() => { try { localStorage.setItem(key, JSON.stringify(v)); } catch (e) {} }, [v]);
+  return [v, setV];
+};
 
 // ─── SECTIONS ────────────────────────────────────────────────────────────────
 
@@ -1001,9 +1006,9 @@ function IntroScreen({ onStart }) {
 // ─── APP ──────────────────────────────────────────────────────────────────────
 
 function App() {
-  const [screen, setScreen] = useState('intro');
-  const [sectionIndex, setSectionIndex] = useState(0);
-  const [answers, setAnswers] = useState({});
+  const [screen, setScreen] = useStored('gwc-job-assessment-v1-screen', 'intro');
+  const [sectionIndex, setSectionIndex] = useStored('gwc-job-assessment-v1-section', 0);
+  const [answers, setAnswers] = useStored('gwc-job-assessment-v1-answers', {});
 
   const handleAnswer = (questionId, value) => {
     setAnswers(prev => ({ ...prev, [questionId]: value }));
@@ -1062,6 +1067,6 @@ function App() {
 
 ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 </script>
-<script src="../gwc-shared.js"></script>
+<script src="../gwc-shared.js" data-storage-keys="gwc-job-assessment-v1-screen,gwc-job-assessment-v1-section,gwc-job-assessment-v1-answers"></script>
 </body>
 </html>
