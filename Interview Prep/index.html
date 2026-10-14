@@ -1157,6 +1157,55 @@ function buildSummary() {
 buildEmailPreview();
 </script>
 
-<script src="../gwc-shared.js"></script>
+<script src="../gwc-shared.js" data-storage-keys="gwc-interview-prep-v1"></script>
+<script>
+/* Saves and restores Interview Prep progress on this device. */
+if (window.GWC && GWC.persist) {
+  GWC.persist({
+    key: "gwc-interview-prep-v1",
+    snap: function () {
+      return {
+        state: { currentSection: state.currentSection, selectedFormat: state.selectedFormat, emailToggles: state.emailToggles, myQuestions: state.myQuestions, starDone: state.starDone },
+        checks: Array.prototype.map.call(document.querySelectorAll("#night-checklist .check-box, #morning-checklist .check-box"), function (b) { return b.classList.contains("checked"); }),
+        star: Array.prototype.map.call(document.querySelectorAll(".star-textarea"), function (t) { return t.value; })
+      };
+    },
+    restore: function (d) {
+      if (!d || !d.state) return;
+      var st = d.state;
+      state.emailToggles = st.emailToggles || state.emailToggles;
+      document.querySelectorAll("#email-toggles .email-toggle-item").forEach(function (it) {
+        it.querySelector(".toggle-box").classList.toggle("on", !!state.emailToggles[it.dataset.key]);
+      });
+      buildEmailPreview();
+      state.myQuestions = st.myQuestions || [];
+      document.querySelectorAll(".q-item").forEach(function (it) {
+        var t = it.querySelector(".q-text"), btn = it.querySelector(".q-add-btn");
+        if (t && btn && state.myQuestions.indexOf(t.textContent) !== -1) {
+          btn.textContent = "\u2713 Added"; btn.classList.add("added"); it.classList.add("added");
+        }
+      });
+      updateMyQuestionsList();
+      (d.checks || []).forEach(function (on, i) {
+        var box = document.querySelectorAll("#night-checklist .check-box, #morning-checklist .check-box")[i];
+        if (box && on) { box.classList.add("checked"); var l = box.parentNode.querySelector(".check-label"); if (l) l.classList.add("done"); }
+      });
+      updateChecklistProgress();
+      (d.star || []).forEach(function (v, i) { var t = document.querySelectorAll(".star-textarea")[i]; if (t) t.value = v; });
+      state.starDone = st.starDone || [];
+      document.querySelectorAll(".star-card").forEach(function (c) {
+        var q = c.querySelector(".star-q span").textContent;
+        if (state.starDone.indexOf(q) !== -1) {
+          var b = c.querySelector(".star-complete-btn");
+          if (b) { b.textContent = "\u2713 Practiced"; b.style.background = "var(--gwc-teal-deep)"; b.disabled = true; }
+        }
+      });
+      if (st.selectedFormat && formatTips[st.selectedFormat]) selectFormat(st.selectedFormat);
+      if (st.currentSection) goTo(st.currentSection);
+    }
+  });
+}
+</script>
+
 </body>
 </html>
