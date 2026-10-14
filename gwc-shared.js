@@ -6,6 +6,8 @@
    Options on the script tag:
      data-gwc-export="off"        hide the button on this page
      data-storage-keys="a,b"      localStorage keys to include in backup
+     data-gwc-panel="off"         hide the "Save your work" panel at the bottom of the page
+   Pages can call GWC.persist({key, snap, restore}) to save and restore their own state.
 */
 (function () {
   var tag = document.currentScript;
@@ -119,6 +121,63 @@
     r.readAsText(file);
   }
 
+  var savers = [];
+  var stampEl = null;
+  function stamp(msg) {
+    if (!stampEl) return;
+    var d = new Date();
+    stampEl.textContent = (msg || "Saved on this device") + " at " + d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) + ".";
+  }
+  function persist(o) {
+    try {
+      var raw = localStorage.getItem(o.key);
+      if (raw) o.restore(JSON.parse(raw));
+    } catch (e) {}
+    var t;
+    function save() {
+      try { localStorage.setItem(o.key, JSON.stringify(o.snap())); stamp(); } catch (e) {}
+    }
+    savers.push(save);
+    function later() { clearTimeout(t); t = setTimeout(save, 400); }
+    ["click", "input", "change"].forEach(function (ev) { document.addEventListener(ev, later, true); });
+    window.addEventListener("beforeunload", save);
+    return save;
+  }
+  function saveNow() {
+    savers.forEach(function (f) { f(); });
+    if (!savers.length) stamp("Your work saves on this device as you go. Checked");
+    else stamp("Saved on this device");
+    toast("Saved on this device.");
+  }
+
+  function buildPanel() {
+    if (document.getElementById("savepanel") || (tag && tag.getAttribute("data-gwc-panel") === "off")) return;
+    var sec = document.createElement("section");
+    sec.className = "gwc-panel"; sec.id = "gwc-savepanel"; sec.setAttribute("data-gwc-skip", "1");
+    var h = document.createElement("h2"); h.textContent = "Save your work";
+    var p = document.createElement("p");
+    p.textContent = "Your work saves on this device, in this browser, as you go. Download a copy so you never lose it or so you can move to another computer.";
+    stampEl = document.createElement("p"); stampEl.className = "gwc-panel-stamp"; stampEl.setAttribute("aria-live", "polite");
+    var row = document.createElement("div"); row.className = "gwc-panel-actions";
+    function b(label, fn, ghost) {
+      var x = document.createElement("button"); x.type = "button"; x.textContent = label;
+      if (ghost) x.className = "ghost";
+      x.addEventListener("click", fn); row.appendChild(x); return x;
+    }
+    b("Save now", saveNow);
+    b("Download as Word", wordExport);
+    if (keys.length) {
+      b("Download backup file", backup, true);
+      var fi = document.createElement("input"); fi.type = "file"; fi.accept = ".json,application/json"; fi.hidden = true;
+      fi.addEventListener("change", function () { if (fi.files[0]) restore(fi.files[0]); fi.value = ""; });
+      b("Restore from backup", function () { fi.click(); }, true);
+      row.appendChild(fi);
+    }
+    b("Print or save as PDF", function () { window.print(); }, true);
+    sec.appendChild(h); sec.appendChild(p); sec.appendChild(row); sec.appendChild(stampEl);
+    document.body.appendChild(sec);
+  }
+
   function build() {
     var wrap = document.createElement("div");
     wrap.className = "gwc-save";
@@ -158,7 +217,9 @@
     document.body.appendChild(wrap);
   }
 
+  window.GWC = { wordExport: wordExport, backup: backup, restore: restore, persist: persist, saveNow: saveNow };
   if (!off) {
-    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", build); else build();
+    var go = function () { build(); buildPanel(); };
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", go); else go();
   }
 })();
