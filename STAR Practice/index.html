@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STAR Interview Practice | GroundWork Collaborative</title>
+<link rel="stylesheet" href="../gwc-theme.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--gwc-bg); color: var(--gwc-navy); line-height: 1.5; }
+  header { background: var(--gwc-navy); padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  header .brand { color: var(--gwc-white); font-size: 14px; font-weight: 600; }
+  header .title { color: var(--gwc-mist); font-size: 20px; font-weight: 700; }
+  main { max-width: 900px; margin: 0 auto; padding: 24px 16px 96px; }
+  h1 { font-size: 26px; margin: 0 0 6px; }
+  h2 { font-size: 19px; margin: 0 0 6px; }
+  p { margin: 0 0 10px; }
+  .lead { font-size: 16px; color: var(--gwc-blue); }
+  .card { background: var(--gwc-white); border: 1px solid var(--gwc-pale); border-radius: 12px; padding: 18px; margin-bottom: 16px; }
+  .sample { background: var(--gwc-blush-tint); border-left: 4px solid var(--gwc-blush); border-radius: 0 8px 8px 0; padding: 12px 14px; margin-bottom: 16px; font-size: 15px; }
+  .star { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 12px 0 0; }
+  .star div { background: var(--gwc-panel); border-radius: 8px; padding: 8px 10px; font-size: 13px; }
+  .star b { display: block; font-size: 15px; color: var(--gwc-teal-deep); }
+  @media (max-width: 640px) { .star { grid-template-columns: 1fr 1fr; } }
+  .ask { background: var(--gwc-panel); border-left: 4px solid var(--gwc-teal-deep); padding: 8px 12px; border-radius: 0 8px 8px 0; font-size: 14px; margin: 8px 0 10px; }
+  label { display: block; font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+  textarea { width: 100%; font: inherit; font-size: 15px; padding: 10px 12px; border: 2px solid var(--gwc-slate); border-radius: 8px; background: var(--gwc-white); color: var(--gwc-navy); resize: vertical; min-height: 190px; }
+  .meta { font-size: 13px; color: var(--gwc-blue); margin: 4px 0 10px; }
+  button.btn { font: inherit; font-size: 15px; font-weight: 700; padding: 10px 16px; border-radius: 8px; border: 2px solid var(--gwc-blue); background: var(--gwc-blue); color: var(--gwc-white); cursor: pointer; margin-right: 8px; }
+  button.btn:hover { background: var(--gwc-navy); border-color: var(--gwc-navy); }
+  button.btn.ghost { background: var(--gwc-white); color: var(--gwc-blue); }
+  button.btn.ghost:hover { background: var(--gwc-panel); color: var(--gwc-navy); }
+  .result { margin-top: 14px; border-top: 2px solid var(--gwc-panel-2); padding-top: 12px; }
+  .result[hidden] { display: none; }
+  .headline { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .parts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 10px; }
+  .part { border-radius: 8px; padding: 8px 10px; font-size: 13px; background: var(--gwc-panel); border: 2px solid var(--gwc-pale); }
+  .part b { display: block; font-size: 15px; }
+  .part.solid { border-color: var(--gwc-teal-deep); }
+  .part.thin { border-color: var(--gwc-cyan); }
+  .part.missing { border-color: var(--gwc-blush); background: var(--gwc-blush-tint); }
+  @media (max-width: 640px) { .parts { grid-template-columns: 1fr 1fr; } }
+  ul.flags { list-style: none; margin: 0; padding: 0; }
+  ul.flags li { padding: 7px 10px; margin-bottom: 6px; border-radius: 8px; font-size: 14px; background: var(--gwc-panel); }
+  ul.flags li.fix { border-left: 4px solid var(--gwc-blush); background: var(--gwc-blush-tint); }
+  ul.flags li.tip { border-left: 4px solid var(--gwc-cyan); }
+  ul.flags li.good { border-left: 4px solid var(--gwc-teal-deep); }
+  ul.flags b { margin-right: 6px; }
+  .tagged { margin-top: 10px; font-size: 14px; }
+  .tagged span { display: inline; padding: 1px 3px; border-radius: 4px; background: var(--gwc-panel); margin-right: 2px; }
+  .tagged sup { color: var(--gwc-teal-deep); font-weight: 700; margin-right: 4px; }
+  .tagged span.n { background: transparent; }
+</style>
+</head>
+<body>
+<header><span class="brand">GroundWork Collaborative</span><span class="title">STAR Interview Practice</span></header>
+<main>
+  <h1>Practice your STAR answers</h1>
+  <p class="lead">Write your answer to each question. Then check it. The checker looks for Situation, Task, Action and Result. It also flags common problems.</p>
+
+  <div class="sample" id="sample-note">
+    <b>These are sample questions.</b> Not every interview asks these exact questions. They are common, so practicing them builds stories you can reshape for other questions.
+  </div>
+
+  <div class="card">
+    <h2>The STAR method</h2>
+    <div class="star">
+      <div><b>S Situation</b>Set the scene in one or two sentences.</div>
+      <div><b>T Task</b>Say what you needed to do.</div>
+      <div><b>A Action</b>Walk through the steps you took. Spend the most time here.</div>
+      <div><b>R Result</b>Say what changed. Add a number and a lesson.</div>
+    </div>
+  </div>
+
+  <div id="qs"></div>
+</main>
+<script src="../gwc-shared.js" data-storage-keys="gwc_star_v1"></script>
+<script>
+(function () {
+  var NAMES = { S: 'Situation', T: 'Task', A: 'Action', R: 'Result' };
+  var ORDER = ['S', 'T', 'A', 'R'];
+  var STARTERS = {
+    S: 'Try: "At the time, I was ... when ..."',
+    T: 'Try: "My job was to ..." or "I needed to ..."',
+    A: 'Try: "First, I ... Then I ... Finally, I ..."',
+    R: 'Try: "As a result, ..." and "What I learned was ..."'
+  };
+  var IRREG = 'spoke|met|wrote|made|ran|took|led|told|built|chose|set|sent|said|gave|brought|taught|held|kept|drew|found|got|put|stood|began|sat|wove|thought|did';
+  var A_VERBS = 'talked|spoke|asked|met|created|built|made|wrote|organized|planned|suggested|proposed|explained|listened|researched|tracked|called|emailed|sent|led|took|taught|trained|practiced|checked|reviewed|offered|apologized|scheduled|compared|presented|shared|brought|drafted|designed|fixed|solved|handled|coordinated|negotiated|prepared|followed|stepped|started|began|decided|chose|raised|gathered|collected|simplified|rebuilt|rewrote|set up|reached out';
+  var S_CUES = [
+    /\b(when|while|during)\b/gi,
+    /\b(last (year|summer|semester|month|week|fall|spring)|at the time|back (in|when)|one (day|time|afternoon|morning))\b/gi,
+    /\b(in|at) (my|our|the) (class|job|role|group|team|department|internship|school|company|store|office|restaurant|program|club|shift)\b/gi,
+    /\b(there was|there were|we were|i was working|i was a|i was in)\b/gi,
+    /\bmy (coworker|colleague|manager|boss|teammate|supervisor|coach|teacher|professor|group|partner|classmate)\b/gi,
+    /\b(project|semester|season|assignment|event)\b/gi
+  ];
+  var T_CUES = [
+    /\bmy (job|role|task|goal|responsibility|assignment|part|duty|duties) (was|were)\b/gi,
+    /\bi (was|were) (asked|responsible|assigned|tasked|supposed|expected|in charge)\b/gi,
+    /\b(i|we) (needed|had|wanted|was trying|were trying) to\b/gi,
+    /\b(the goal|the problem|the challenge|the issue|the deadline) (was|is)\b/gi,
+    /\b(deadline|was due|tasked|assigned|in charge of)\b/gi
+  ];
+  var A_CUES = [
+    new RegExp('\\bi (then |first |also |quickly |immediately |calmly |respectfully |personally )?(' + A_VERBS + ')\\b', 'gi'),
+    new RegExp('\\b(so|then|first,?|next,?|after that,?|finally,?) i (' + A_VERBS + '|' + IRREG + '|[a-z]{3,}ed)\\b', 'gi'),
+    new RegExp('\\bi (' + IRREG + ')\\b', 'gi'),
+    /\bi (?!was|were|had|felt|thought|knew|wanted|needed|hoped|loved|liked|realized|noticed|worried|expected|believed|learned|appreciated|am|have|can|could|would|should|tried to)[a-z]{3,}ed\b/gi
+  ];
+  var R_CUES = [
+    /\b(as a result|the result|resulted|result was|in the end|ended up|eventually|outcome|since then|going forward|from then on|turned out|paid off|worked out)\b/gi,
+    /\b(we were able|was able to|were able to|i learned|what i learned|i realized|lesson)\b/gi,
+    /\b(improved|increased|decreased|reduced|saved|grew|won|earned|exceeded|praised|thanked|recognized|promoted|resolved|solved|agreed|successful|success|stronger|met the deadline|on time)\b/gi,
+    /\b(\d+(\.\d+)?\s?(%|percent)|\$\s?\d[\d,]*|\d+\s+(hours?|days?|weeks?|months?|customers|people|students|sales|clients|items|points|members|calls|orders))\b/gi,
+    /\b(now (we|they|he|she|i)|after that|afterwards?)\b/gi
+  ];
+  var NUM = /(\d+(\.\d+)?\s?(%|percent)|\$\s?\d|\b\d+\b|\b(zero|two|three|four|five|six|seven|eight|nine|ten|dozen|hundred|thousand|twice|doubled|tripled|half)\b)/i;
+
+  function count(res, s) {
+    var n = 0;
+    res.forEach(function (r) { r.lastIndex = 0; var m = s.match(r); if (m) n += Math.min(m.length, 2); });
+    return Math.min(n, 4);
+  }
+  function splitSentences(text) {
+    var out = [];
+    text.split(/\n+/).forEach(function (p) {
+      p.split(/(?<=[.!?])\s+(?=[A-Z"'(])/).forEach(function (s) { s = s.trim(); if (s) out.push(s); });
+    });
+    return out;
+  }
+  function wc(s) { var m = s.trim().match(/\S+/g); return m ? m.length : 0; }
+  function has(t, r) { return r.test(t); }
+
+  var QUESTIONS = [
+    { id: 'conflict', short: 'Resolve a conflict',
+      prompt: 'Tell me about a time when you had to resolve a conflict with a colleague.',
+      listening: 'They want to see that you can disagree without damaging a working relationship. They listen for how you handled it, not who was right.',
+      checks: function (t) {
+        var f = [];
+        if (t.trim().length < 20) return f;
+        if (has(t, /\b(stupid|lazy|idiot|hate|incompetent|useless|jerk|ridiculous|annoying|always|never)\b/i))
+          f.push({ level: 'fix', text: 'Blame language spotted (words like lazy, always, never). Describe the behavior, not the person.' });
+        if (!has(t, /\b(listened|talked|spoke|asked|understood|understand|compromise|agreed|apologized|discussed|met with|one-on-one|privately|calmly|perspective|their side)\b/i))
+          f.push({ level: 'fix', text: 'Show HOW you handled it: listening, talking directly, or finding a middle ground.' });
+        if (!has(t, /\b(relationship|working together|trust|respect|moved forward|since then|afterward|still work|get along|better)\b/i))
+          f.push({ level: 'tip', text: 'Say what happened to the working relationship afterward.' });
+        return f;
+      } },
+    { id: 'win', short: 'A big win',
+      prompt: 'Tell me about a time when you had a big win.',
+      listening: 'They want proof of what you can do and how big it was. They also listen for who you credit. Own your part and name the people who helped.',
+      checks: function (t) {
+        var f = [];
+        if (t.trim().length < 20) return f;
+        if (!NUM.test(t) && !has(t, /\b(award|promoted|recognized|praised|first place|won|record|top|best|honor|certificate|selected|chosen)\b/i))
+          f.push({ level: 'fix', text: 'A big win needs proof of its size. Add a number, an award, or who noticed.' });
+        if (!has(t, /\b(team|colleague|coworker|classmate|manager|coach|mentor|group|teacher|friend|family|supervisor)\b/i))
+          f.push({ level: 'tip', text: 'Name who helped or supported you. Crediting others shows maturity.' });
+        if (!has(t, /\b(felt|proud|learned|taught me|lesson|realized)\b/i))
+          f.push({ level: 'tip', text: 'Add a line on what the win taught you or why it mattered to you.' });
+        return f;
+      } },
+    { id: 'pushback', short: 'Pushed back on leadership',
+      prompt: 'Tell me about a time that you pushed back on an idea your boss, coach, or someone in leadership had.',
+      listening: 'They want to know you will speak up when something looks wrong, and that you do it with respect. Facts and a better option beat a flat no.',
+      checks: function (t) {
+        var f = [];
+        if (t.trim().length < 20) return f;
+        if (!has(t, /\b(respectful|respectfully|asked|suggested|explained|data|evidence|numbers|concern|alternative|option|proposed|listened|understand|their goal|their point|offered|raised|shared my|question)\b/i))
+          f.push({ level: 'fix', text: 'Show HOW you pushed back respectfully: ask a question, bring evidence, or offer another option.' });
+        if (has(t, /\b(refused|argued|insisted|demanded|stood my ground|told (him|her|them) (he|she|they|it) (was|were) wrong)\b/i))
+          f.push({ level: 'tip', text: 'Words like refused or insisted can sound rigid. Show curiosity before you show your position.' });
+        if (!has(t, /\b(decided|agreed|adopted|changed|went with|accepted|approved|committed|supported the decision|moved forward|listened to)\b/i))
+          f.push({ level: 'tip', text: 'Say what happened to the idea. Was it changed, adopted, or did you commit to the final call?' });
+        return f;
+      } }
+  ];
+
+  function evaluate(text, q) {
+    var sents = splitSentences(text);
+    var words = wc(text);
+    var tagged = [];
+    var last = 'S';
+    sents.forEach(function (s, i) {
+      var rc = count(R_CUES, s);
+      var sc = {
+        S: count(S_CUES, s) + (i === 0 ? 1 : 0),
+        T: count(T_CUES, s),
+        A: count(A_CUES, s),
+        R: rc + (i === sents.length - 1 && rc > 0 ? 1 : 0)
+      };
+      if (i === 0 && sc.S === 1 && count(S_CUES, s) === 0) sc.S = 0.5;
+      var best = null, bestScore = 0;
+      ['R', 'A', 'T', 'S'].forEach(function (L) { if (sc[L] > bestScore) { best = L; bestScore = sc[L]; } });
+      if (bestScore < 1) best = null;
+      var shared = best || last;
+      if (best) last = best;
+      tagged.push({ text: s, letter: best, shared: shared, words: wc(s) });
+    });
+    var letters = {};
+    ORDER.forEach(function (L) {
+      var cued = tagged.filter(function (t) { return t.letter === L; });
+      var w = cued.reduce(function (a, t) { return a + t.words; }, 0);
+      var sw = tagged.filter(function (t) { return t.shared === L; }).reduce(function (a, t) { return a + t.words; }, 0);
+      var status = 'missing';
+      if (cued.length > 0) {
+        if (L === 'A') status = (cued.length >= 2 || w >= 25) ? 'solid' : 'thin';
+        else if (L === 'R') {
+          var concrete = cued.some(function (t) { return NUM.test(t.text) || /\b(learned|lesson|realized|resulted|result)\b/i.test(t.text); });
+          status = (concrete && w >= 8) ? 'solid' : 'thin';
+        } else status = w >= 12 ? 'solid' : 'thin';
+      }
+      letters[L] = { status: status, share: words ? sw / words : 0, evidence: cued.map(function (t) { return t.text; }) };
+    });
+    var found = ORDER.filter(function (L) { return letters[L].status !== 'missing'; }).length;
+    var flags = [];
+    function add(level, t) { flags.push({ level: level, text: t }); }
+    ORDER.forEach(function (L) { if (letters[L].status === 'missing') add('fix', NAMES[L] + ' is missing. ' + STARTERS[L]); });
+    ORDER.forEach(function (L) {
+      if (letters[L].status === 'thin') {
+        add('tip', L === 'R' ? 'Your Result has no number and no lesson. Say what changed or what you learned.'
+          : L === 'A' ? 'Your Action is one short line. Walk through the steps you took.'
+          : NAMES[L] + ' is only a short mention. Add one more detail.');
+      }
+    });
+    if (words === 0) add('fix', 'Write your answer first.');
+    else if (words < 60) add('fix', 'Too short at ' + words + ' words. Aim for 150 to 250 words, about one to two minutes out loud.');
+    else if (words < 100) add('tip', 'Short at ' + words + ' words. Strong answers run 150 to 250 words.');
+    else if (words > 320) add('tip', 'Long at ' + words + ' words. Trim the setup. Aim for 150 to 250 words.');
+    if (words >= 60) {
+      var st = letters.S.share + letters.T.share;
+      if (st > 0.45) add('fix', Math.round(st * 100) + '% of your answer is setup. Cut background and spend more words on what you did.');
+      else if (letters.A.status !== 'missing' && letters.A.share < 0.3)
+        add('fix', 'Only ' + Math.round(letters.A.share * 100) + '% of your answer is Action. Interviewers want the most time on what YOU did.');
+      if (letters.R.status !== 'missing' && letters.R.share < 0.1) add('tip', 'Your Result is brief. Give it at least two sentences.');
+      var I = (text.match(/\b(i|i'm|i've|i'll|i'd)\b/gi) || []).length;
+      var WE = (text.match(/\b(we|our|us|the team|everyone)\b/gi) || []).length;
+      if (I < 2) add('fix', 'Almost no "I". The interviewer needs to hear what YOU did, not what the group did.');
+      else if (WE > I * 1.5) add('tip', 'You say "we" far more than "I". Name your own part clearly.');
+      else add('good', 'You use "I" to claim your own actions.');
+    }
+    if (letters.R.status === 'solid' && NUM.test(letters.R.evidence.join(' '))) add('good', 'Your Result includes a number. That makes it concrete.');
+    if (!NUM.test(text) && words >= 60) add('tip', 'No numbers anywhere. Even rough ones help: how many people, how long, how much.');
+    q.checks(text).forEach(function (f) { flags.push(f); });
+    var ord = { fix: 0, tip: 1, good: 2 };
+    flags.sort(function (a, b) { return ord[a.level] - ord[b.level]; });
+    var fixes = flags.filter(function (f) { return f.level === 'fix'; }).length;
+    var verdict = 'work';
+    if (found === 4 && fixes === 0) verdict = 'strong';
+    else if (found >= 3 && fixes <= 1) verdict = 'close';
+    var headline = words === 0 ? 'Nothing to check yet'
+      : verdict === 'strong' ? 'Strong STAR answer'
+      : verdict === 'close' ? 'Close. Fix ' + (fixes === 0 ? 'one small thing' : 'one thing') + ' to land it'
+      : 'Not yet a full STAR answer. ' + found + ' of 4 parts found';
+    return { words: words, tagged: tagged, letters: letters, found: found, flags: flags, headline: headline };
+  }
+
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+
+  var root = document.getElementById('qs');
+  var boxes = {};
+  var results = {};
+
+  QUESTIONS.forEach(function (q, i) {
+    var card = el('div', 'card');
+    card.id = 'q-' + q.id;
+    card.appendChild(el('h2', null, 'Question ' + (i + 1) + ' of ' + QUESTIONS.length + ': ' + q.short));
+    card.appendChild(el('p', null, q.prompt));
+    var ask = el('div', 'ask');
+    var b = el('b', null, 'What they listen for: ');
+    ask.appendChild(b);
+    ask.appendChild(document.createTextNode(q.listening));
+    card.appendChild(ask);
+    var lab = el('label', null, 'Your answer');
+    lab.setAttribute('for', 'ta-' + q.id);
+    card.appendChild(lab);
+    var ta = el('textarea');
+    ta.id = 'ta-' + q.id;
+    ta.placeholder = 'Write your answer here. Aim for 150 to 250 words.';
+    card.appendChild(ta);
+    var meta = el('div', 'meta', '0 words');
+    card.appendChild(meta);
+    var go = el('button', 'btn', 'Check my answer');
+    go.type = 'button';
+    var clr = el('button', 'btn ghost', 'Clear');
+    clr.type = 'button';
+    card.appendChild(go);
+    card.appendChild(clr);
+    var res = el('div', 'result');
+    res.hidden = true;
+    res.setAttribute('aria-live', 'polite');
+    card.appendChild(res);
+    root.appendChild(card);
+    boxes[q.id] = ta;
+    results[q.id] = res;
+    ta.addEventListener('input', function () { meta.textContent = wc(ta.value) + ' words'; });
+    go.addEventListener('click', function () { check(q); });
+    clr.addEventListener('click', function () {
+      ta.value = ''; meta.textContent = '0 words'; res.hidden = true; res.textContent = '';
+      ta.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+  });
+
+  function check(q) {
+    var ta = boxes[q.id], res = results[q.id];
+    var ev = evaluate(ta.value, q);
+    res.textContent = '';
+    res.hidden = false;
+    res.appendChild(el('div', 'headline', ev.headline));
+    if (ev.words === 0) return;
+    var parts = el('div', 'parts');
+    ORDER.forEach(function (L) {
+      var p = el('div', 'part ' + ev.letters[L].status);
+      p.appendChild(el('b', null, L + ' ' + NAMES[L]));
+      p.appendChild(document.createTextNode(ev.letters[L].status === 'missing' ? 'Not found' : ev.letters[L].status === 'thin' ? 'Found, but thin' : 'Found'));
+      parts.appendChild(p);
+    });
+    res.appendChild(parts);
+    var ul = el('ul', 'flags');
+    var tag = { fix: 'Fix', tip: 'Tip', good: 'Good' };
+    ev.flags.forEach(function (f) {
+      var li = el('li', f.level);
+      li.appendChild(el('b', null, tag[f.level] + ':'));
+      li.appendChild(document.createTextNode(f.text));
+      ul.appendChild(li);
+    });
+    res.appendChild(ul);
+    var tg = el('div', 'tagged');
+    tg.appendChild(el('b', null, 'How each sentence reads: '));
+    ev.tagged.forEach(function (t) {
+      if (t.letter) { tg.appendChild(el('sup', null, t.letter + ' ')); }
+      tg.appendChild(el('span', t.letter ? '' : 'n', t.text + ' '));
+    });
+    res.appendChild(tg);
+  }
+
+  function snap() {
+    var o = {};
+    QUESTIONS.forEach(function (q) { o[q.id] = boxes[q.id].value; });
+    return o;
+  }
+  function restore(o) {
+    if (!o) return;
+    QUESTIONS.forEach(function (q) {
+      if (typeof o[q.id] === 'string') {
+        boxes[q.id].value = o[q.id];
+        boxes[q.id].dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    });
+  }
+  if (window.GWC && GWC.persist) GWC.persist({ key: 'gwc_star_v1', snap: snap, restore: restore });
+})();
+</script>
+</body>
+</html>
