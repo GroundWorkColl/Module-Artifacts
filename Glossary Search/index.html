@@ -200,6 +200,10 @@
     .fuzzy-badge { background: var(--gwc-teal-deep); color: var(--gwc-mist); }
     .card.fuzzy { border-color: var(--gwc-cyan); }
   }
+  .savebtn { font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; margin-left: auto; padding: 4px 10px; border-radius: 999px; border: 1.5px solid var(--gwc-blue); background: #fff; color: var(--gwc-blue); }
+  .savebtn.on { background: var(--gwc-blue); color: #fff; }
+  .savebtn:focus-visible { outline: 3px solid var(--gwc-cyan); outline-offset: 2px; }
+  .meta { align-items: center; }
 </style>
 <link rel="stylesheet" href="../gwc-theme.css">
 </head>
@@ -246,7 +250,11 @@ const MODULE_NAMES = {
   "12": "M12 Peopling"
 };
 
-const state = { q: "", module: null };
+const state = { q: "", module: null, saved: false };
+const SAVED_KEY = "gwc_glossary_saved_v1";
+let savedTerms = new Set();
+try { savedTerms = new Set(JSON.parse(localStorage.getItem(SAVED_KEY) || "[]")); } catch (e) {}
+function persistSaved() { try { localStorage.setItem(SAVED_KEY, JSON.stringify(Array.from(savedTerms))); } catch (e) {} }
 
 function escapeHtml(s) {
   return s.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
@@ -370,12 +378,21 @@ function buildFilters() {
   });
   f.appendChild(generalBtn);
 
+  const savedBtn = document.createElement("button");
+  savedBtn.className = "chip";
+  savedBtn.id = "savedchip";
+  savedBtn.textContent = "My saved (" + savedTerms.size + ")";
+  savedBtn.title = "Show only the terms you saved";
+  savedBtn.addEventListener("click", () => { state.saved = !state.saved; render(); });
+  f.appendChild(savedBtn);
+
   const clearBtn = document.createElement("button");
   clearBtn.className = "chip clear";
   clearBtn.textContent = "Clear";
   clearBtn.addEventListener("click", () => {
     state.q = "";
     state.module = null;
+    state.saved = false;
     document.getElementById("search").value = "";
     render();
   });
@@ -383,6 +400,7 @@ function buildFilters() {
 }
 
 function moduleOk(e) {
+  if (state.saved && !savedTerms.has(e.term)) return false;
   if (!state.module) return true;
   if (state.module === "__none__") return !e.modules || e.modules.length === 0;
   return e.modules && e.modules.includes(state.module);
@@ -401,6 +419,7 @@ function renderEntry(e, fuzzy) {
       <div class="meta">
         <span class="tag">${escapeHtml(e.category)}</span>
         ${moduleTags}
+        <button type="button" class="savebtn${savedTerms.has(e.term) ? " on" : ""}" data-term="${escapeHtml(e.term)}" aria-pressed="${savedTerms.has(e.term)}">${savedTerms.has(e.term) ? "\u2605 Saved" : "\u2606 Save"}</button>
       </div>
       <div class="label">What it means</div>
       <div class="body">${highlight(e.definition, fuzzy ? "" : state.q)}</div>
@@ -422,7 +441,9 @@ function render() {
   suggest.style.display = "none";
   suggest.innerHTML = "";
 
-  if (!q && !state.module) {
+  const sv = document.getElementById("savedchip");
+  if (sv) { sv.textContent = "My saved (" + savedTerms.size + ")"; sv.classList.toggle("active", state.saved); }
+  if (!q && !state.module && !state.saved) {
     const sorted = ENTRIES.slice().sort((a,b) => a.term.localeCompare(b.term));
     meta.textContent = `${sorted.length} terms.`;
     results.innerHTML = sorted.map(e => renderEntry(e, false)).join("");
@@ -465,7 +486,9 @@ function render() {
 
   if (scored.length === 0) {
     meta.textContent = "";
-    results.innerHTML = `<div class="empty"><strong>No matches.</strong>Try a shorter word, or clear the filters.</div>`;
+    results.innerHTML = state.saved && !savedTerms.size
+      ? `<div class="empty"><strong>No saved terms yet.</strong>Press Save on any term to keep it here.</div>`
+      : `<div class="empty"><strong>No matches.</strong>Try a shorter word, or clear the filters.</div>`;
     return;
   }
 
@@ -482,9 +505,18 @@ document.getElementById("search").addEventListener("input", e => {
   render();
 });
 
+document.getElementById("results").addEventListener("click", e => {
+  const b = e.target.closest(".savebtn");
+  if (!b) return;
+  const t = b.dataset.term;
+  if (savedTerms.has(t)) savedTerms.delete(t); else savedTerms.add(t);
+  persistSaved();
+  render();
+});
+
 buildFilters();
 render();
 </script>
-<script src="../gwc-shared.js" data-gwc-export="off"></script>
+<script src="../gwc-shared.js" data-storage-keys="gwc_glossary_saved_v1"></script>
 </body>
 </html>
