@@ -645,7 +645,7 @@
     <div class="page-header">
       <div class="page-tag">7.6 Early Warning Check</div>
       <h2>Recognize the need before burnout</h2>
-      <p>Answer these questions about how work has felt over the past few weeks. This is for your awareness only — nothing is submitted or saved beyond this browser session.</p>
+      <p>Answer these questions about how work has felt over the past few weeks. This is for your awareness only. Nothing is sent anywhere. Your answers save on this device so you can come back to them.</p>
     </div>
 
     <div class="card">
@@ -753,8 +753,9 @@ function evaluateDecision() {
   const keys = ['need', 'specific', 'trust', 'culture', 'perf', 'provider'];
   if (!keys.every(k => answers[k])) return;
 
-  const yesCount = keys.filter(k => answers[k] === 'yes').length;
-  const noCount = keys.filter(k => answers[k] === 'no').length;
+  // Question 5 (performance scrutiny) reads the other way: "No" is the favorable answer.
+  const yesCount = keys.filter(k => k === 'perf' ? answers[k] === 'no' : answers[k] === 'yes').length;
+  const noCount = keys.filter(k => k === 'perf' ? answers[k] === 'yes' : answers[k] === 'no').length;
 
   const result = document.getElementById('decision-result');
   result.className = 'decision-result visible';
@@ -912,6 +913,46 @@ function evaluateBurnout() {
 document.getElementById('req-law').value = 'the Americans with Disabilities Act (ADA)';
 </script>
 
-<script src="../gwc-shared.js"></script>
+<script src="../gwc-shared.js" data-storage-keys="gwc-disclosure-v1"></script>
+<script>
+/* Saves and restores Disclosure and Accommodations answers on this device. */
+if (window.GWC && GWC.persist) {
+  var GWC_FIELDS = ["req-name", "req-to", "req-limitation", "req-accommodation", "req-law", "burnout-reflection"];
+  GWC.persist({
+    key: "gwc-disclosure-v1",
+    snap: function () {
+      var f = {};
+      GWC_FIELDS.forEach(function (id) { var e = document.getElementById(id); if (e) f[id] = e.value; });
+      return { answers: answers, scale: scaleAnswers, accoms: selectedAccoms, fields: f };
+    },
+    restore: function (d) {
+      if (!d) return;
+      Object.keys(d.answers || {}).forEach(function (k) {
+        var v = d.answers[k];
+        var btn = Array.prototype.find.call(document.querySelectorAll(".dq-opt"), function (b) {
+          var oc = b.getAttribute("onclick") || "";
+          return oc.indexOf("'" + k + "', '" + v + "'") !== -1;
+        });
+        if (btn) btn.click();
+      });
+      Object.keys(d.scale || {}).forEach(function (k) {
+        var v = d.scale[k];
+        var btn = Array.prototype.find.call(document.querySelectorAll(".scale-btn"), function (b) {
+          var oc = b.getAttribute("onclick") || "";
+          return oc.indexOf("'" + k + "', " + v + ",") !== -1;
+        });
+        if (btn) btn.click();
+      });
+      Object.keys(d.accoms || {}).forEach(function (id) {
+        var it = document.querySelector('.accom-item[data-id="' + id + '"]');
+        if (it) it.click();
+      });
+      Object.keys(d.fields || {}).forEach(function (id) { var e = document.getElementById(id); if (e && d.fields[id] !== "") e.value = d.fields[id]; });
+      updateEmail();
+    }
+  });
+}
+</script>
+
 </body>
 </html>
