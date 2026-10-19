@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grounded: Interview Self Awareness Toolkit | Groundwork Collaborative</title>
+<meta name="description" content="An interactive self awareness workbook for neurodivergent job seekers preparing for interviews.">
+<style>
+:root{
+  --navy:#012a4e; --mid:#03567a; --teal:#2A9D8F; --light:#b8d7d8; --tint:#eef6f6; --taupe:#e7c7cf;
+  --ink:#012a4e; --line:#b8d7d8; --bg:#ffffff;
+  --font: Arial, Helvetica, sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;color-scheme:light}
+body{margin:0;font-family:var(--font);color:var(--ink);background:var(--bg);font-size:17px;line-height:1.55}
+a{color:var(--mid)}
+:focus-visible{outline:3px solid var(--teal);outline-offset:2px;border-radius:3px}
+.skip{position:absolute;left:-999px;top:8px;background:var(--navy);color:#fff;padding:8px 12px;z-index:50}
+.skip:focus{left:8px}
+
+/* header */
+.top{background:var(--navy);color:#fff;position:relative;overflow:hidden;border-bottom:6px solid var(--taupe)}
+.top svg{position:absolute;right:-120px;top:-140px;width:560px;height:560px;opacity:.9;pointer-events:none}
+.top .in{max-width:1080px;margin:0 auto;padding:44px 24px 40px;position:relative}
+.top .org{color:var(--light);font-size:15px;margin:0 0 28px}
+.top h1{font-size:clamp(52px,10vw,92px);line-height:1;margin:0 0 14px;font-weight:700;letter-spacing:-.02em}
+.top .sub{font-size:clamp(20px,3vw,26px);font-weight:700;margin:0 0 8px}
+.top .tag{color:var(--light);margin:0;font-size:18px}
+
+/* layout */
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:230px minmax(0,1fr);gap:48px}
+nav.side{position:sticky;top:0;align-self:start;padding:28px 0;max-height:100vh;overflow:auto}
+nav.side ol{list-style:none;margin:0;padding:0}
+nav.side a{display:block;padding:7px 12px;border-left:3px solid var(--line);color:var(--ink);text-decoration:none;font-size:15px}
+nav.side a:hover{background:var(--tint)}
+nav.side a.on{border-left-color:var(--teal);font-weight:700;background:var(--tint)}
+.meter{margin:0 0 18px;font-size:14px;color:var(--mid)}
+.meter .bar{height:8px;background:var(--tint);border-radius:4px;margin-top:6px;overflow:hidden;border:1px solid var(--line)}
+.meter .bar i{display:block;height:100%;width:0;background:var(--teal);transition:width .3s}
+main{padding:28px 0 80px;max-width:720px}
+section{padding:34px 0 8px;border-top:1px solid var(--line);scroll-margin-top:8px}
+section:first-of-type{border-top:0;padding-top:12px}
+h2{font-size:30px;line-height:1.15;margin:0 0 14px;color:var(--navy)}
+h3{font-size:19px;margin:30px 0 12px;color:var(--mid);padding-left:14px;border-left:6px solid var(--teal);line-height:1.2}
+p{margin:0 0 14px;max-width:62ch}
+.part{font-size:15px;color:var(--mid);margin:0 0 6px}
+.call{background:var(--tint);border-left:6px solid var(--teal);padding:16px 18px;margin:18px 0;border-radius:0 6px 6px 0}
+.call b{display:block;margin-bottom:4px}
+.call p{margin:0;max-width:none}
+ul.dots{padding-left:0;list-style:none;margin:0 0 16px}
+ul.dots li{padding-left:20px;position:relative;margin:0 0 6px}
+ul.dots li:before{content:"";position:absolute;left:3px;top:.62em;width:7px;height:7px;background:var(--teal)}
+
+/* fields */
+.fld{margin:0 0 16px}
+.fld label,.lbl{display:block;font-weight:700;font-size:15px;color:var(--mid);margin-bottom:5px}
+input[type=text],textarea{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--tint);border:1.5px solid var(--teal);border-radius:6px;padding:10px 12px;resize:vertical}
+textarea{min-height:92px;overflow:hidden}
+input[type=text]:focus,textarea:focus{background:#fff}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0 16px}
+.checks{display:grid;gap:8px 24px;margin:0 0 18px}
+.checks.c2{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.checks.c3{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.ck{display:flex;gap:10px;align-items:flex-start;cursor:pointer;line-height:1.4}
+.ck input{appearance:none;-webkit-appearance:none;flex:none;width:22px;height:22px;margin:1px 0 0;border:2px solid var(--teal);border-radius:4px;background:#fff;display:grid;place-content:center;cursor:pointer}
+.ck input:checked{background:var(--teal)}
+.ck input:checked:after{content:"";width:6px;height:11px;border:solid #fff;border-width:0 3px 3px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.ck input:focus-visible{outline:3px solid var(--navy);outline-offset:2px}
+
+/* sensory table */
+.sens{margin:0 0 20px;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.sens .r{display:grid;grid-template-columns:minmax(0,1.1fr) auto minmax(0,1.5fr);gap:12px 16px;align-items:center;padding:12px 14px}
+.sens .r:nth-child(odd){background:var(--tint)}
+.sens .r small{display:block;color:var(--mid);font-size:14px}
+.sens .r b{display:block}
+@media(max-width:640px){.sens .r{grid-template-columns:1fr}}
+
+/* breathing */
+.breath{background:var(--navy);color:#fff;border-radius:10px;padding:26px 22px;margin:20px 0}
+.breath h4{margin:0 0 4px;font-size:21px}
+.breath p{color:var(--light);max-width:none}
+.tabs{display:flex;gap:8px;margin:14px 0 6px;flex-wrap:wrap}
+.tabs button{font:inherit;font-size:15px;font-weight:700;padding:9px 16px;border-radius:999px;border:2px solid var(--light);background:transparent;color:#fff;cursor:pointer}
+.tabs button[aria-pressed=true]{background:var(--light);color:var(--navy)}
+.stage{display:grid;place-items:center;height:290px;position:relative}
+.ring{position:absolute;width:250px;height:250px;border:2px solid var(--mid);border-radius:50%}
+.orb{width:250px;height:250px;border-radius:50%;background:var(--teal);transform:scale(.4);display:grid;place-items:center;transition:transform 1s ease-in-out;box-shadow:0 0 0 10px rgba(184,215,216,.15)}
+.cue{font-size:21px;font-weight:700;text-align:center;min-height:2.6em;margin:0}
+.cue small{display:block;font-size:15px;font-weight:400;color:var(--light)}
+.go{font:inherit;font-weight:700;font-size:17px;background:var(--taupe);color:var(--navy);border:0;border-radius:8px;padding:12px 26px;cursor:pointer}
+.go:hover{background:#fff}
+.steps{counter-reset:s;list-style:none;padding:0;margin:0 0 16px}
+.steps li{counter-increment:s;position:relative;padding:0 0 10px 40px;max-width:62ch}
+.steps li:before{content:counter(s);position:absolute;left:0;top:0;width:27px;height:27px;border-radius:50%;background:var(--mid);color:#fff;font-weight:700;font-size:14px;display:grid;place-items:center}
+
+/* card + buttons */
+.btn{font:inherit;font-weight:700;font-size:15px;background:var(--navy);color:#fff;border:0;border-radius:8px;padding:11px 18px;cursor:pointer}
+.btn.alt{background:#fff;color:var(--navy);border:2px solid var(--navy)}
+.btn:hover{background:var(--mid);color:#fff}
+.acts{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 20px}
+.cardbox{border:2px dashed var(--mid);border-radius:12px;padding:22px;margin:0 0 20px}
+.cardbox h3{margin-top:0}
+.quote{background:var(--taupe);padding:12px 16px;border-radius:6px;font-weight:700}
+footer{background:var(--navy);color:var(--light);padding:30px 24px;font-size:15px}
+footer .in{max-width:1080px;margin:0 auto}
+footer p{max-width:70ch;margin:0 0 8px}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 18px;border-radius:8px;font-size:15px;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.show{opacity:1}
+
+@media(max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:0}
+  nav.side{position:static;padding:16px 0 0;max-height:none}
+  nav.side ol{display:flex;gap:6px;overflow-x:auto;padding-bottom:10px}
+  nav.side a{white-space:nowrap;border:1px solid var(--line);border-radius:999px;padding:6px 12px}
+  nav.side a.on{border-color:var(--teal)}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .orb{transition:none!important}
+  .meter .bar i{transition:none}
+}
+@media print{
+  body{font-size:12pt}
+  .top svg,nav.side,.acts,.breath,.skip,.toast,.noprint{display:none!important}
+  .wrap{display:block;padding:0}
+  .top{border-bottom:3px solid var(--taupe)}
+  .top .in{padding:20px 0}
+  .top h1{font-size:40pt}
+  section{break-inside:avoid-page}
+  .fld,.call,.sens{break-inside:avoid}
+  input[type=text],textarea{background:#fff}
+  body.card-only .top,body.card-only section:not(#card),body.card-only footer{display:none!important}
+  body.card-only #card .acts,body.card-only #card > p{display:none}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#start">Skip to the workbook</a>
+
+<header class="top">
+  <svg viewBox="0 0 560 560" aria-hidden="true" fill="none" stroke="#03567a" stroke-width="2"><circle cx="280" cy="280" r="130"/><circle cx="280" cy="280" r="190"/><circle cx="280" cy="280" r="250"/><circle cx="280" cy="280" r="275"/></svg>
+  <div class="in">
+    <p class="org">Groundwork Collaborative</p>
+    <h1>Grounded</h1>
+    <p class="sub">Your Interview Self Awareness Toolkit</p>
+    <p class="tag">Know your signals. Build your plan. Walk in steady.</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="side" aria-label="Workbook sections">
+    <div class="meter" aria-live="polite"><span id="meterText">0 answers saved</span><div class="bar"><i id="meterBar"></i></div></div>
+    <ol id="navList"></ol>
+  </nav>
+  <main id="main"></main>
+</div>
+
+<footer>
+  <div class="in">
+    <p>Groundwork Collaborative gives neurodivergent job seekers and the employers who hire them tools and training to compete on a level playing field.</p>
+    <p>Your answers stay in this browser on this device. Nothing is sent anywhere.</p>
+  </div>
+</footer>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+"use strict";
+var KEY="gwc-grounded-v1";
+var store={};
+try{store=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){store={}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}}
+var registry=[]; // {id,label,type,section}
+var cur="";
+
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+
+/* ---------- content ---------- */
+var S=[
+{id:"start",nav:"Start here",title:"How this workbook works",b:[
+ {t:"p",x:"An interview asks you to think clearly while your body feels pressure. You can plan for that. This workbook helps you learn your own signals and choose your own tools. There are no right answers. Your answers only need to work for you."},
+ {t:"ul",items:["Learn your signals in the first two sections.","Choose your tools in the next five sections. Pick the breathing, grounding and body language options that fit you.","Plan your day in the last three sections. Then build your toolkit card.","Say each tool out loud at least once. Practice makes it available when you are nervous."]},
+ {t:"sub",x:"Your interview details"},
+ {t:"row",f:[["co","Company"],["role","Role"]]},
+ {t:"row",f:[["when","Date and time"],["len","How long it will last"]]},
+ {t:"lbl",x:"Format"},
+ {t:"checks",id:"fmt",cols:3,items:["Phone","Video call","One way recorded video","In person one on one","Panel","Series of interviews"]},
+ {t:"f",id:"where",label:"Where it happens or the video link"},
+ {t:"f",id:"who",label:"Who I will meet"},
+ {t:"f",id:"travel",label:"My travel time and parking plan"}
+]},
+{id:"signals",nav:"Know your signals",part:"Part 1",title:"Know your signals",b:[
+ {t:"call",h:"What happens in your brain",x:"Under pressure your amygdala sounds an alarm. Your prefrontal cortex, the part that plans and finds words, gets quieter. That is why your mind can go blank in an interview. Regulation brings your thinking brain back online."},
+ {t:"sub",x:"Check the signals you notice"},
+ {t:"checks",id:"sig",cols:2,items:["Racing heart","Shallow breathing","Tight jaw or shoulders","Hot face or sweating","Shaky hands","Stomach tension","Mind goes blank","Racing thoughts","Fidgeting or pacing","Urge to leave","I go quiet","I talk too fast"]},
+ {t:"f",id:"sigother",label:"Other signals I notice"},
+ {t:"sub",x:"Your early warning plan"},
+ {t:"f",id:"first",label:"My first sign that stress is rising"},
+ {t:"f",id:"notice",label:"When I notice it I will",rows:3},
+ {t:"row",f:[["lvl","My usual stress level before an interview (1 to 10)"],["tool","The level where I will use a tool (1 to 10)"]]},
+ {t:"call",h:"Remember",x:"Nerves mean this matters. You are prepared and you deserve this interview."}
+]},
+{id:"sensory",nav:"Know your sensory needs",part:"Part 2",title:"Know your sensory needs",b:[
+ {t:"p",x:"Interview spaces can be loud, bright and scented. Learn what bothers you before you arrive. Then decide what you will do about it."},
+ {t:"sens",rows:[["light","Bright or flickering light","Fluorescent lights, glass rooms"],["noise","Noise","Ringing phones, chatter, open offices"],["scent","Strong scents","Perfume, cologne, cleaning products"],["cloth","Clothing texture","Waistband, collar, seams, tags"],["temp","Temperature","A cold room or a warm room"],["crowd","Crowds and waiting rooms","Sitting with other people"],["trav","Travel","Elevators, public transit, long walks"],["late","A late or distracted interviewer","Waiting with no information"]]},
+ {t:"call",h:"Outfit test",x:"Wear your full interview outfit at home for two hours. Check the waistband, collar and seams. Fix problems before the day."},
+ {t:"row",f:[["outfit","Date I tested my outfit"],["sensother","Other sensory needs and my plan"]]},
+ {t:"p",x:"Ideas to try: sit facing away from bright light. Wear layers. Pack water. Arrive early so you can choose a seat. Take a quiet minute in your car or the restroom."}
+]},
+{id:"breathing",nav:"Breathing",part:"Part 3",title:"Breathing",b:[
+ {t:"p",x:"Practice both techniques with the guide below. Pick the one that feels better in your body."},
+ {t:"breath"},
+ {t:"sub",x:"Physiological sigh"},
+ {t:"steps",items:["Notice the anxiety. Tell yourself you are safe.","Pause and look around. Close your eyes if that feels comfortable.","Breathe in through your nose.","Pause. Take a second short breath in through your nose.","Breathe out long and slow, like blowing out a candle.","Picture yourself calm and answering with ease. Repeat as often as you need."]},
+ {t:"p",x:"Use it before you arrive, before an answer and after you leave."},
+ {t:"sub",x:"Box breathing"},
+ {t:"p",x:"Breathe in for 4. Hold for 4. Breathe out for 4. Hold for 4. Repeat for 4 rounds. It gives you a steady rhythm."},
+ {t:"sub",x:"Your breathing plan"},
+ {t:"f",id:"btech",label:"What breathing technique will you use before an interview?"},
+ {t:"row",f:[["bwhere","Where will you do it? (car, restroom, lobby)"],["blong","How long will you give yourself?"]]},
+ {t:"lbl",x:"Practice daily for one week. Check each day you practice."},
+ {t:"checks",id:"bday",cols:3,items:["Day 1","Day 2","Day 3","Day 4","Day 5","Day 6","Day 7"]},
+ {t:"f",id:"bbest",label:"Which technique felt best for me, and why?",rows:3}
+]},
+{id:"grounding",nav:"Grounding",part:"Part 3 continued",title:"Grounding: 5 4 3 2 1",b:[
+ {t:"p",x:"Grounding interrupts anxious thinking and anchors you in the present. Practice it now. Look around the room you are in and fill in each line."},
+ {t:"f",id:"g5",label:"5 things I can see"},
+ {t:"f",id:"g4",label:"4 things I can touch"},
+ {t:"f",id:"g3",label:"3 things I can hear"},
+ {t:"f",id:"g2",label:"2 things I can smell"},
+ {t:"f",id:"g1",label:"1 thing I can taste"},
+ {t:"sub",x:"Where I will use it"},
+ {t:"checks",id:"gwhere",cols:2,items:["In the parking lot","After public transit","In the lobby","In the restroom before I go in","Between interviews in a series","While I wait for a video call to start"]},
+ {t:"sub",x:"Other tools to try"},
+ {t:"checks",id:"gother",cols:2,items:["A calm playlist on the way (headphones off before I enter)","Slow walk before I arrive","Press my palms together","Hold a smooth stone in my pocket","Repeat a calming phrase","Quiet time alone in my car","Text a supportive person","Mint or gum (gone before I walk in)"]},
+ {t:"f",id:"top2",label:"My top two tools are"}
+]},
+{id:"eye",nav:"Eye contact",part:"Part 4",title:"Body language: eye contact",b:[
+ {t:"call",h:"You have options",x:"Eye contact can feel uncomfortable. Pick a plan before the interview and practice it. Looking away to think is normal."},
+ {t:"sub",x:"Pick the options you will practice"},
+ {t:"checks",id:"eyeopt",cols:1,items:["Look at the space between their eyebrows","Look at the bridge of their nose","Look at their face without meeting their eyes","Look away to think, then look back when I speak","Hold eye contact for a few seconds, then glance at my notes","On video, look at the camera and not at my own image"]},
+ {t:"call",h:"Video",x:"Put a sticky note by the lens. Set the camera at eye level."},
+ {t:"call",h:"Panel",x:"Start and end each answer looking at the person who asked. Glance at the others in the middle."},
+ {t:"f",id:"eyeunc",label:"What will you do when eye contact feels uncomfortable?",rows:3},
+ {t:"f",id:"eyeplan",label:"My eye contact plan in one sentence"},
+ {t:"f",id:"eyeprac",label:"How I will practice it (with who and when)"}
+]},
+{id:"greet",nav:"Greetings and your body",part:"Part 4 continued",title:"Greetings and your body",b:[
+ {t:"sub",x:"The handshake"},
+ {t:"checks",id:"hs",cols:1,items:["Offer a quick handshake and let go","Take one slow breath first, then offer my hand",'Smile, nod and say "Nice to meet you"',"Carry my folio and greet with a nod","Dry my palms in the restroom before I go in",'Ask "Would you like to shake hands?"']},
+ {t:"f",id:"hsplan",label:"How will you shake hands if you are uncomfortable?",rows:3},
+ {t:"f",id:"hssay",label:"What I will say when I meet someone"},
+ {t:"sub",x:"Hands and body while you sit"},
+ {t:"checks",id:"body",cols:2,items:["Rest my hands on my notebook","Hold a pen","Use a quiet fidget in my pocket","Plant both feet on the floor","Sit back and take one slow breath"]},
+ {t:"f",id:"bodyplan",label:"What will I do with my hands and body?"},
+ {t:"call",h:"Everyone counts",x:"Everyone you meet is part of the impression. Say hello. Thank the person who gives you directions."}
+]},
+{id:"pause",nav:"Pause and Think",part:"Part 5",title:"Pause and Think",b:[
+ {t:"call",h:"Why it works",x:"A short pause gives your brain time to find words. Long silences feel shorter to the interviewer than they feel to you. Speak a little slower than feels natural. It calms your breathing."},
+ {t:"sub",x:"Bridge phrases to borrow"},
+ {t:"ul",items:['"That is a good question."','"I am glad you brought that up."','"Let me think about that for a moment."','"Could you repeat the question?"','"Let me make sure I understand. You are asking..."']},
+ {t:"sub",x:"Your phrases"},
+ {t:"f",id:"br1",label:"My bridge phrase 1"},
+ {t:"f",id:"br2",label:"My bridge phrase 2"},
+ {t:"f",id:"br3",label:"My bridge phrase 3"},
+ {t:"f",id:"again",label:"If I need the question again I will say"},
+ {t:"checks",id:"prac",cols:1,items:["I will write 2 or 3 keywords from each question on my notepad","I said my phrases out loud three times","I recorded myself and listened back","I practiced with another person"]},
+ {t:"f",id:"pracdate",label:"Date I practiced"}
+]},
+{id:"ifthen",nav:"If this happens",part:"Part 6",title:"If this happens, I will",b:[
+ {t:"p",x:"Decide now. A plan you made ahead of time is easier to use when your brain is under pressure."},
+ {t:"f",id:"if1",label:"If my mind goes blank, then I will",rows:2},
+ {t:"f",id:"if2",label:"If my heart starts racing during an answer, then I will",rows:2},
+ {t:"f",id:"if3",label:"If the room is loud or bright, then I will",rows:2},
+ {t:"f",id:"if4",label:"If the interviewer is late or distracted, then I will",rows:2},
+ {t:"f",id:"if5",label:"If I do not understand the question, then I will",rows:2},
+ {t:"f",id:"if6",label:"If I lose my train of thought, then I will",rows:2},
+ {t:"f",id:"if7",label:"If I feel overwhelmed and need a moment, then I will",rows:2},
+ {t:"f",id:"if8",label:"If the technology fails on a video call, then I will",rows:2},
+ {t:"f",id:"if9",label:"If I make a mistake, then I will",rows:2}
+]},
+{id:"day",nav:"Your day of plan",part:"Part 7",title:"Your day of plan",b:[
+ {t:"sub",x:"The night before"},
+ {t:"checks",id:"night",cols:1,items:["Outfit is clean, pressed and laid out. I tested it for comfort.","Route, parking and building entrance checked or test run done","Video tech tested: microphone, camera and link","Bag packed: notebook or folio, pen, extra resumes and water","Showered. Reminders set for deodorant and brushing teeth."]},
+ {t:"row",f:[["bed","Bedtime"],["wake","Wake up time"]]},
+ {t:"sub",x:"The morning of"},
+ {t:"checks",id:"morn",cols:1,items:["Ate something with protein and fat","Hygiene routine done","Outfit on and comfortable"]},
+ {t:"row",f:[["leave","I leave by"],["gstart","My grounding time starts at (add 10 to 20 minutes)"]]},
+ {t:"sub",x:"When I arrive"},
+ {t:"checks",id:"arr",cols:1,items:["Arrive 10 to 15 minutes early and wait in the lobby, not the parking lot","Physiological sigh in the car","5 4 3 2 1 before I walk in","Phone silenced","Say hello to everyone and thank them"]},
+ {t:"sub",x:"During"},
+ {t:"checks",id:"dur",cols:1,items:["Pause and Think before I answer","Use my eye contact plan","Use my handshake plan"]},
+ {t:"f",id:"reset",label:"My reset tool if I feel overwhelmed"}
+]},
+{id:"after",nav:"After the interview",part:"Part 8",title:"After the interview",b:[
+ {t:"checks",id:"aft",cols:1,items:["Physiological sigh before I leave the building","Thank you note sent within 24 hours (short and specific)"]},
+ {t:"row",f:[["fb","How I felt before (1 to 10)"],["fd","During (1 to 10)"],["fa","After (1 to 10)"]]},
+ {t:"f",id:"worked",label:"What worked",rows:3},
+ {t:"f",id:"change",label:"What I would change",rows:3},
+ {t:"f",id:"enjoy",label:"One thing I enjoyed about the conversation"},
+ {t:"f",id:"recover",label:"My recovery plan for the rest of the day",rows:3}
+]},
+{id:"card",nav:"Your toolkit card",title:"My interview toolkit",b:[
+ {t:"p",x:"Pull in your answers, edit anything and print the card. Carry it in your folio or phone case."},
+ {t:"card"}
+]}
+];
+
+var cardFields=[["c_sig","My signals","first"],["c_breath","My breathing tool","btech"],["c_ground","My grounding tool","top2"],["c_sens","My sensory fix","sensother"],["c_eye","My eye contact plan","eyeplan"],["c_hand","My handshake plan","hsplan"],["c_bridge","My bridge phrases",["br1","br2","br3"]],["c_reset","If I feel overwhelmed I will","reset"]];
+/* ---------- render ---------- */
+var main=document.getElementById("main");
+var nav=document.getElementById("navList");
+var html="";
+S.forEach(function(sec){
+  cur=sec.title;
+  html+='<section id="'+sec.id+'" aria-labelledby="h-'+sec.id+'">';
+  if(sec.part) html+='<p class="part">'+esc(sec.part)+'</p>';
+  html+='<h2 id="h-'+sec.id+'">'+esc(sec.title)+'</h2>';
+  sec.b.forEach(function(b){html+=block(b)});
+  html+='</section>';
+  nav.insertAdjacentHTML("beforeend",'<li><a href="#'+sec.id+'" data-s="'+sec.id+'">'+esc(sec.nav)+'</a></li>');
+});
+main.innerHTML=html;
+
+function field(id,label,rows){
+  registry.push({id:id,label:label,type:"t",section:cur});
+  var v=esc(store[id]||"");
+  var inp=(rows&&rows>1)?'<textarea id="'+id+'" data-id="'+id+'" rows="'+rows+'">'+v+'</textarea>':'<input type="text" id="'+id+'" data-id="'+id+'" value="'+v+'">';
+  return '<div class="fld"><label for="'+id+'">'+esc(label)+'</label>'+inp+'</div>';
+}
+function check(id,label){
+  registry.push({id:id,label:label,type:"c",section:cur});
+  return '<label class="ck"><input type="checkbox" data-id="'+id+'"'+(store[id]?" checked":"")+'><span>'+esc(label)+'</span></label>';
+}
+function block(b){
+  switch(b.t){
+  case "p": return '<p>'+esc(b.x)+'</p>';
+  case "sub": return '<h3>'+esc(b.x)+'</h3>';
+  case "lbl": return '<span class="lbl">'+esc(b.x)+'</span>';
+  case "call": return '<div class="call"><b>'+esc(b.h)+'</b><p>'+esc(b.x)+'</p></div>';
+  case "ul": return '<ul class="dots">'+b.items.map(function(i){return '<li>'+esc(i)+'</li>'}).join("")+'</ul>';
+  case "steps": return '<ol class="steps">'+b.items.map(function(i){return '<li>'+esc(i)+'</li>'}).join("")+'</ol>';
+  case "f": return field(b.id,b.label,b.rows);
+  case "row": return '<div class="row">'+b.f.map(function(f){return field(f[0],f[1])}).join("")+'</div>';
+  case "checks": return '<div class="checks c'+b.cols+'" role="group">'+b.items.map(function(it,i){return check(b.id+i,it)}).join("")+'</div>';
+  case "sens": return '<div class="sens">'+b.rows.map(function(r){
+      registry.push({id:"s_"+r[0]+"_c",label:r[1]+" bothers me",type:"c",section:cur});
+      registry.push({id:"s_"+r[0]+"_p",label:r[1]+": what I will do",type:"t",section:cur});
+      return '<div class="r"><div><b>'+esc(r[1])+'</b><small>'+esc(r[2])+'</small></div>'+
+        '<label class="ck"><input type="checkbox" data-id="s_'+r[0]+'_c"'+(store["s_"+r[0]+"_c"]?" checked":"")+'><span>Bothers me</span></label>'+
+        '<div><label class="lbl" for="s_'+r[0]+'_p" style="position:absolute;left:-999px">'+esc(r[1])+': what I will do</label><input type="text" id="s_'+r[0]+'_p" data-id="s_'+r[0]+'_p" placeholder="What I will do" value="'+esc(store["s_"+r[0]+"_p"]||"")+'"></div></div>';
+    }).join("")+'</div>';
+  case "breath": return breathHTML();
+  case "card": return cardHTML();
+  }
+  return "";
+}
+
+/* ---------- toolkit card ---------- */
+function cardHTML(){
+  var h='<div class="acts noprint"><button class="btn" id="pull" type="button">Pull in my answers</button><button class="btn alt" id="printCard" type="button">Print my card</button></div>';
+  h+='<div class="cardbox"><h3>Grounded toolkit</h3>';
+  cardFields.forEach(function(c){h+=field(c[0],c[1])});
+  h+='<p class="quote">Nerves mean this matters. You are prepared and you deserve this interview.</p></div>';
+  h+='<div class="acts noprint"><button class="btn" id="printAll" type="button">Print the whole workbook</button><button class="btn alt" id="dl" type="button">Download my answers</button><button class="btn alt" id="clr" type="button">Clear everything</button></div>';
+  return h;
+}
+
+/* ---------- breathing guide ---------- */
+function breathHTML(){
+  return '<div class="breath"><h4>Breathe with the circle</h4><p>Follow the circle and the words. Stop any time.</p>'+
+  '<div class="tabs" role="group" aria-label="Choose a technique"><button type="button" id="tSigh" aria-pressed="true">Physiological sigh</button><button type="button" id="tBox" aria-pressed="false">Box breathing</button></div>'+
+  '<div class="stage"><div class="ring"></div><div class="orb" id="orb"></div></div>'+
+  '<p class="cue" id="cue" role="status" aria-live="polite">Press start when you are ready.<small id="cueSub"></small></p>'+
+  '<p style="text-align:center;margin:16px 0 0"><button class="go" id="goBtn" type="button">Start</button></p></div>';
+}
+var tech="sigh",running=false,timer=null,round=0;
+var plans={
+  sigh:{rounds:3,steps:[["Breathe in through your nose",2,.75],["Pause",.6,.75],["Second short breath in",1,1],["Long slow breath out",5,.4]]},
+  box:{rounds:4,steps:[["Breathe in",4,1],["Hold",4,1],["Breathe out",4,.4],["Hold",4,.4]]}
+};
+function setOrb(scale,sec){
+  var o=document.getElementById("orb");
+  o.style.transitionDuration=sec+"s";
+  o.style.transform="scale("+scale+")";
+}
+function stopBreath(msg){
+  running=false;clearTimeout(timer);
+  var g=document.getElementById("goBtn");if(!g)return;
+  g.textContent="Start";
+  setOrb(.4,1);
+  document.getElementById("cue").firstChild.nodeValue=msg||"Press start when you are ready.";
+  document.getElementById("cueSub").textContent="";
+}
+function runStep(i){
+  if(!running)return;
+  var p=plans[tech];
+  if(i>=p.steps.length){round++;i=0;
+    if(round>=p.rounds){stopBreath("Well done. Notice how you feel.");return;}
+  }
+  var s=p.steps[i];
+  document.getElementById("cue").firstChild.nodeValue=s[0];
+  document.getElementById("cueSub").textContent="Round "+(round+1)+" of "+p.rounds;
+  setOrb(s[2],s[1]);
+  timer=setTimeout(function(){runStep(i+1)},s[1]*1000);
+}
+function bind(){
+  var g=document.getElementById("goBtn"),a=document.getElementById("tSigh"),b=document.getElementById("tBox");
+  g.addEventListener("click",function(){
+    if(running){stopBreath("Stopped. Press start to begin again.");return;}
+    running=true;round=0;g.textContent="Stop";runStep(0);
+  });
+  function pick(t){tech=t;a.setAttribute("aria-pressed",t==="sigh");b.setAttribute("aria-pressed",t==="box");stopBreath();}
+  a.addEventListener("click",function(){pick("sigh")});
+  b.addEventListener("click",function(){pick("box")});
+}
+bind();
+
+/* ---------- saving and meter ---------- */
+function grow(t){if(t.tagName==="TEXTAREA"){t.style.height="auto";t.style.height=(t.scrollHeight+4)+"px"}}
+function meter(){
+  var n=0,tot=registry.length;
+  registry.forEach(function(r){if(store[r.id])n++});
+  document.getElementById("meterText").textContent=n+" of "+tot+" answered";
+  document.getElementById("meterBar").style.width=Math.round(100*n/tot)+"%";
+}
+main.addEventListener("input",function(e){
+  var t=e.target,id=t.getAttribute("data-id");if(!id)return;
+  if(t.type==="checkbox") store[id]=t.checked?1:0; else {store[id]=t.value;grow(t)}
+  save();meter();
+});
+main.querySelectorAll("textarea").forEach(grow);
+meter();
+
+function toast(m){var t=document.getElementById("toast");t.textContent=m;t.classList.add("show");setTimeout(function(){t.classList.remove("show")},2200)}
+function setVal(id,v){
+  store[id]=v;var el=document.querySelector('[data-id="'+id+'"]');
+  if(el){el.value=v;grow(el)}
+}
+document.getElementById("pull").addEventListener("click",function(){
+  var n=0;
+  cardFields.forEach(function(c){
+    var src=c[2],v="";
+    if(Array.isArray(src)){v=src.map(function(k){return store[k]||""}).filter(Boolean).join(" / ")}
+    else v=store[src]||"";
+    if(c[0]==="c_sig"&&!v){
+      var picked=registry.filter(function(r){return r.id.indexOf("sig")===0&&r.type==="c"&&store[r.id]&&r.id!=="sigother"}).map(function(r){return r.label});
+      v=picked.slice(0,3).join(", ");
+    }
+    if(v){setVal(c[0],v);n++}
+  });
+  save();meter();toast(n?"Pulled in "+n+(n===1?" answer":" answers"):"Fill in earlier sections first");
+});
+document.getElementById("printCard").addEventListener("click",function(){document.body.classList.add("card-only");window.print();setTimeout(function(){document.body.classList.remove("card-only")},500)});
+document.getElementById("printAll").addEventListener("click",function(){document.body.classList.remove("card-only");window.print()});
+document.getElementById("dl").addEventListener("click",function(){
+  var out="Grounded: Your Interview Self Awareness Toolkit\nGroundwork Collaborative\n\n",last="";
+  registry.forEach(function(r){
+    var v=store[r.id];if(!v)return;
+    if(r.section!==last){out+="\n"+r.section+"\n"+Array(r.section.length+1).join("=")+"\n";last=r.section}
+    out+=(r.type==="c"?"[x] "+r.label:r.label+": "+v)+"\n";
+  });
+  var blob=new Blob([out],{type:"text/plain"});var a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);a.download="my-grounded-answers.txt";document.body.appendChild(a);a.click();a.remove();
+});
+document.getElementById("clr").addEventListener("click",function(){
+  if(!confirm("Clear every answer in this workbook? This cannot be undone."))return;
+  store={};save();
+  main.querySelectorAll("input[type=text],textarea").forEach(function(e){e.value="";grow(e)});
+  main.querySelectorAll("input[type=checkbox]").forEach(function(e){e.checked=false});
+  meter();toast("Workbook cleared");
+});
+
+/* ---------- nav highlight ---------- */
+var links=[].slice.call(document.querySelectorAll("nav.side a"));
+if("IntersectionObserver" in window){
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(e.isIntersecting){links.forEach(function(l){l.classList.toggle("on",l.getAttribute("data-s")===e.target.id)})}
+    });
+  },{rootMargin:"-20% 0px -70% 0px"});
+  document.querySelectorAll("main section").forEach(function(s){io.observe(s)});
+}
+})();
+</script>
+</body>
+</html>
